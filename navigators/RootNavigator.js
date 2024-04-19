@@ -18,6 +18,7 @@ const RootNavigator = () => {
 			{!isLoggedIn ? (
 				<Stack.Navigator initialRouteName='landing'>
 					<Stack.Screen name='landing' component={MainNavigator} />
+					<Stack.Screen name='staff-home' component={StaffNavigator} />
 					<Stack.Screen name='login' component={LoginScreen} />
 					<Stack.Screen name='register' component={RegisterScreen} />
 				</Stack.Navigator>
