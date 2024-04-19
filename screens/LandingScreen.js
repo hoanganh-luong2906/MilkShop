@@ -6,7 +6,7 @@ const LandingScreen = ({ navigation }) => {
 			<Text>This is LandingScreen</Text>
 			<Button
 				title='Go to Login'
-				onPress={() => navigation.navigate('Login')}
+				onPress={() => navigation.navigate('login')}
 			/>
 		</View>
 	);
