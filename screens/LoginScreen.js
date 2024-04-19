@@ -8,6 +8,10 @@ const LoginScreen = ({ navigation }) => {
 				title='Go to Register'
 				onPress={() => navigation.navigate('register')}
 			/>
+			<Button
+				title='Login as Staff'
+				onPress={() => navigation.navigate('staff-home')}
+			/>
 		</View>
 	);
 };
