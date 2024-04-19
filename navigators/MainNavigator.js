@@ -5,7 +5,10 @@ const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
 	return (
-		<Tab.Navigator initialRouteName='Landing'>
+		<Tab.Navigator
+			initialRouteName='Landing'
+			screenOptions={{ headerShown: false }}
+		>
 			<Tab.Screen name='Landing' component={LandingScreen} />
 		</Tab.Navigator>
 	);

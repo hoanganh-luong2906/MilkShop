@@ -1,12 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MainNavigator from './MainNavigator';
-import useAuth from '../utils/useAuth';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import CustomerNavigator from './CustomerNavigator';
-import StaffNavigator from './StaffNavigator';
+import useAuth from '../utils/useAuth';
 import AdminNavigator from './AdminNavigator';
+import CustomerNavigator from './CustomerNavigator';
+import MainNavigator from './MainNavigator';
+import StaffNavigator from './StaffNavigator';
+import { StyleSheet, Text } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,8 +19,20 @@ const RootNavigator = () => {
 			{!isLoggedIn ? (
 				<Stack.Navigator initialRouteName='landing'>
 					<Stack.Screen name='landing' component={MainNavigator} />
-					<Stack.Screen name='login' component={LoginScreen} />
-					<Stack.Screen name='register' component={RegisterScreen} />
+					<Stack.Screen
+						name='login'
+						component={LoginScreen}
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name='register'
+						component={RegisterScreen}
+						options={{
+							headerShown: false,
+						}}
+					/>
 				</Stack.Navigator>
 			) : (
 				<Stack.Navigator
@@ -53,5 +66,14 @@ const RootNavigator = () => {
 		</NavigationContainer>
 	);
 };
+
+const styles = StyleSheet.create({
+	headerTitle: {
+		width: '78%',
+		textAlign: 'center',
+		fontSize: 22,
+		fontWeight: 'bold',
+	},
+});
 
 export default RootNavigator;
