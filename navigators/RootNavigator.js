@@ -8,6 +8,7 @@ import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
 import { StyleSheet, Text } from 'react-native';
+import NavigationScreen from '../screens/NavigationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,26 @@ const RootNavigator = () => {
 	return (
 		<NavigationContainer>
 			{!isLoggedIn ? (
-				<Stack.Navigator initialRouteName='landing'>
+				<Stack.Navigator initialRouteName='Navigation'>
+					{/*=======Đoạn code này sẽ bị xóa sau khi login được==========*/}
+					<Stack.Screen
+						name='Navigation'
+						component={NavigationScreen}
+					/>
+					<Stack.Screen
+						name='staff-home'
+						component={StaffNavigator}
+					/>
+					<Stack.Screen
+						name='admin-home'
+						component={AdminNavigator}
+					/>
+					<Stack.Screen
+						name='customer-home'
+						component={CustomerNavigator}
+					/>
+					{/*===========================================================*/}
+
 					<Stack.Screen name='landing' component={MainNavigator} />
 					<Stack.Screen
 						name='login'

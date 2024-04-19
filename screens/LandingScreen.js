@@ -8,6 +8,10 @@ const LandingScreen = ({ navigation }) => {
 				title='Go to Login'
 				onPress={() => navigation.navigate('login')}
 			/>
+			<Button
+				title='Go to Staff'
+				onPress={() => navigation.navigate('staff-home')}
+			/>
 		</View>
 	);
 };
