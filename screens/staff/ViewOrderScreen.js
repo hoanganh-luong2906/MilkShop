@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from '@expo/vector-icons';
 
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +22,7 @@ export default function ViewOrderScreen() {
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
       <View style={styles.title}>
         <TouchableOpacity onPress={goBack}>
-          <Icon name="chevron-left" size={22} style={styles.goBack} />
+          <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
         </TouchableOpacity>
         <Text style={styles.titleText}>Chi tiết đơn hàng</Text>
       </View>
@@ -121,7 +121,7 @@ export default function ViewOrderScreen() {
           </View>
           <View style={{ flexDirection: "column", alignItems: "center" }}>
             <Text style={styles.infoTitle}>
-              <Icon name="credit-card" size={16} /> Phương thức thanh toán
+              <FontAwesome name="credit-card" size={16} /> Phương thức thanh toán
             </Text>
             <Text style={styles.infoContent}>
               Tài khoản liên kết với ShopeePay
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
   title: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   titleText: {
     flex: 1,
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#FEECE2",
-    marginVertical: 10,
+    marginBottom: 30,
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 10,
