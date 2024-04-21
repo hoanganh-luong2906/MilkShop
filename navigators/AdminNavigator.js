@@ -6,7 +6,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import AdminHomeScreen from '../screens/admin/AdminHomeScreen';
 import { useState } from 'react';
 import AccountScreen from '../screens/admin/AccountScreen';
-import AdminProfileScreen from '../screens/admin/AdminProfileScreen';
+import { AdminProfileScreen } from '../screens/admin/AdminProfileScreen';
 import ChartScreen from '../screens/admin/ChartScreen';
 
 const Tab = createBottomTabNavigator();
@@ -30,6 +30,7 @@ const AdminNavigator = () => {
 				component={AdminHomeScreen}
 				options={{
 					tabBarLabel: 'Home',
+					tabBarShowLabel: false,
 					tabBarIcon: ({ color, size }) => (
 						<Ionicons name={iconName} size={26} color={color} />
 					),
@@ -40,6 +41,7 @@ const AdminNavigator = () => {
 				component={AccountScreen}
 				options={{
 					tabBarLabel: 'Accounts',
+					tabBarShowLabel: false,
 					tabBarIcon: ({ color, size }) => (
 						<Feather name="users" size={26} color={color} />
 					),
@@ -50,6 +52,7 @@ const AdminNavigator = () => {
 				component={ChartScreen}
 				options={{
 					tabBarLabel: 'Chart',
+					tabBarShowLabel: false,
 					tabBarIcon: ({ color, size }) => (
 						<AntDesign name="areachart" size={26} color={color} />
 					),
@@ -60,6 +63,7 @@ const AdminNavigator = () => {
 				component={AdminProfileScreen}
 				options={{
 					tabBarLabel: 'Profile',
+					tabBarShowLabel: false,
 					tabBarIcon: ({ color, size }) => (
 						<FontAwesome name="user" size={24} color={color} />
 					),
