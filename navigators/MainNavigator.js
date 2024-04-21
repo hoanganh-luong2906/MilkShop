@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LandingScreen from '../screens/LandingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoryScreen from '../screens/CategoryScreen';
 import CartScreen from '../screens/CartScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import VoucherScreen from '../screens/VoucherScreen';
+import LandingScreen from '../screens/LandingScreen';
 
 const Tab = createBottomTabNavigator();
 

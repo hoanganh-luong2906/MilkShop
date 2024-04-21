@@ -61,6 +61,7 @@ const LandingScreen = ({ navigation }) => {
 		loadTopProducts();
 		loadVoucher();
 		loadCategory();
+		console.log("check");
 	}, []);
 
 	function updateStateValue({
