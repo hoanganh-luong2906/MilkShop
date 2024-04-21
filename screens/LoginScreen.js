@@ -3,11 +3,37 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
+import useAuth from '../utils/useAuth';
 
 const LoginScreen = ({ navigation }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const { login } = useAuth();
+
+	const handleLoginBtn = async () => {
+		try {
+			const response = await fetch(
+				'https://milk-shop-eight.vercel.app/api/authen/login',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: username,
+						password: password,
+					}),
+				}
+			);
+			const data = await response.json();
+			if (data && data?.status === 200) {
+				login(data.data);
+			}
+		} catch (error) {
+			alert('ERROR: ' + error);
+		}
+	};
 
 	return (
 		<LinearGradient
@@ -72,6 +98,7 @@ const LoginScreen = ({ navigation }) => {
 							letterSpacing: 1,
 							fontSize: 18,
 						}}
+						onPress={() => handleLoginBtn()}
 					>
 						ĐĂNG NHẬP
 					</Text>
@@ -123,6 +150,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 		zIndex: 0,
+		opacity: 0.8,
 	},
 	backArrow: {
 		position: 'absolute',

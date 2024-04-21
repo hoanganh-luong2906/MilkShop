@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+	KeyboardAvoidingView,
+	Pressable,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -34,44 +41,45 @@ const RegisterScreen = ({ navigation }) => {
 					</Pressable>
 					<Text style={styles.title}>ĐĂNG KÝ</Text>
 					<View style={styles.inputContainer}>
-						<TextInput
-							style={styles.textInput}
-							placeholder='Email của bạn'
-							value={username}
-							onChangeText={(text) => setUsername(text)}
-						/>
-						<TextInput
-							style={styles.textInput}
-							placeholder='Họ và tên'
-							value={fullName}
-							onChangeText={(text) => setFullName(text)}
-						/>
-						<TextInput
-							style={styles.textInput}
-							placeholder='Số điện thoại'
-							value={phoneNumber}
-							onChangeText={(text) => setPhoneNumber(text)}
-						/>
-						<View style={{ position: 'relative' }}>
+						<KeyboardAvoidingView
+							behavior='height'
+							style={{ flex: 1 }}
+						>
+							<TextInput
+								style={styles.textInput}
+								placeholder='Email của bạn'
+								value={username}
+								onChangeText={(text) => setUsername(text)}
+							/>
+							<TextInput
+								style={styles.textInput}
+								placeholder='Họ và tên'
+								value={fullName}
+								onChangeText={(text) => setFullName(text)}
+							/>
+							<TextInput
+								style={styles.textInput}
+								placeholder='Số điện thoại'
+								value={phoneNumber}
+								onChangeText={(text) => setPhoneNumber(text)}
+							/>
 							<TextInput
 								style={styles.textInput}
 								placeholder='Nhập mật khẩu'
 								secureTextEntry={true}
 								value={password}
 								onChangeText={(text) => setPassword(text)}
-							></TextInput>
-						</View>
-						<View style={{ position: 'relative' }}>
+							/>
 							<TextInput
 								style={styles.textInput}
-								placeholder='Nhập mật khẩu'
+								placeholder='Nhập lại mật khẩu'
 								secureTextEntry={true}
 								value={passwordConfirm}
 								onChangeText={(text) =>
 									setPasswordConfirm(text)
 								}
-							></TextInput>
-						</View>
+							/>
+						</KeyboardAvoidingView>
 					</View>
 					<Pressable style={styles.registerButton}>
 						<Text
@@ -107,7 +115,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingVertical: 20,
 		paddingHorizontal: 30,
-		height: 'auto',
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
@@ -146,6 +153,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		borderRadius: 50,
 		fontSize: 17,
+		marginVertical: 10,
 	},
 	showPasswordBtn: {
 		position: 'absolute',

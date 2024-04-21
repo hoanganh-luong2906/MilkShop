@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import LandingCategory from '../components/landing/Category';
 import LandingTopProduct from '../components/landing/TopProducts';
 import LandingVoucher from '../components/landing/Voucher';
+import useAuth from '../utils/useAuth';
 
 const calculateAvgRating = (ratings) => {
 	let totalRatings = 0;
@@ -35,6 +36,7 @@ const LandingScreen = ({ navigation }) => {
 	const [isTopProductsLoaded, setIsTopProductsLoaded] = useState(false);
 	const [isVoucherLoaded, setIsVoucherLoaded] = useState(false);
 	const [isCategoryLoaded, setIsCategoryLoaded] = useState(false);
+	const { isLoggedIn, user } = useAuth();
 
 	useEffect(() => {
 		const loadTopProducts = async () => {
@@ -137,12 +139,21 @@ const LandingScreen = ({ navigation }) => {
 					>
 						<Icon name='cart' size={23} color='black' />
 					</Pressable>
-					<Pressable
-						style={styles.button}
-						onPress={() => navigation.push('login')}
-					>
-						<Icon name='person' size={23} color='black' />
-					</Pressable>
+					{isLoggedIn ? (
+						<Pressable
+							style={styles.button}
+							onPress={() => navigation.push('profile')}
+						>
+							<Icon name='person' size={23} color='gray' />
+						</Pressable>
+					) : (
+						<Pressable
+							style={styles.button}
+							onPress={() => navigation.push('login')}
+						>
+							<Icon name='person' size={23} color='black' />
+						</Pressable>
+					)}
 				</View>
 				<ScrollView>
 					{isTopProductsLoaded && (

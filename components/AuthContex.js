@@ -1,30 +1,31 @@
 import React, { createContext, useState } from 'react';
+import { AsyncStorage } from 'react-native';
 
 const AuthContext = createContext({
 	isLoggedIn: false,
-	role: '',
+	user: {},
 	setIsLoggedIn: () => {},
 	setRole: () => {},
 });
 
 const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [role, setRole] = useState('');
+	const [user, setUser] = useState('');
 
-	const login = (userRole) => {
+	const login = async (userAccount) => {
 		setIsLoggedIn(true);
-		setRole(userRole);
-		// Store token securely (e.g., AsyncStorage)
+		setUser(userAccount);
+		await AsyncStorage.setItem('user', JSON.stringify(userAccount));
 	};
 
-	const logout = () => {
+	const logout = async () => {
 		setIsLoggedIn(false);
-		setRole('');
-		// Remove token from storage
+		setUser('');
+		await AsyncStorage.removeItem('user');
 	};
 
 	return (
-		<AuthContext.Provider value={{ isLoggedIn, role, login, logout }}>
+		<AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);
