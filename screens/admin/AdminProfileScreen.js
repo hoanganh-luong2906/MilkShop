@@ -21,7 +21,7 @@ export function AdminProfileScreen({ navigation }) {
     return (
         <LinearGradient
             colors={['#FFF3ED', '#FFFFFF']}
-            style={{ flex: 1, position: "relative" }}
+            style={{ flex: 1, position: "relative", paddingTop: 20 }}
         >
             {isLoggedin ? (
                 <>

@@ -20,7 +20,7 @@ export default function ChartScreen() {
     return (
         <LinearGradient
             colors={['#FFF3ED', '#FFFFFF']}
-            style={{ flex: 1 }}
+            style={{ flex: 1, paddingTop: 20 }}
         >
             <ScrollView style={styles.screen}>
                 {/* Filter */}

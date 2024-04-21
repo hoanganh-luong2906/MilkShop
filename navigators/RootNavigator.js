@@ -71,6 +71,15 @@ const RootNavigator = () => {
 							<Stack.Screen
 								name='admin-product-form'
 								component={AddProduct}
+								options={{
+									headerTitle: "Product Form",
+									headerShown: true,
+									headerTitleAlign: 'center',
+									headerTintColor: 'black',
+									headerStyle: { backgroundColor: '#FFBE98' },
+									headerTitleStyle: { fontSize: 30 },
+									statusBarColor: "black"
+								}}
 							/>
 						</>
 					) : user?.role?.toLowerCase() === 'staff' ? (
