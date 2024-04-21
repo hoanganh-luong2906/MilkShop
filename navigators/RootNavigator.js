@@ -9,6 +9,7 @@ import AdminNavigator from './AdminNavigator';
 import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
+import DetailScreen from '../screens/DetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,13 @@ const RootNavigator = () => {
 					<Stack.Screen
 						name='landing'
 						component={MainNavigator}
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name='detail'
+						component={DetailScreen}
 						options={{
 							headerShown: false,
 						}}

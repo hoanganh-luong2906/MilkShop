@@ -13,34 +13,37 @@ const LandingVoucher = ({ vouchers }) => {
 				<Text style={{ fontSize: 18, fontWeight: 'bold' }}>
 					Dành cho bạn
 				</Text>
-				<View
-					style={{
-						position: 'relative',
-						paddingRight: 15,
-					}}
-				>
-					<Text
+				{vouchers?.length > 2 && (
+					<View
 						style={{
-							fontSize: 14,
-							lineHeight: 16,
-							opacity: 0.6,
+							position: 'relative',
+							paddingRight: 15,
 						}}
+						key={Math.random()}
 					>
-						Xem tất cả
-					</Text>
-					<Icon
-						name='chevron-forward'
-						size={14}
-						style={styles.voucherHeaderIcon}
-					/>
-				</View>
+						<Text
+							style={{
+								fontSize: 14,
+								lineHeight: 16,
+								opacity: 0.6,
+							}}
+						>
+							Xem tất cả
+						</Text>
+						<Icon
+							name='chevron-forward'
+							size={14}
+							style={styles.voucherHeaderIcon}
+						/>
+					</View>
+				)}
 			</View>
 			<ScrollView
 				horizontal={true}
 				showsHorizontalScrollIndicator={false}
 			>
-				{vouchers?.map((voucher) => (
-					<Pressable style={styles.voucherContent}>
+				{vouchers?.map((voucher, index) => (
+					<Pressable style={styles.voucherContent} key={index}>
 						<View style={styles.voucherLeft}>
 							<Text
 								style={{
@@ -130,7 +133,8 @@ const styles = StyleSheet.create({
 		width: 230,
 		height: 100,
 		marginRight: 50,
-		marginTop: '1%',
+		marginTop: '2%',
+		marginBottom: '1%',
 		display: 'flex',
 		flexDirection: 'row',
 	},

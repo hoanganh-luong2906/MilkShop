@@ -18,12 +18,28 @@ function formatToVND(value) {
 	return `${formattedNumber} VNĐ`; // Prepend "VND " manually
 }
 
-const LandingCategory = ({ categoryList, products }) => {
+const LandingCategory = ({ categoryList, products, vouchers, navigation }) => {
+	function getProductVoucher(product, vouchers) {
+		try {
+			let productVouchers = [];
+			vouchers.forEach((voucher) => {
+				voucher.categories_applied.forEach((category) => {
+					if (category.name === product.category.name) {
+						productVouchers.push(voucher);
+					}
+				});
+			});
+			return productVouchers;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<View>
 			{categoryList ? (
-				categoryList.map((category) => (
-					<View style={styles.categoryContainer}>
+				categoryList.map((category, index) => (
+					<View style={styles.categoryContainer} index={index}>
 						<Text
 							style={{
 								fontWeight: 'bold',
@@ -42,8 +58,20 @@ const LandingCategory = ({ categoryList, products }) => {
 									(product) =>
 										product.category.name === category
 								)
-								?.map((product) => (
-									<Pressable style={styles.categoryProducts}>
+								?.map((product, index) => (
+									<Pressable
+										style={styles.categoryProducts}
+										index={index}
+										onPress={() => {
+											navigation.navigate('detail', {
+												product: product,
+												vouchers: getProductVoucher(
+													product,
+													vouchers
+												),
+											});
+										}}
+									>
 										<Image
 											src={product.imageURL}
 											style={styles.categoryImages}
@@ -61,19 +89,23 @@ const LandingCategory = ({ categoryList, products }) => {
 										</Text>
 										<View style={styles.categoryBody}>
 											<View style={styles.productRating}>
-												{[1, 2, 3, 4, 5].map((star) => (
-													<View key={Math.random()}>
-														<Icon
-															name='star'
-															size={11}
-															color={
-																5 >= star
-																	? '#FF8137'
-																	: 'gray'
-															}
-														/>
-													</View>
-												))}
+												{[1, 2, 3, 4, 5].map(
+													(star, index) => (
+														<View key={index}>
+															<Icon
+																name='star'
+																size={11}
+																color={
+																	Math.round(
+																		product.percentageRating
+																	) >= star
+																		? '#FF8137'
+																		: 'gray'
+																}
+															/>
+														</View>
+													)
+												)}
 											</View>
 											<Text
 												style={{
