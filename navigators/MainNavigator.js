@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LandingScreen from '../screens/LandingScreen';
+import LandingScreen from '../screens/admin/LandingScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CategoryScreen from '../screens/CategoryScreen';
 import CartScreen from '../screens/CartScreen';

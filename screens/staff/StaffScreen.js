@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from '@expo/vector-icons';
 export default function StaffScreen() {
   const navigation = useNavigation();
 
@@ -39,9 +39,12 @@ export default function StaffScreen() {
         textColor = "black";
     }
 
-    const onPress = () => {
+    const viewOrder = () => {
       navigation.navigate("View Order");
     };
+    const viewDeliveyProgress = () => {
+      navigation.navigate("Delivery Progress");
+    }
     return (
       <View style={styles.card}>
         <View style={styles.cardContent}>
@@ -71,7 +74,7 @@ export default function StaffScreen() {
             <View style={styles.retradeContainer}>
               <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
             </View>
-            <TouchableOpacity style={styles.seeMoreButton} onPress={onPress}>
+            <TouchableOpacity style={styles.seeMoreButton} onPress={viewOrder}>
               <Text style={styles.buttonText}>Xem thêm sản phẩm</Text>
             </TouchableOpacity>
           </View>
@@ -97,8 +100,9 @@ export default function StaffScreen() {
             marginVertical: 10,
             marginHorizontal: 10
           }}
+          onPress={viewDeliveyProgress}
         >
-          <Icon name="truck" size={26} color={iconColor} />
+          <FontAwesome name="truck" size={26} color={iconColor} />
           <Text
             style={{
               fontSize: 20,
@@ -109,7 +113,7 @@ export default function StaffScreen() {
           >
             {status}
           </Text>
-          <Icon name="chevron-right" size={22} style={{ fontWeight: "200" }} />
+          <FontAwesome name="chevron-right" size={22} style={{ fontWeight: "200" }} />
         </TouchableOpacity>
       </View>
     );
