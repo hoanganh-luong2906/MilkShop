@@ -1,54 +1,61 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView, Button } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import moment from "moment";
+import DatePickerCustom from './DatePickerCustom';
 
 export default function AddProduct() {
+    const [dateChooseImportedDate, setDateChooseImportedDate] = useState(new Date(1598051730000));
+    const [dateChooseExpiredDate, setDateChooseExpiredDate] = useState(new Date(1598051730000));
     const [product, setProduct] = useState({
         name: "",
         description: "",
         brandName: "",
         category: "",
-        price: 0,
-        percentageRating: 0,
-        quantity: 0,
-        sales: 0,
+        price: undefined,
+        percentageRating: undefined,
+        quantity: undefined,
+        sales: undefined,
         status: true,
-        importedDate: new Date(),
-        expiredDate: new Date,
+        importedDate: "",
+        expiredDate: "",
         imageURL: "",
     })
     const navigation = useNavigation();
+
+    const handleChangeData = (fieldName, data) => {
+        setProduct(prev => ({
+            ...prev,
+            [fieldName]: data
+        }))
+    }
+
+    const handleChooseImportedDate = (event, selectedDate) => {
+        // const currentDate = selectedDate;
+        const currentDate = moment(selectedDate).format('DD/MM/YYYY');
+        setProduct(prev => ({
+            ...prev,
+            importedDate: currentDate.toString()
+        }))
+        setDateChooseImportedDate(selectedDate);
+    };
+    const handleChooseExpiredDate = (event, selectedDate) => {
+        // const currentDate = selectedDate;
+        const currentDate = moment(selectedDate).format('DD/MM/YYYY');
+        setProduct(prev => ({
+            ...prev,
+            expiredDate: currentDate.toString()
+        }))
+        setDateChooseExpiredDate(selectedDate);
+    };
+
     const saveChanges = () => {
         // Implement logic to save the edited product information
         // For simplicity, just logging the edited product name
         console.log("Edited product name:", product.name);
     };
 
-    const [date, setDate] = useState(new Date(1598051730000));
-
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setDate(currentDate);
-    };
-
-    const showMode = (currentMode) => {
-        DateTimePickerAndroid.open({
-            value: date,
-            onChange,
-            mode: currentMode,
-            is24Hour: true,
-        });
-    };
-
-    const showDatepicker = () => {
-        showMode('date');
-    };
-
-    const showTimepicker = () => {
-        showMode('time');
-    };
     return (
         <KeyboardAvoidingView behavior="padding" style={{
             flex: 1
@@ -71,6 +78,7 @@ export default function AddProduct() {
                                 style={styles.input}
                                 placeholder="Tên sản phẩm"
                                 value={product.name}
+                                onChangeText={(value) => handleChangeData("name", value)}
                             />
                         </View>
                     </View>
@@ -80,6 +88,7 @@ export default function AddProduct() {
                                 style={styles.input}
                                 placeholder="Mô tả"
                                 value={product.description}
+                                onChangeText={(value) => handleChangeData("description", value)}
                                 multiline={true} // Allow multiple lines
                                 numberOfLines={5} // Set initial number of lines
                             />
@@ -91,6 +100,7 @@ export default function AddProduct() {
                                 style={styles.input}
                                 placeholder="Hãng"
                                 value={product.brandName}
+                                onChangeText={(value) => handleChangeData("brandName", value)}
                             />
                         </View>
                     </View>
@@ -100,6 +110,7 @@ export default function AddProduct() {
                                 style={styles.input}
                                 placeholder="Thể loại"
                                 value={product.category}
+                                onChangeText={(value) => handleChangeData("category", value)}
                             />
                         </View>
                     </View>
@@ -108,7 +119,8 @@ export default function AddProduct() {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Giá"
-                                value={product.price.toString()}
+                                value={product.price}
+                                onChangeText={(value) => handleChangeData("price", value)}
                                 keyboardType='numeric'
                             />
                         </View>
@@ -118,7 +130,8 @@ export default function AddProduct() {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Số lượng"
-                                value={product.quantity.toString()}
+                                value={product.quantity}
+                                onChangeText={(value) => handleChangeData("quantity", value)}
                                 keyboardType='numeric'
                             />
                         </View>
@@ -128,32 +141,14 @@ export default function AddProduct() {
                             <TextInput
                                 style={styles.input}
                                 placeholder="Giảm giá (%)"
-                                value={product.sales.toString()}
+                                value={product.sales}
+                                onChangeText={(value) => handleChangeData("sales", value)}
                                 keyboardType='numeric'
                             />
                         </View>
                     </View>
-                    <View style={styles.inputContainer} >
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Ngày nhập kho"
-                                value={product.importedDate.toString()}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Hạn sử dụng"
-                                value={product.expiredDate.toString()}
-                            />
-                        </View>
-                    </View>
-                    <Button onPress={showDatepicker} title="Show date picker!" />
-                    <Button onPress={showTimepicker} title="Show time picker!" />
-                    <Text>selected: {date.toLocaleString()}</Text>
+                    <DatePickerCustom date={dateChooseImportedDate} dateShow={product.importedDate.length == 0 ? "Ngày nhập kho" : product.importedDate} onChange={handleChooseImportedDate} />
+                    <DatePickerCustom date={dateChooseExpiredDate} dateShow={product.expiredDate.length == 0 ? "Hạn sử dụng" : product.expiredDate} onChange={handleChooseExpiredDate} />
 
                     <View
                         style={{
