@@ -85,29 +85,29 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#FFF0E7",
+    backgroundColor: "#FFFFFF",
     paddingVertical: 30,
     marginVertical: 0,
   },
   header: {
-    backgroundColor: "#FFF0E7",
+    backgroundColor: "#FEBE98",
     padding: 10,
   },
   headerText: {
     textAlign: "center",
     fontSize: 24,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginTop: 10,
   },
   contentContainer: {
     backgroundColor: "#FEECE2",
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    borderColor: "#FFBE98",
-    borderWidth: 2,
+    // borderTopLeftRadius: 40,
+    // borderTopRightRadius: 40,
+    // borderColor: "#FFBE98",
+    // borderWidth: 2,
     overflow: "hidden",
     height: "100%",
-    marginTop: 30,
+    marginTop: 3,
   },
   content: {
     padding: 15,
@@ -115,14 +115,14 @@ const styles = StyleSheet.create({
   contentBox: {
     backgroundColor: "#FEECE2",
   },
-  headerPoint: {
-	backgroundColor: "#FFBE98",
-	width: 70,
-	height: 10,
-	borderRadius: 25,
-	alignSelf: 'center',
-	marginBottom: 10,
-  },  
+//   headerPoint: {
+// 	backgroundColor: "#FFBE98",
+// 	width: 70,
+// 	height: 10,
+// 	borderRadius: 25,
+// 	alignSelf: 'center',
+// 	marginBottom: 10,
+//   },  
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
