@@ -10,6 +10,7 @@ import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
 import DetailScreen from '../screens/DetailScreen';
+import AddProduct from '../components/admin/AddProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,10 @@ const RootNavigator = () => {
 					<Stack.Screen
 						name='customer-home'
 						component={CustomerNavigator}
+					/>
+					<Stack.Screen
+						name='admin-product-form'
+						component={AddProduct}
 					/>
 					{/*===========================================================*/}
 
@@ -78,6 +83,10 @@ const RootNavigator = () => {
 							<Stack.Screen
 								name='admin-home'
 								component={AdminNavigator}
+							/>
+							<Stack.Screen
+								name='admin-product-form'
+								component={AddProduct}
 							/>
 						</>
 					) : role === 'Staff' ? (
