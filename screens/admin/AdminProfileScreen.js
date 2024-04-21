@@ -1,14 +1,22 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, Dimensions, Modal } from 'react-native'
 import React, { useState } from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
+import AddProduct from '../../components/admin/AddProduct';
+import { useNavigation } from '@react-navigation/native';
 
-export function AdminProfileScreen() {
+export function AdminProfileScreen({ navigation }) {
     const [isLoggedin, setIsLoggedin] = useState(true);
+    const [isOpenCreate, setIsOpenCreate] = useState(false);
     const [isSetting, setSetting] = useState(false);
+    const navigate = useNavigation();
+
+    const handleNavigate = () => {
+        navigation.navigate("admin-product-form")
+    }
 
     return (
         <LinearGradient
@@ -28,7 +36,12 @@ export function AdminProfileScreen() {
                             </Pressable>
                         </View>
                         {/* Function 1 */}
-                        <Pressable style={styles.functionContainerStyle}>
+                        <Pressable
+                            style={styles.functionContainerStyle}
+                            onPress={() => {
+                                // setIsOpenCreate(!isOpenCreate)
+                                handleNavigate();
+                            }}>
                             <View style={styles.functionPressable}>
                                 <Feather name="box" size={27} color="black" style={styles.functionIcon} />
                                 <Text style={styles.functionDescription}>Thêm sản phẩm</Text>
@@ -56,6 +69,10 @@ export function AdminProfileScreen() {
                         isSetting &&
                         <NavigationDrawer isSetting={isSetting} setSetting={setSetting} />
                     }
+                    {/* {
+                        isOpenCreate &&
+                        <AddProduct isOpenCreate={isOpenCreate} setIsOpenCreate={setIsOpenCreate} />
+                    } */}
                 </>
             ) : (
                 <View style={styles.loginContainer}>

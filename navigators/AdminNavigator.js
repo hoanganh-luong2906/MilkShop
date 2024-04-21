@@ -15,6 +15,7 @@ const AdminNavigator = () => {
 	const [iconName, setIconName] = useState("home")
 	const screenOptions = ({ route }) => ({
 		headerShown: false,
+		tabBarHideOnKeyboard: true
 		// tabBarIcon: ({ focused, color }) => {
 		// 	switch (route.name) {
 		// 		case "Staff Home":
