@@ -39,7 +39,7 @@ const LandingCategory = ({ categoryList, products, vouchers, navigation }) => {
 		<View>
 			{categoryList ? (
 				categoryList.map((category, index) => (
-					<View style={styles.categoryContainer} index={index}>
+					<View style={styles.categoryContainer} key={index}>
 						<Text
 							style={{
 								fontWeight: 'bold',
@@ -61,7 +61,7 @@ const LandingCategory = ({ categoryList, products, vouchers, navigation }) => {
 								?.map((product, index) => (
 									<Pressable
 										style={styles.categoryProducts}
-										index={index}
+										key={index}
 										onPress={() => {
 											navigation.navigate('detail', {
 												product: product,

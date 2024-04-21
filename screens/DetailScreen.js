@@ -152,8 +152,8 @@ const DetailScreen = ({ navigation, route }) => {
 								)}
 								<View style={styles.ratingContainer}>
 									<View style={styles.productRating}>
-										{[1, 2, 3, 4, 5].map((star) => (
-											<View key={Math.random()}>
+										{[1, 2, 3, 4, 5].map((star, index) => (
+											<View key={index}>
 												<Icon
 													name='star'
 													size={25}
@@ -312,7 +312,7 @@ const DetailScreen = ({ navigation, route }) => {
 								<View>
 									{[5, 4, 3, 2, 1].map((star, index) => (
 										<View
-											index={index}
+											key={index}
 											style={{
 												width: '100%',
 												display: 'flex',
@@ -323,7 +323,12 @@ const DetailScreen = ({ navigation, route }) => {
 										>
 											{Array.from({ length: star }).map(
 												(_, innerIndex) => (
-													<View index={innerIndex}>
+													<View
+														key={
+															innerIndex *
+															Math.random(10, 100)
+														}
+													>
 														<Icon
 															name='star'
 															size={25}
@@ -406,8 +411,10 @@ const DetailScreen = ({ navigation, route }) => {
 														}
 													>
 														{[1, 2, 3, 4, 5].map(
-															(star) => (
-																<View>
+															(star, index) => (
+																<View
+																	key={index}
+																>
 																	<Icon
 																		name='star'
 																		size={
