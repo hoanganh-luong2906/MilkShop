@@ -57,7 +57,8 @@ export default function AddProduct() {
                 colors={['#FFF3ED', '#FFFFFF']}
                 style={{
                     flex: 1,
-                    paddingHorizontal: 20
+                    paddingHorizontal: 20,
+                    paddingTop: 20
                 }}
             >
                 <ScrollView>
