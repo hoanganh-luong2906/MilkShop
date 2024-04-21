@@ -1,18 +1,29 @@
 import { View, Text, ScrollView, StyleSheet, Pressable, Dimensions } from 'react-native'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function ChartScreen() {
     const arrayYears = ["2020", "2021", "2022", "2023", "2024",]
     const [choosedYear, setYear] = useState("2024");
-    const [isShowed, setShowed] = useState(false)
+    const [isShowed, setShowed] = useState(false);
+    const [arrData, setData] = useState([]);
+
+    useEffect(() => {
+        const handleData = async () => {
+            const response = await fetch("https://milk-shop-eight.vercel.app/api/chart")
+            const data = await response.json();
+            setData(data.data);
+        };
+        handleData();
+    }, [])
     return (
         <LinearGradient
             colors={['#FFF3ED', '#FFFFFF']}
             style={{ flex: 1 }}
         >
             <ScrollView style={styles.screen}>
+                {/* Filter */}
                 <View style={styles.filterRow}>
                     <Pressable style={styles.filterBg} onPress={() => { setShowed(!isShowed) }} >
                         <Text style={styles.filterTxt}>{choosedYear}</Text>
@@ -36,6 +47,7 @@ export default function ChartScreen() {
                                         }]}
                                         onPress={() => {
                                             setYear(year)
+                                            setShowed(!isShowed)
                                         }}
                                         key={index}
                                     >
@@ -88,71 +100,86 @@ export default function ChartScreen() {
                 </View>
 
                 {/* Item */}
-                <View style={styles.notationContainer}>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.textStyle}>Nhà cung cấp:</Text>
-                            <Text style={styles.textStyle}>Vinamilk</Text>
-                        </View>
-                    </View>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.textStyle}>Loại sản phẩm:</Text>
-                            <Text style={styles.textStyle}>Sữa tươi các loại</Text>
-                        </View>
-                    </View>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.textStyle}>Tên sản phẩm:</Text>
-                            <Text style={styles.textStyle}>Sữa Bobs Organic</Text>
-                        </View>
-                    </View>
+                {
+                    arrData.length == 0 || choosedYear !== "2024" && <Text style={{ textAlign: "center" }}>Không có dữ liệu</Text>
+                }
+                {
+                    choosedYear === "2024" && arrData.map((item, index) => {
+                        return (
+                            <View key={index} style={styles.notationContainer}>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.textStyle}>Nhà cung cấp:</Text>
+                                        <Text style={styles.textStyle}>{item.brandName}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.textStyle}>Loại sản phẩm:</Text>
+                                        <Text style={styles.textStyle}>{item.category}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.textStyle}>Mã sản phẩm:</Text>
+                                        <Text style={styles.textStyle}>{item.productId}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.textStyle}>Tên sản phẩm:</Text>
+                                        <Text style={styles.textStyle}>{item.productName.slice(0, 25) + "..."}</Text>
+                                    </View>
+                                </View>
 
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.notationItemTxt}>Số lượng thực: </Text>
-                            <View style={styles.itemField1}>
-                                <Text style={styles.itemField2}>71</Text>
-                                <View style={styles.itemField3}>
-                                    <View style={[styles.itemField4, { backgroundColor: "red" }]} />
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.notationItemTxt}>Số lượng thực: </Text>
+                                        <View style={styles.itemField1}>
+                                            <Text style={styles.itemField2}>{item.trueQuantity}</Text>
+                                            <View style={styles.itemField3}>
+                                                <View style={[styles.itemField4, { backgroundColor: "red" }]} />
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.notationItemTxt}>Doanh thu: </Text>
+                                        <View style={styles.itemField1}>
+                                            <Text style={styles.itemField2}>{item.sellPrice}</Text>
+                                            <View style={styles.itemField3}>
+                                                <View style={[styles.itemField4, { backgroundColor: "orange" }]} />
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.notationItemTxt}>Giảm giá: </Text>
+                                        <View style={styles.itemField1}>
+                                            <Text style={styles.itemField2}>{item.salePrice}</Text>
+                                            <View style={styles.itemField3}>
+                                                <View style={[styles.itemField4, { backgroundColor: "yellow" }]} />
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View style={styles.notationItemContainer}>
+                                    <View style={styles.notationItem}>
+                                        <Text style={styles.notationItemTxt}>Tổng doanh thu: </Text>
+                                        <View style={styles.itemField1}>
+                                            <Text style={styles.itemField2}>{item.totalPrice}</Text>
+                                            <View style={styles.itemField3}>
+                                                <View style={[styles.itemField4, { backgroundColor: "purple" }]} />
+                                            </View>
+                                        </View>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    </View>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.notationItemTxt}>Doanh thu: </Text>
-                            <View style={styles.itemField1}>
-                                <Text style={styles.itemField2}>71</Text>
-                                <View style={styles.itemField3}>
-                                    <View style={[styles.itemField4, { backgroundColor: "orange" }]} />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.notationItemTxt}>Giảm giá: </Text>
-                            <View style={styles.itemField1}>
-                                <Text style={styles.itemField2}>71</Text>
-                                <View style={styles.itemField3}>
-                                    <View style={[styles.itemField4, { backgroundColor: "yellow" }]} />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.notationItemContainer}>
-                        <View style={styles.notationItem}>
-                            <Text style={styles.notationItemTxt}>Tổng doanh thu: </Text>
-                            <View style={styles.itemField1}>
-                                <Text style={styles.itemField2}>718709568709</Text>
-                                <View style={styles.itemField3}>
-                                    <View style={[styles.itemField4, { backgroundColor: "purple" }]} />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+                        )
+                    })
+                }
             </ScrollView>
         </LinearGradient>
     )
@@ -205,7 +232,7 @@ const styles = StyleSheet.create({
     notationContainer: {
         flex: 1,
         backgroundColor: "#FEECE2",
-        height: 200,
+        height: 250,
         margin: 20,
         borderRadius: 30
     },
@@ -247,7 +274,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     textStyle: {
-        textAlignVertical: "center"
+        textAlignVertical: "center",
     },
     itemField1: {
         flex: 0.8,
