@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, Pressable, Dimensions } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
