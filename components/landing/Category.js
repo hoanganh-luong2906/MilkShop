@@ -39,7 +39,8 @@ const LandingCategory = ({ categoryList, products }) => {
 						>
 							{products
 								.filter(
-									(product) => product.category === category
+									(product) =>
+										product.category.name === category
 								)
 								?.map((product) => (
 									<Pressable style={styles.categoryProducts}>
