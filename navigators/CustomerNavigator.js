@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LandingScreen from '../screens/admin/LandingScreen';
+import LandingScreen from '../screens/LandingScreen';
 
 const Tab = createBottomTabNavigator();
 
