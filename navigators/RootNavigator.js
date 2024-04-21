@@ -1,49 +1,26 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StyleSheet } from 'react-native';
+import DetailScreen from '../screens/DetailScreen';
 import LoginScreen from '../screens/LoginScreen';
-import NavigationScreen from '../screens/NavigationScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import VoucherScreen from '../screens/VoucherScreen';
 import useAuth from '../utils/useAuth';
 import AdminNavigator from './AdminNavigator';
 import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
-import DetailScreen from '../screens/DetailScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import AddProduct from '../components/admin/AddProduct';
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
-	const { isLoggedIn, role } = useAuth();
+	const { isLoggedIn, user } = useAuth();
 
 	return (
 		<NavigationContainer>
-			{!isLoggedIn ? (
-				<Stack.Navigator initialRouteName='Navigation'>
-					{/*=======Đoạn code này sẽ bị xóa sau khi login được==========*/}
-					<Stack.Screen
-						name='Navigation'
-						component={NavigationScreen}
-					/>
-					<Stack.Screen
-						name='staff-home'
-						component={StaffNavigator}
-					/>
-					<Stack.Screen
-						name='admin-home'
-						component={AdminNavigator}
-					/>
-					<Stack.Screen
-						name='customer-home'
-						component={CustomerNavigator}
-					/>
-					<Stack.Screen
-						name='admin-product-form'
-						component={AddProduct}
-					/>
-					{/*===========================================================*/}
-
+			{!isLoggedIn && !user ? (
+				<Stack.Navigator initialRouteName='landing'>
 					<Stack.Screen
 						name='landing'
 						component={MainNavigator}
@@ -72,13 +49,20 @@ const RootNavigator = () => {
 							headerShown: false,
 						}}
 					/>
+					<Stack.Screen
+						name='voucher'
+						component={VoucherScreen}
+						options={{
+							headerShown: false,
+						}}
+					/>
 				</Stack.Navigator>
 			) : (
 				<Stack.Navigator
-					initialRouteName=''
+					initialRouteName={`${user?.role?.toLowerCase()}-home`}
 					screenOptions={{ headerShown: false }}
 				>
-					{role === 'Admin' ? (
+					{user?.role?.toLowerCase() === 'admin' ? (
 						<>
 							<Stack.Screen
 								name='admin-home'
@@ -89,7 +73,7 @@ const RootNavigator = () => {
 								component={AddProduct}
 							/>
 						</>
-					) : role === 'Staff' ? (
+					) : user?.role?.toLowerCase() === 'staff' ? (
 						<>
 							<Stack.Screen
 								name='staff-home'
@@ -102,6 +86,10 @@ const RootNavigator = () => {
 								name='customer-home'
 								component={CustomerNavigator}
 							/>
+							<Stack.Screen
+								name='profile'
+								component={ProfileScreen}
+							/>
 						</>
 					)}
 				</Stack.Navigator>
@@ -109,14 +97,5 @@ const RootNavigator = () => {
 		</NavigationContainer>
 	);
 };
-
-const styles = StyleSheet.create({
-	headerTitle: {
-		width: '78%',
-		textAlign: 'center',
-		fontSize: 22,
-		fontWeight: 'bold',
-	},
-});
 
 export default RootNavigator;
