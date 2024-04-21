@@ -6,7 +6,7 @@ const translateCurrency = (number) => {
 	return `${thousands}K`;
 };
 
-const LandingVoucher = ({ vouchers }) => {
+const LandingVoucher = ({ vouchers, navigation }) => {
 	return (
 		<View style={styles.voucherContainer}>
 			<View style={styles.voucherHeader}>
@@ -14,12 +14,17 @@ const LandingVoucher = ({ vouchers }) => {
 					Dành cho bạn
 				</Text>
 				{vouchers?.length > 2 && (
-					<View
+					<Pressable
 						style={{
 							position: 'relative',
 							paddingRight: 15,
 						}}
 						key={Math.random()}
+						onPress={() => {
+							navigation.navigate('voucher', {
+								vouchers: vouchers,
+							});
+						}}
 					>
 						<Text
 							style={{
@@ -35,7 +40,7 @@ const LandingVoucher = ({ vouchers }) => {
 							size={14}
 							style={styles.voucherHeaderIcon}
 						/>
-					</View>
+					</Pressable>
 				)}
 			</View>
 			<ScrollView
@@ -43,7 +48,16 @@ const LandingVoucher = ({ vouchers }) => {
 				showsHorizontalScrollIndicator={false}
 			>
 				{vouchers?.map((voucher, index) => (
-					<Pressable style={styles.voucherContent} key={index}>
+					<Pressable
+						style={styles.voucherContent}
+						key={index}
+						onPress={() => {
+							navigation.navigate('voucher', {
+								vouchers: vouchers,
+								navigation: navigation,
+							});
+						}}
+					>
 						<View style={styles.voucherLeft}>
 							<Text
 								style={{

@@ -10,6 +10,7 @@ import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
 import DetailScreen from '../screens/DetailScreen';
+import VoucherScreen from '../screens/VoucherScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,6 +64,13 @@ const RootNavigator = () => {
 					<Stack.Screen
 						name='register'
 						component={RegisterScreen}
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name='voucher'
+						component={VoucherScreen}
 						options={{
 							headerShown: false,
 						}}

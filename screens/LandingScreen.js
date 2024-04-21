@@ -152,7 +152,12 @@ const LandingScreen = ({ navigation }) => {
 							vouchers={vouchers}
 						/>
 					)}
-					{isVoucherLoaded && <LandingVoucher vouchers={vouchers} />}
+					{isVoucherLoaded && (
+						<LandingVoucher
+							vouchers={vouchers}
+							navigation={navigation}
+						/>
+					)}
 					{isCategoryLoaded && (
 						<LandingCategory
 							categoryList={categoryList}

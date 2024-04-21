@@ -1,4 +1,7 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import LottieView from 'lottie-react-native';
+import React, { useCallback, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -10,9 +13,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LandingVoucher from '../components/landing/Voucher';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
-import LottieView from 'lottie-react-native';
 
 function formatToVND(value) {
 	const formatter = new Intl.NumberFormat('vi-VN', {
