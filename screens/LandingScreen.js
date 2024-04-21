@@ -97,9 +97,7 @@ const LandingScreen = ({ navigation }) => {
 
 				const categories = new Set();
 				data.data.forEach((product) => {
-					categories.add(
-						product?.category?.name ?? product?.category
-					);
+					categories.add(product?.category?.name);
 				});
 
 				updateStateValue({
