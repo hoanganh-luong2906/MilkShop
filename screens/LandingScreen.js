@@ -123,7 +123,7 @@ const LandingScreen = ({ navigation }) => {
 				<View style={styles.searchContainer}>
 					<TextInput
 						style={styles.searchBox}
-						placeholder='Tìm kiếm'
+						placeholder='Tìm kiếm sản phẩm'
 					/>
 					<Icon
 						name='search'
@@ -146,13 +146,19 @@ const LandingScreen = ({ navigation }) => {
 				</View>
 				<ScrollView>
 					{isTopProductsLoaded && (
-						<LandingTopProduct topProducts={topProducts} />
+						<LandingTopProduct
+							topProducts={topProducts}
+							navigation={navigation}
+							vouchers={vouchers}
+						/>
 					)}
 					{isVoucherLoaded && <LandingVoucher vouchers={vouchers} />}
 					{isCategoryLoaded && (
 						<LandingCategory
 							categoryList={categoryList}
 							products={products}
+							vouchers={vouchers}
+							navigation={navigation}
 						/>
 					)}
 				</ScrollView>
@@ -181,6 +187,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
+		marginBottom: 5,
 	},
 	searchBox: {
 		width: '70%',

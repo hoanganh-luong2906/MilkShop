@@ -8,7 +8,23 @@ import {
 	View,
 } from 'react-native';
 
-const LandingTopProduct = ({ topProducts }) => {
+const LandingTopProduct = ({ topProducts, navigation, vouchers }) => {
+	function getProductVoucher(product, vouchers) {
+		try {
+			let productVouchers = [];
+			vouchers.forEach((voucher) => {
+				voucher.categories_applied.forEach((category) => {
+					if (category.name === product.category.name) {
+						productVouchers.push(voucher);
+					}
+				});
+			});
+			return productVouchers;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<View style={styles.topProductContainer}>
 			<View style={styles.topProductTitle}>
@@ -24,8 +40,20 @@ const LandingTopProduct = ({ topProducts }) => {
 					horizontal={true}
 					showsHorizontalScrollIndicator={false}
 				>
-					{topProducts?.map((product) => (
-						<Pressable style={styles.topProductContent}>
+					{topProducts?.map((product, index) => (
+						<Pressable
+							style={styles.topProductContent}
+							onPress={() => {
+								navigation.navigate('detail', {
+									product: product,
+									vouchers: getProductVoucher(
+										product,
+										vouchers
+									),
+								});
+							}}
+							key={index}
+						>
 							<Image
 								src={product.imageURL}
 								resizeMode='contain'
@@ -88,7 +116,7 @@ const styles = StyleSheet.create({
 	topProductContent: {
 		width: 120,
 		backgroundColor: 'white',
-		marginHorizontal: 12,
+		marginHorizontal: 8,
 		marginBottom: 15,
 		borderRadius: 10,
 		paddingVertical: 10,
