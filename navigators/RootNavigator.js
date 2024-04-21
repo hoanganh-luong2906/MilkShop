@@ -1,14 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
 import LoginScreen from '../screens/LoginScreen';
+import NavigationScreen from '../screens/NavigationScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import useAuth from '../utils/useAuth';
 import AdminNavigator from './AdminNavigator';
 import CustomerNavigator from './CustomerNavigator';
 import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
-import { StyleSheet, Text } from 'react-native';
-import NavigationScreen from '../screens/NavigationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +38,13 @@ const RootNavigator = () => {
 					/>
 					{/*===========================================================*/}
 
-					<Stack.Screen name='landing' component={MainNavigator} />
+					<Stack.Screen
+						name='landing'
+						component={MainNavigator}
+						options={{
+							headerShown: false,
+						}}
+					/>
 					<Stack.Screen
 						name='login'
 						component={LoginScreen}
