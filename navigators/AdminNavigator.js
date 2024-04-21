@@ -3,7 +3,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import LandingScreen from '../screens/admin/LandingScreen';
+import AdminHomeScreen from '../screens/admin/AdminHomeScreen';
 import { useState } from 'react';
 import AccountScreen from '../screens/admin/AccountScreen';
 import AdminProfileScreen from '../screens/admin/AdminProfileScreen';
@@ -27,7 +27,7 @@ const AdminNavigator = () => {
 		<Tab.Navigator initialRouteName='AdminHome' screenOptions={screenOptions}>
 			<Tab.Screen
 				name='AdminHome'
-				component={LandingScreen}
+				component={AdminHomeScreen}
 				options={{
 					tabBarLabel: 'Home',
 					tabBarIcon: ({ color, size }) => (

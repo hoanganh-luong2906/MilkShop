@@ -1,9 +1,9 @@
 import { Button, Text, View } from 'react-native';
 
-const LandingScreen = ({ navigation }) => {
+const AdminHomeScreen = ({ navigation }) => {
 	return (
 		<View>
-			<Text>This is LandingScreen</Text>
+			<Text>This is AdminHomeScreen</Text>
 			<Button
 				title='Go to Login'
 				onPress={() => navigation.navigate('login')}
@@ -16,4 +16,4 @@ const LandingScreen = ({ navigation }) => {
 	);
 };
 
-export default LandingScreen;
+export default AdminHomeScreen;
