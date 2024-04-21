@@ -29,13 +29,6 @@ const RootNavigator = () => {
 						}}
 					/>
 					<Stack.Screen
-						name='detail'
-						component={DetailScreen}
-						options={{
-							headerShown: false,
-						}}
-					/>
-					<Stack.Screen
 						name='login'
 						component={LoginScreen}
 						options={{
@@ -45,6 +38,13 @@ const RootNavigator = () => {
 					<Stack.Screen
 						name='register'
 						component={RegisterScreen}
+						options={{
+							headerShown: false,
+						}}
+					/>
+					<Stack.Screen
+						name='detail'
+						component={DetailScreen}
 						options={{
 							headerShown: false,
 						}}
@@ -89,6 +89,20 @@ const RootNavigator = () => {
 							<Stack.Screen
 								name='profile'
 								component={ProfileScreen}
+							/>
+							<Stack.Screen
+								name='detail'
+								component={DetailScreen}
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name='voucher'
+								component={VoucherScreen}
+								options={{
+									headerShown: false,
+								}}
 							/>
 						</>
 					)}
