@@ -14,6 +14,7 @@ const StaffNavigator = () => {
   const screenOptions = ({ route }) => ({
     headerShown: false,
     tabBarShowLabel: false,
+    tabBarHideOnKeyboard: true,
     tabBarIcon: ({ focused, color }) => {
       let iconName;
       switch (route.name) {
@@ -57,7 +58,7 @@ const StaffNavigator = () => {
         component={ViewDetail}
         options={tabOptions}
       />
-      <Tab.Screen name="Voucher" component={Voucher}/>
+      <Tab.Screen name="Voucher" component={Voucher} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );

@@ -4,7 +4,6 @@ import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import AdminHomeScreen from '../screens/admin/AdminHomeScreen';
-import { useState } from 'react';
 import AccountScreen from '../screens/admin/AccountScreen';
 import { AdminProfileScreen } from '../screens/admin/AdminProfileScreen';
 import ChartScreen from '../screens/admin/ChartScreen';
@@ -12,7 +11,6 @@ import ChartScreen from '../screens/admin/ChartScreen';
 const Tab = createBottomTabNavigator();
 
 const AdminNavigator = () => {
-	const [iconName, setIconName] = useState("home")
 	const screenOptions = ({ route }) => ({
 		headerShown: false,
 		tabBarHideOnKeyboard: true,
@@ -33,7 +31,7 @@ const AdminNavigator = () => {
 					tabBarLabel: 'Home',
 					tabBarShowLabel: false,
 					tabBarIcon: ({ color, size }) => (
-						<Ionicons name={iconName} size={26} color={color} />
+						<Ionicons name={"home"} size={26} color={color} />
 					),
 					headerTitle: 'Home',
 				}} />

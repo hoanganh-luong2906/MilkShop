@@ -26,7 +26,7 @@ export default function DatePickerCustom({ date, dateShow, onChange, isError }) 
             <View style={styles.inputWrapper}>
                 <Text style={[
                     styles.input,
-                    { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "grey" : "black"}` },
+                    { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" || dateShow === "Ngày hết hạn" ? "grey" : "black"}` },
                     isError ? styles.inputError : null
                 ]}>
                     {dateShow.toString()}

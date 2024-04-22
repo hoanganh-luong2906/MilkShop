@@ -17,9 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 import useAuth from '../../utils/useAuth';
 
 export function AdminProfileScreen({ navigation }) {
-	const [isLoggedin, setIsLoggedin] = useState(true);
 	const [isSetting, setSetting] = useState(false);
-	const { logout } = useAuth();
+	const { user, isLoggedIn, login, logout } = useAuth();
 
 	const handleNavigate = (nameRoute) => {
 		navigation.navigate(nameRoute);
@@ -30,7 +29,7 @@ export function AdminProfileScreen({ navigation }) {
 			colors={['#FFF3ED', '#FFFFFF']}
 			style={{ flex: 1, position: 'relative', paddingTop: 20 }}
 		>
-			{isLoggedin ? (
+			{isLoggedIn ? (
 				<>
 					<ScrollView style={styles.mainScreen}>
 						<View style={styles.questionStyle}>
@@ -140,8 +139,7 @@ export function AdminProfileScreen({ navigation }) {
 					<Text style={styles.loginText}>Đăng nhập để xem hồ sơ</Text>
 					<TouchableOpacity
 						style={styles.loginButton}
-						// onPress={() => navigation.navigate("login")}
-						onPress={() => setIsLoggedin(true)}
+						onPress={() => navigation.navigate("login")}
 					>
 						<Text style={styles.loginButtonText}>Đăng nhập</Text>
 					</TouchableOpacity>
