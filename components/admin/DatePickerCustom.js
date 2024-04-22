@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React from 'react';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { AntDesign } from '@expo/vector-icons';
@@ -24,14 +24,14 @@ export default function DatePickerCustom({ date, dateShow, onChange }) {
     return (
         <Pressable style={styles.inputContainer} onPress={showDatepicker} >
             <View style={styles.inputWrapper}>
-                <Text style={styles.input}>
+                <Text style={[styles.input, { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "#CCCCCC" : "black"}` }]}>
                     {dateShow.toString()}
                 </Text>
                 <View style={styles.iconContainer}>
                     <AntDesign name="calendar" size={20} color="black" />
                 </View>
             </View>
-        </Pressable>
+        </Pressable >
     )
 }
 
