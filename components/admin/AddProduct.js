@@ -64,19 +64,19 @@ export default function AddProduct() {
     const validateForm = () => {
         // Define your validation criteria for each field
         const validations = {
-            name: product.name.trim() !== "", // Name should not be empty
-            description: product.description.trim() !== "", // Description should not be empty
-            brandName: product.brandName.trim() !== "", // Brand name should not be empty
-            category: product.category.trim() !== "", // Category should not be empty
-            price: !!product.price, // Price should be a valid number
-            quantity: !!product.quantity, // Quantity should be a valid number
-            sales: !!product.sales, // Sales should be a valid number
-            importedDate: product.importedDate.trim() !== "", // Imported date should not be empty
-            expiredDate: product.expiredDate.trim() !== "" // Expired date should not be empty
+            name: product.name === "", // Name should not be empty
+            description: product.description === "", // Description should not be empty
+            brandName: product.brandName === "", // Brand name should not be empty
+            category: product.category === "", // Category should not be empty
+            price: product.price === "" || product.price == undefined, // Price should be a valid number
+            quantity: product.quantity === "" || product.quantity == undefined, // Quantity should be a valid number
+            sales: product.sales === "" || product.sales == undefined, // Sales should be a valid number
+            importedDate: product.importedDate === "", // Imported date should not be empty
+            expiredDate: product.expiredDate === "" // Expired date should not be empty
         };
 
         // Check if all fields are valid
-        const isValid = Object.values(validations).every(value => value);
+        const isValid = Object.values(validations).every(value => !value);
 
         // Return validation result and errors
         return { isValid, errors: validations };
@@ -92,13 +92,14 @@ export default function AddProduct() {
             console.log("Edited product name:", product.name);
         } else {
             // Display errors or handle invalid form
-            console.log("Form is invalid. Errors:", errors);
+            // console.log("Form is invalid. Errors:", errors);
             showError(errors);
         }
     };
 
     const showError = (errors) => {
         let message = "";
+        console.log("check err", typeof errors.name);
         if (errors.name) {
             message += "Empty product name.\n"
         }
@@ -148,7 +149,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.name ? styles.inputError : null]}
                                 placeholder="Tên sản phẩm"
                                 value={product.name}
                                 onChangeText={(value) => handleChangeData("name", value)}
@@ -157,8 +158,23 @@ export default function AddProduct() {
                     </View>
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
+                            {
+                                errors.name ?
+                                    <Text style={[
+                                        styles.input,
+                                        styles.inputError
+                                    ]}
+                                    >Empty name.</Text>
+                                    :
+                                    <Text style={styles.input}
+                                    ></Text>
+                            }
+                        </View>
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.description ? styles.inputError : null]}
                                 placeholder="Mô tả"
                                 value={product.description}
                                 onChangeText={(value) => handleChangeData("description", value)}
@@ -170,7 +186,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.brandName ? styles.inputError : null]}
                                 placeholder="Hãng"
                                 value={product.brandName}
                                 onChangeText={(value) => handleChangeData("brandName", value)}
@@ -180,7 +196,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.category ? styles.inputError : null]}
                                 placeholder="Thể loại"
                                 value={product.category}
                                 onChangeText={(value) => handleChangeData("category", value)}
@@ -190,7 +206,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.price ? styles.inputError : null]}
                                 placeholder="Giá"
                                 value={product.price}
                                 onChangeText={(value) => handleChangeData("price", value)}
@@ -201,7 +217,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.quantity ? styles.inputError : null]}
                                 placeholder="Số lượng"
                                 value={product.quantity}
                                 onChangeText={(value) => handleChangeData("quantity", value)}
@@ -212,7 +228,7 @@ export default function AddProduct() {
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             <TextInput
-                                style={styles.input}
+                                style={[styles.input, errors.sales ? styles.inputError : null]}
                                 placeholder="Giảm giá (%)"
                                 value={product.sales}
                                 onChangeText={(value) => handleChangeData("sales", value)}
@@ -220,8 +236,8 @@ export default function AddProduct() {
                             />
                         </View>
                     </View>
-                    <DatePickerCustom date={dateChooseImportedDate} dateShow={product.importedDate.length == 0 ? "Ngày nhập kho" : product.importedDate} onChange={handleChooseImportedDate} />
-                    <DatePickerCustom date={dateChooseExpiredDate} dateShow={product.expiredDate.length == 0 ? "Hạn sử dụng" : product.expiredDate} onChange={handleChooseExpiredDate} />
+                    <DatePickerCustom isError={errors.importedDate} date={dateChooseImportedDate} dateShow={product.importedDate.length == 0 ? "Ngày nhập kho" : product.importedDate} onChange={handleChooseImportedDate} />
+                    <DatePickerCustom isError={errors.expiredDate} date={dateChooseExpiredDate} dateShow={product.expiredDate.length == 0 ? "Hạn sử dụng" : product.expiredDate} onChange={handleChooseExpiredDate} />
 
                     <View
                         style={{
@@ -275,6 +291,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
+    },
+    inputError: {
+        borderColor: "red", // Change border color to red for invalid input
     },
     saveButton: {
         flex: 0.4,

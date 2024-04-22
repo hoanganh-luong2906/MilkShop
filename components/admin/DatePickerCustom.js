@@ -3,7 +3,7 @@ import React from 'react';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { AntDesign } from '@expo/vector-icons';
 
-export default function DatePickerCustom({ date, dateShow, onChange }) {
+export default function DatePickerCustom({ date, dateShow, onChange, isError }) {
     const showMode = (currentMode) => {
         DateTimePickerAndroid.open({
             value: date,
@@ -24,11 +24,15 @@ export default function DatePickerCustom({ date, dateShow, onChange }) {
     return (
         <Pressable style={styles.inputContainer} onPress={showDatepicker} >
             <View style={styles.inputWrapper}>
-                <Text style={[styles.input, { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "#CCCCCC" : "black"}` }]}>
+                <Text style={[
+                    styles.input,
+                    { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "#CCCCCC" : "black"}` },
+                    isError ? styles.inputError : null
+                ]}>
                     {dateShow.toString()}
                 </Text>
                 <View style={styles.iconContainer}>
-                    <AntDesign name="calendar" size={20} color="black" />
+                    <AntDesign name="calendar" size={20} color={isError ? "red" : "black"} />
                 </View>
             </View>
         </Pressable >
@@ -52,6 +56,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingHorizontal: 10,
         paddingVertical: 3.5,
+    },
+    inputError: {
+        borderColor: "red", // Change border color to red for invalid input
     },
     iconContainer: {
         position: 'absolute',
