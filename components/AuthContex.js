@@ -24,6 +24,7 @@ const AuthProvider = ({ children }) => {
 	const logout = async () => {
 		setIsLoggedIn(false);
 		setUser('');
+		await AsyncStorage.removeItem('isLoggedIn');
 		await AsyncStorage.removeItem('user');
 	};
 
