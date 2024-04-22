@@ -17,6 +17,7 @@ const AuthProvider = ({ children }) => {
 	const login = async (userAccount) => {
 		setIsLoggedIn(true);
 		setUser(userAccount);
+		await AsyncStorage.setItem('isLoggedIn', true);
 		await AsyncStorage.setItem('user', JSON.stringify(userAccount));
 	};
 
