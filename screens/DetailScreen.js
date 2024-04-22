@@ -80,7 +80,10 @@ const DetailScreen = ({ route }) => {
 		setRecentClick(true);
 		let isDuplicated = false;
 		newCart.map((item) => {
-			if (item.product._id === product._id) {
+			if (
+				item.product._id === product._id &&
+				item.user === (user?._id ? user?._id : 'guest')
+			) {
 				if (item.quantity >= product.quantity) {
 					alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
 					return;

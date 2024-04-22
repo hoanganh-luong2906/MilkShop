@@ -40,7 +40,7 @@ export function AdminProfileScreen({ navigation }) {
 							/>
 						</View>
 						<View style={styles.titleContainer}>
-							<Text style={styles.nameTitle}>Nguyen Văn A</Text>
+							<Text style={styles.nameTitle}>{user.fullName}</Text>
 							<Pressable
 								onPress={() => {
 									setSetting(!isSetting);
@@ -131,6 +131,7 @@ export function AdminProfileScreen({ navigation }) {
 						<NavigationDrawer
 							isSetting={isSetting}
 							setSetting={setSetting}
+							user={user}
 						/>
 					)}
 				</>
@@ -149,7 +150,7 @@ export function AdminProfileScreen({ navigation }) {
 	);
 }
 
-const NavigationDrawer = ({ isSetting, setSetting }) => {
+const NavigationDrawer = ({ isSetting, setSetting, user }) => {
 	return (
 		<View style={styles.screen}>
 			<View style={styles.contentContainer}>
@@ -170,21 +171,21 @@ const NavigationDrawer = ({ isSetting, setSetting }) => {
 					<View style={[styles.row, styles.rowWithBorder]}>
 						<Text style={[styles.label, styles.bold]}>Tên</Text>
 						<Text style={[styles.value, styles.bold]}>
-							Nguyễn Văn A
+							{user.fullName}
 						</Text>
 					</View>
 					<View style={[styles.row, styles.rowWithBorder]}>
 						<Text style={[styles.label, styles.bold]}>
 							Giới tính
 						</Text>
-						<Text style={[styles.value, styles.bold]}>Nam</Text>
+						<Text style={[styles.value, styles.bold]}>{user.gender ? "Nam" : "Nữ"}</Text>
 					</View>
 					<View style={[styles.row, styles.rowWithBorder]}>
 						<Text style={[styles.label, styles.bold]}>
 							Ngày sinh
 						</Text>
 						<Text style={[styles.value, styles.bold]}>
-							04-07-2003
+							{user.dateOfBirth}
 						</Text>
 					</View>
 					<View style={[styles.row, styles.rowWithBorder]}>
@@ -192,19 +193,19 @@ const NavigationDrawer = ({ isSetting, setSetting }) => {
 							Số điện thoại
 						</Text>
 						<Text style={[styles.value, styles.bold]}>
-							04*****84
+							{user.phone}
 						</Text>
 					</View>
 					<View style={[styles.row, styles.rowWithBorder]}>
 						<Text style={[styles.label, styles.bold]}>Email</Text>
 						<Text style={[styles.value, styles.bold]}>
-							s*****@gmail.com
+							{user.email}
 						</Text>
 					</View>
 					<View style={[styles.row, styles.rowWithBorder]}>
 						<Text style={[styles.label, styles.bold]}>Địa chỉ</Text>
 						<Text style={[styles.value, styles.bold]}>
-							Quận Thủ Đức TpHcm
+							{user.address}
 						</Text>
 					</View>
 				</View>
