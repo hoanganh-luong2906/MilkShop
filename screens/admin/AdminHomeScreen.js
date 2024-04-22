@@ -23,6 +23,14 @@ function formatToVND(value) {
   return `${formattedNumber} VNĐ`; // Prepend "VND " manually
 }
 
+function removeVietnameseDiacritics(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
+
 const AdminHomeScreen = () => {
   const categories = [
     {
@@ -62,48 +70,6 @@ const AdminHomeScreen = () => {
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn3qWtJz7QhOMuwwfhDQAk_W7ys8-tE4Y8BgPmS9q4GA&s",
     },
   ];
-  const products = [
-    {
-      id: 1,
-      name: "Combo 2 Vinamilk Optimum Gold 4 850g",
-      imageUrl:
-        "https://cdn1.concung.com/2023/03/57728-98751/vinamilk-optimum-gold-4-850g-2-6-tuoi.png",
-      price: "614240",
-      rating: 4,
-      soldNumber: 2,
-      sales: 12,
-    },
-    {
-      id: 2,
-      name: "Combo 2 Vinamilk Optimum Gold 4 850g",
-      imageUrl:
-        "https://cdn1.concung.com/2023/03/57728-98751/vinamilk-optimum-gold-4-850g-2-6-tuoi.png",
-      price: "614240",
-      rating: 5,
-      soldNumber: 10,
-      sales: 13,
-    },
-    {
-      id: 3,
-      name: "Combo 2 Vinamilk Optimum Gold 4 850g",
-      imageUrl:
-        "https://cdn1.concung.com/2023/03/57728-98751/vinamilk-optimum-gold-4-850g-2-6-tuoi.png",
-      price: "614240",
-      rating: 5,
-      soldNumber: 10,
-      sales: 13,
-    },
-    {
-      id: 4,
-      name: "Combo 2 Vinamilk Optimum Gold 4 850g",
-      imageUrl:
-        "https://cdn1.concung.com/2023/03/57728-98751/vinamilk-optimum-gold-4-850g-2-6-tuoi.png",
-      price: "614240",
-      rating: 5,
-      soldNumber: 10,
-      sales: 13,
-    },
-  ];
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -115,12 +81,16 @@ const AdminHomeScreen = () => {
         setData(
           json.data.filter(
             (product) =>
-              !selectedCategory || product.category.name === selectedCategory
+              (!selectedCategory ||
+                product.category.name === selectedCategory) &&
+              removeVietnameseDiacritics(product.name.toLowerCase()).includes(
+                removeVietnameseDiacritics(searchQuery.toLowerCase())
+              )
           )
         )
       )
       .catch((error) => console.error(error));
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery]);
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
@@ -276,10 +246,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "33%",
     marginBottom: 10,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   selectedCategory: {
-    backgroundColor: '#FFDAB9',
+    backgroundColor: "#FFDAB9",
     borderRadius: 20,
   },
   categoryImage: {
