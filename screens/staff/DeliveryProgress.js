@@ -5,80 +5,205 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@expo/vector-icons";
 
-export default function DeliveryProgress() {
+export default function DeliveryProgress({ route }) {
   const navigation = useNavigation();
+  const [order, setOrder] = useState([]);
+  const { orderId } = route.params;
+
+  useEffect(() => {
+    const getOrderDetail = async () => {
+      try {
+        const response = await fetch(
+          `https://milk-shop-eight.vercel.app/api/order/${orderId}`
+        );
+        const data = await response.json();
+        setOrder(data.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    getOrderDetail();
+  }, [orderId]);
 
   const goBack = () => {
     navigation.navigate("Staff Home");
   };
-  const ProgressDetail = ({
-    currentStatus,
-    date,
-    time,
-    status,
-    receiver,
-    sender,
-    phone,
-    licensePlates,
-    start,
-  }) => {
-    switch (currentStatus) {
-      case 1:
-        textColor = "black";
-        break;
-      case 2:
-        textColor = "#CDC8C5";
-        break;
-      default:
-        iconColor = "black";
-        textColor = "black";
-    }
-    switch (start) {
-      case 0:
-        displayForm = "none";
-        break;
-      default:
-        displayForm = "flex";
-        break;
-    }
-    switch (status) {
-      case "Đã giao hàng":
-        iconName = "check-circle";
-        size = 16;
-        progressLine = "flex";
-        break;
-      case "Đang giao hàng":
-        iconName = "truck";
-        size = 16;
-        progressLine = "flex";
-        break;
-      case "Đang chuẩn bị hàng":
-        iconName = "dropbox";
-        size = 16;
-        progressLine = "flex";
-        break;
-      case "Đặt hàng thành công":
-        iconName = "credit-card-alt";
-        size = 12;
-        progressLine = "none";
-        break;
-      default:
-        iconName = "none";
-        size = 0;
-        break;
-    }
-    return (
+
+  return (
+    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
+      <View style={styles.title}>
+        <TouchableOpacity onPress={goBack}>
+          <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
+        </TouchableOpacity>
+        <Text style={styles.titleText}>Tiến độ giao hàng</Text>
+      </View>
+      {/* <View>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>
+            Đã giao thành công -- 25 Tháng 4 2024
+          </Text>
+          <Text style={styles.headerText}>
+            Vận chuyển thường -- Giao Hàng Nhanh
+          </Text>
+        </View>
+        <View style={styles.progressContainer}>
+          <View style={styles.codeContainer}>
+            <Text style={styles.code}>
+              Mã vận đơn{"                      "}ABCXYZ123456
+            </Text>
+          </View>
+          <ProgressDetail
+            date="25 Tháng 4"
+            time="12:00"
+            status="Đã giao hàng"
+            receiver="Nguy****A"
+            sender="Ngọc Tân"
+            phone="111 222 8889"
+            licensePlates="59A-123-456"
+            currentStatus={1}
+          />
+          <ProgressDetail
+            date="25 Tháng 4"
+            time="11:30"
+            status="Đang giao hàng"
+            receiver="Nguy****A"
+            sender="Ngọc Tân"
+            phone="111 222 8889"
+            licensePlates="59A-123-456"
+            currentStatus={2}
+          />
+          <ProgressDetail
+            date="20 Tháng 4"
+            time="12:00"
+            status="Đang chuẩn bị hàng"
+            receiver="Nguy****A"
+            sender="Ngọc Tân"
+            phone="111 222 8889"
+            licensePlates="59A-123-456"
+            currentStatus={2}
+          />
+          <ProgressDetail
+            date="20 Tháng 4"
+            time="11:24"
+            status="Đặt hàng thành công"
+            start={0}
+            currentStatus={2}
+          />
+        </View>
+      </View> */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>
+          {order?.shippingList?.[order?.shippingList?.length - 1]?.statusString}{" "}
+          -- {order?.timeCompletion?.substring(0, 5) + ' ' + order?.timeCompletion?.slice(10, 16)}
+        </Text>
+        <Text style={styles.headerText}>
+          Vận chuyển thường -- Giao Hàng Nhanh
+        </Text>
+      </View>
+      <View style={styles.progressContainer}>
+        <View style={styles.codeContainer}>
+          <Text style={styles.code}>
+            Mã vận đơn{"                      "}ABCXYZ123456
+          </Text>
+        </View>
+        {order?.shippingList?.map((shipping, index) => (
+          <ProgressDetail
+            key={index}
+            date={shipping.date}
+            timeCompletion={shipping.timeCompletion}
+            status={shipping.statusString}
+            statusString={shipping.statusString}
+            receiver={shipping.receiver}
+            sender={shipping.sender}
+            senderPhone={shipping.senderPhone}
+            licensePlate={shipping.licensePlate}
+            currentStatus={index === (order?.shippingList?.length - 1) ? 1 : 2}
+            />
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+const ProgressDetail = ({
+  date,
+  statusString,
+  receiver,
+  sender,
+  senderPhone,
+  licensePlate,
+  currentStatus,
+  status,
+  start,
+}) => {
+  switch (currentStatus) {
+    case 1:
+      textColor = "black";
+      break;
+    case 2:
+      textColor = "#CDC8C5";
+      break;
+    default:
+      iconColor = "black";
+      textColor = "black";
+  }
+  switch (start) {
+    case 0:
+      displayForm = "none";
+      break;
+    default:
+      displayForm = "flex";
+      break;
+  }
+  switch (status) {
+    case "Đã giao thành công":
+      iconName = "check-circle";
+      size = 16;
+      progressLine = "none";
+      break;
+    case "Đang giao hàng":
+      iconName = "truck";
+      size = 16;
+      progressLine = "flex";
+      break;
+    case "Đang chuẩn bị hàng":
+      iconName = "dropbox";
+      size = 16;
+      progressLine = "flex";
+      break;
+    case "Người gửi hẹn lại ngày giao":
+      iconName = "clock-o";
+      size = 16;
+      progressLine = "none";
+      break;
+    case "Đã huỷ":
+      iconName = "remove";
+      size = 16;
+      progressLine = "none";
+      break;
+    // case "Đặt hàng thành công":
+    //   iconName = "credit-card-alt";
+    //   start = 0
+    //   size = 12;
+    //   progressLine = "none";
+    //   break;
+    default:
+      iconName = "none";
+      size = 0;
+      break;
+  }
+  return (
+    <>
       <View style={styles.milestoneContainer}>
         <View style={styles.leftInfo}>
           <Text style={[styles.milestoneText, { color: textColor }]}>
-            {date}
+            {date?.substring(0, 10)}
           </Text>
           <Text style={[styles.milestoneText, { color: textColor }]}>
-            {time}
+            {date?.substring(11, 16)}
           </Text>
         </View>
         <View style={styles.checkpoint}>
@@ -89,7 +214,7 @@ export default function DeliveryProgress() {
         </View>
         <View style={styles.rightInfo}>
           <Text style={[styles.infoStatus, { color: textColor }]}>
-            {status}
+            {statusString}
           </Text>
           <Text
             style={[
@@ -113,7 +238,7 @@ export default function DeliveryProgress() {
               { color: textColor, display: displayForm },
             ]}
           >
-            (+84) {phone}
+            (+84) {senderPhone}
           </Text>
           <Text
             style={[
@@ -121,99 +246,24 @@ export default function DeliveryProgress() {
               { color: textColor, display: displayForm },
             ]}
           >
-            Biển số xe: {licensePlates}
+            Biển số xe: {licensePlate}
           </Text>
         </View>
       </View>
-    );
-  };
-  return (
-    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-      <View style={styles.title}>
-        <TouchableOpacity onPress={goBack}>
-          <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
-        </TouchableOpacity>
-        <Text style={styles.titleText}>Tiến độ giao hàng</Text>
-      </View>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>
-          Đã giao thành công -- 25 Tháng 4 2024
-        </Text>
-        <Text style={styles.headerText}>
-          Vận chuyển thường -- Giao Hàng Nhanh
-        </Text>
-      </View>
-      <View style={styles.progressContainer}>
-        <View style={styles.codeContainer}>
-          <Text style={styles.code}>
-            Mã vận đơn{"                      "}ABCXYZ123456
-          </Text>
-        </View>
-        <ProgressDetail
-          date="25 Tháng 4"
-          time="12:00"
-          status="Đã giao hàng"
-          receiver="Nguy****A"
-          sender="Ngọc Tân"
-          phone="111 222 8889"
-          licensePlates="59A-123-456"
-          currentStatus={1}
-        />
-        <ProgressDetail
-          date="25 Tháng 4"
-          time="11:30"
-          status="Đang giao hàng"
-          receiver="Nguy****A"
-          sender="Ngọc Tân"
-          phone="111 222 8889"
-          licensePlates="59A-123-456"
-          currentStatus={2}
-        />
-        <ProgressDetail
-          date="20 Tháng 4"
-          time="12:00"
-          status="Đang chuẩn bị hàng"
-          receiver="Nguy****A"
-          sender="Ngọc Tân"
-          phone="111 222 8889"
-          licensePlates="59A-123-456"
-          currentStatus={2}
-        />
-        <ProgressDetail
-          date="20 Tháng 4"
-          time="11:24"
-          status="Đặt hàng thành công"
-          start={0}
-          currentStatus={2}
-        />
-
-        {/* <View style={styles.milestoneContainer}>
-            <View style={styles.leftInfo}>
-              <Text style={styles.milestoneText}>20 Tháng 4</Text>
-              <Text style={styles.milestoneText}>11:24</Text>
-            </View>
-            <View style={styles.checkpoint}>
-              <Icon name="credit-card-alt" size={12} color="#000000" />
-            </View>
-            <View style={styles.rightInfo}>
-              <Text style={styles.infoStatus}>Đặt hàng thành công</Text>
-            </View>
-          </View> */}
-      </View>
-    </ScrollView>
+    </>
   );
-}
-
+};
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingTop: 20,
   },
   title: {
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 20,
   },
   titleText: {
     flex: 1,
@@ -282,12 +332,12 @@ const styles = StyleSheet.create({
     marginLeft: -12,
     marginTop: -12,
     position: "absolute",
-    left: "31%",
+    left: "32%",
     top: "10%",
   },
   progressLine: {
     top: 30,
-    height: 115,
+    height: "auto",
     bottom: 0,
     left: 15,
     width: 2,
@@ -296,6 +346,7 @@ const styles = StyleSheet.create({
   rightInfo: {
     flex: 1,
     left: 40,
+    paddingHorizontal:10
   },
   infoStatus: {
     fontSize: 18,

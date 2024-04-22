@@ -6,13 +6,30 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from "@expo/vector-icons";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-export default function ViewOrderScreen() {
+export default function ViewOrderScreen({ route }) {
   const navigation = useNavigation();
+  const [order, setOrder] = useState([]);
+  const { orderId } = route.params;
+
+  useEffect(() => {
+    const getOrderDetail = async () => {
+      try {
+        const response = await fetch(
+          `https://milk-shop-eight.vercel.app/api/order/${orderId}`
+        );
+        const data = await response.json();
+        setOrder(data.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    getOrderDetail();
+  }, [orderId]);
 
   const goBack = () => {
     navigation.navigate("Staff Home");
@@ -26,139 +43,121 @@ export default function ViewOrderScreen() {
         </TouchableOpacity>
         <Text style={styles.titleText}>Chi tiết đơn hàng</Text>
       </View>
-      <View style={styles.card}>
-        <View style={styles.item}>
-          <Image
-            source={{
-              uri: "https://concung.com/2022/05/57007-87855-large_mobile/dielac-alpha-gold-iq-2-800g.jpg",
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>
-              Sữa bột Alphagold
-              <Text style={styles.quantity}>{"   "}x2</Text>
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Text style={styles.originPrice}>139000Đ</Text>
-              <Text style={styles.unitPrice}>99000Đ</Text>
-            </View>
-            <View style={styles.retradeContainer}>
-              <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.blackLine}></View>
-        <View style={styles.item}>
-          <Image
-            source={{
-              uri: "https://cdn.nhathuoclongchau.com.vn/unsafe/https://cms-prod.s3-sgn09.fptcloud.com/00032632_sua_abbott_cho_tre_0_6_thang_similac_1_moi_prodi_g_va_5_hmos_400g_5562_6425_large_e5f804346a.jpg",
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>
-              Sữa bột Similac
-              <Text style={styles.quantity}>{"   "}x1</Text>
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Text style={styles.originPrice}>115000Đ</Text>
-              <Text style={styles.unitPrice}>70000Đ</Text>
-            </View>
-            <View style={styles.retradeContainer}>
-              <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.blackLine}></View>
-        <View style={styles.item}>
-          <Image
-            source={{
-              uri: "https://suabottot.com/wp-content/uploads/2020/08/sua-ensure-uc.jpg",
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>
-              Sữa bột Ensure
-              <Text style={styles.quantity}>{"   "}x2</Text>
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Text style={styles.originPrice}>189000Đ</Text>
-              <Text style={styles.unitPrice}>100000Đ</Text>
-            </View>
-            <View style={styles.retradeContainer}>
-              <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.infoBox}>
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalText}>Thành tiền</Text>
-            <Text style={styles.totalPrice}>450.000Đ</Text>
-          </View>
-          <View style={styles.grayLine}>
-            <Text></Text>
-          </View>
-          <View style={{ flexDirection: "column", alignItems: "center" }}>
-            <Text style={styles.infoTitle}>
-              <FontAwesome name="credit-card" size={16} /> Phương thức thanh toán
-            </Text>
-            <Text style={styles.infoContent}>
-              Tài khoản liên kết với ShopeePay
-            </Text>
-          </View>
-          <View style={styles.grayLine}>
-            <Text></Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Thời gian đặt hàng</Text>
-            <Text style={styles.infoContent}>20-04-2024 11:24</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Thời gian giao hàng</Text>
-            <Text style={styles.infoContent}>20-04-2024 12:11</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoTitle}>Thời gian hoàn thành</Text>
-            <Text style={styles.infoContent}>25-04-2024 12:00</Text>
-          </View>
-        </View>
-      </View>
+      <OrderDetail
+        productList={order.productList}
+        total={order.totalPrice}
+        discount={order.totalDiscount}
+        paymentMethod={order.paymentMethod}
+        timeOrder={order.timeOrder}
+        timePaid={order.timePayed}
+        timeStartShip={order.timeStartShip}
+        timeCompletion={order.timeCompletion}
+      />
     </ScrollView>
   );
 }
+
+const OrderDetail = ({
+  productList,
+  total,
+  discount,
+  paymentMethod,
+  timeOrder,
+  timePaid,
+  timeStartShip,
+  timeCompletion,
+}) => {
+  return (
+    <View style={styles.card}>
+      {productList?.map((product, index) => (
+        <View key={index}>
+          <View style={styles.item}>
+            <Image
+              source={{
+                uri: `${product.imageURL}`,
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <View style={styles.productDetails}>
+              <Text style={styles.productName}>
+                {product.name}
+                <Text style={styles.quantity}>
+                  {"   "}x{product.quantity}
+                </Text>
+              </Text>
+              <Text style={styles.bracate}>Hãng: {product.brandName}</Text>
+              <Text style={styles.bracate}>Loại: {product.category}</Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                }}
+              >
+                <Text style={styles.unitPrice}>Đơn giá: {product.price}Đ</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.blackLine}></View>
+        </View>
+      ))}
+      <View style={styles.infoBox}>
+      <View style={styles.totalContainer}>
+          <Text style={styles.totalText}>Tổng</Text>
+          <Text style={styles.totalPrice}>{total}Đ</Text>
+        </View>
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalText}>Giảm</Text>
+          <Text style={styles.totalPrice}>{discount}Đ</Text>
+        </View>
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalText}>Thành tiền</Text>
+          <Text style={styles.totalPrice}>{total - discount}Đ</Text>
+        </View>
+        <View style={styles.grayLine}>
+          <Text></Text>
+        </View>
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
+          <Text style={styles.infoTitle}>
+            <FontAwesome name="credit-card" size={16} /> Phương thức thanh toán
+          </Text>
+          <Text style={styles.infoContent}>{paymentMethod}</Text>
+        </View>
+        <View style={styles.grayLine}>
+          <Text></Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Thời gian đặt hàng</Text>
+          <Text style={styles.infoContent}>{timeOrder}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Thời gian thanh toán</Text>
+          <Text style={styles.infoContent}>{timePaid}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Thời gian giao hàng</Text>
+          <Text style={styles.infoContent}>{timeStartShip}</Text>
+        </View>
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Thời gian hoàn thành</Text>
+          <Text style={styles.infoContent}>{timeCompletion}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingTop: 20,
   },
   title: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginVertical: 20
   },
   titleText: {
     flex: 1,
@@ -188,10 +187,10 @@ const styles = StyleSheet.create({
   },
   productDetails: {
     flex: 1,
-    marginLeft: 5
+    marginLeft: 10,
   },
   productName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#000000",
   },
@@ -211,9 +210,16 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     textDecorationColor: "#CDC8C5",
   },
-  unitPrice: {
+  bracate: {
+    marginTop: 5,
+    fontWeight: "400",
     fontSize: 18,
-    color: "#000000",
+  },
+  unitPrice: {
+    textAlign: "right",
+    fontWeight: "bold",
+    fontSize: 22,
+    marginTop: 10
   },
   blackLine: {
     height: 2,
@@ -234,30 +240,25 @@ const styles = StyleSheet.create({
   totalContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginVertical: 3,
   },
   totalText: {
     color: "#000000",
     fontSize: 24,
-    fontWeight: "500",
-    marginBottom: 10
+    fontWeight: "600",
+    marginBottom: 10,
   },
   totalPrice: {
     color: "#000000",
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10
+    marginBottom: 10,
   },
   infoBox: {
     backgroundColor: "#FFBE98",
     borderRadius: 10,
     padding: 10,
     marginTop: 20,
-  },
-  boxTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
   },
   infoContainer: {
     flexDirection: "row",
@@ -266,11 +267,11 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
     color: "#000000",
   },
   infoContent: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#000000",
   },
   grayLine: {
