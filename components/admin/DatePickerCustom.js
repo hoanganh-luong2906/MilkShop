@@ -26,7 +26,7 @@ export default function DatePickerCustom({ date, dateShow, onChange, isError }) 
             <View style={styles.inputWrapper}>
                 <Text style={[
                     styles.input,
-                    { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "#CCCCCC" : "black"}` },
+                    { color: `${dateShow === "Hạn sử dụng" || dateShow === "Ngày nhập kho" ? "grey" : "black"}` },
                     isError ? styles.inputError : null
                 ]}>
                     {dateShow.toString()}
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         position: "relative"
     },
     input: {
-        borderColor: "#CCCCCC",
+        borderColor: "grey",
         borderWidth: 1,
         borderRadius: 5,
         paddingHorizontal: 10,
