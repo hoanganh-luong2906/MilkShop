@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LandingVoucher from '../components/landing/Voucher';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuth from '../utils/useAuth';
 
 function formatToVND(value) {
 	const formatter = new Intl.NumberFormat('vi-VN', {
@@ -24,9 +26,13 @@ function formatToVND(value) {
 	return `${formattedNumber} VNĐ`; // Prepend "VND " manually
 }
 
-const DetailScreen = ({ navigation, route }) => {
-	const { product, vouchers } = route.params;
+const DetailScreen = ({ route }) => {
+	const { product, vouchers, navigation } = route.params;
 	const [comments, setComments] = useState([]);
+	const [cart, setCart] = useState([]);
+	const [isRecentClick, setRecentClick] = useState(false);
+	const { isChanged, setIsChanged } = useAuth();
+	const { user } = useAuth();
 
 	useFocusEffect(
 		useCallback(() => {
@@ -41,6 +47,19 @@ const DetailScreen = ({ navigation, route }) => {
 					);
 					setComments([...filteredComments]);
 				}
+
+				const cartDB = await AsyncStorage.getItem('cart');
+				if (cart) {
+					let tmpCart = JSON.parse(cartDB);
+					tmpCart = tmpCart.filter((product) => {
+						return (
+							product?.user === (user?._id ? user?._id : 'guest')
+						);
+					});
+					setCart([...tmpCart]);
+				} else {
+					await AsyncStorage.setItem('cart', JSON.stringify([]));
+				}
 			};
 			fetchComments();
 		}, [])
@@ -54,6 +73,34 @@ const DetailScreen = ({ navigation, route }) => {
 			}
 		});
 		return count;
+	}
+
+	async function handleAddToCart(product) {
+		let newCart = cart;
+		setRecentClick(true);
+		let isDuplicated = false;
+		newCart.map((item) => {
+			if (item.product._id === product._id) {
+				if (item.quantity >= product.quantity) {
+					alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
+					return;
+				}
+				item.quantity += 1;
+				isDuplicated = true;
+			}
+		});
+		if (!isDuplicated) {
+			newCart.push({
+				user: `${user?._id ? user._id : 'guest'}`,
+				product: product,
+				quantity: 1,
+			});
+		}
+
+		setCart(newCart);
+		await AsyncStorage.setItem('cart', JSON.stringify(newCart));
+		setIsChanged(!isChanged);
+		setRecentClick(false);
 	}
 
 	return (
@@ -87,6 +134,40 @@ const DetailScreen = ({ navigation, route }) => {
 							style={styles.searchIcon}
 						/>
 					</View>
+					<Pressable
+						style={styles.button}
+						onPress={() =>
+							navigation.navigate(
+								user?.fullName
+									? `${
+											user?.role?.toLowerCase() ?? 'user'
+									  }-home`
+									: 'landing',
+								{ screen: 'cart' }
+							)
+						}
+					>
+						<View style={{ position: 'relative' }}>
+							<Icon name='cart' size={25} color={'gray'} />
+							{cart?.length > 0 && (
+								<Text
+									style={{
+										fontSize: 12,
+										backgroundColor: 'red',
+										color: 'white',
+										position: 'absolute',
+										top: -3,
+										right: -3,
+										paddingHorizontal: 4,
+										fontWeight: 'bold',
+										borderRadius: 10,
+									}}
+								>
+									{cart.length}
+								</Text>
+							)}
+						</View>
+					</Pressable>
 					<Pressable
 						style={styles.button}
 						onPress={() =>
@@ -193,14 +274,43 @@ const DetailScreen = ({ navigation, route }) => {
 									</View>
 								</View>
 							</View>
-							<Text style={styles.productName}>
-								{product.name}
-							</Text>
+							<View
+								style={{
+									width: '100%',
+									display: 'flex',
+									flexDirection: 'row',
+									justifyContent: 'space-between',
+									alignItems: 'center',
+								}}
+							>
+								<Text style={styles.productName}>
+									{product.name}
+								</Text>
+								<Pressable
+									style={[
+										styles.addToCartButton,
+										isRecentClick
+											? { backgroundColor: 'light-gray' }
+											: { backgroundColor: '#FFF3EE' },
+									]}
+									onPress={() => handleAddToCart(product)}
+									disabled={isRecentClick}
+								>
+									<Icon
+										name='cart'
+										size={28}
+										color={'black'}
+									/>
+								</Pressable>
+							</View>
 						</View>
 					</View>
 					{vouchers ? (
 						<View style={{ width: '100%', paddingHorizontal: 14 }}>
-							<LandingVoucher vouchers={vouchers} />
+							<LandingVoucher
+								vouchers={vouchers}
+								navigation={navigation}
+							/>
 						</View>
 					) : (
 						<View></View>
@@ -209,10 +319,11 @@ const DetailScreen = ({ navigation, route }) => {
 						<View style={styles.contentContainer}>
 							<Text
 								style={{
-									textAlign: 'center',
+									textAlign: 'left',
 									fontSize: 18,
 									fontWeight: 'bold',
 									marginBottom: 10,
+									paddingLeft: 5,
 								}}
 							>
 								Thông tin chi tiết
@@ -250,10 +361,11 @@ const DetailScreen = ({ navigation, route }) => {
 						<View style={styles.contentContainer}>
 							<Text
 								style={{
-									textAlign: 'center',
+									textAlign: 'left',
 									fontSize: 18,
 									fontWeight: 'bold',
 									marginBottom: 10,
+									paddingLeft: 5,
 								}}
 							>
 								Đánh giá
@@ -502,7 +614,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 	},
 	searchBox: {
-		width: 260,
+		width: 220,
 		backgroundColor: 'white',
 		paddingVertical: 8,
 		paddingRight: 30,
@@ -571,12 +683,23 @@ const styles = StyleSheet.create({
 		paddingRight: 5,
 	},
 	productName: {
+		width: '80%',
 		fontSize: 23,
 		paddingHorizontal: 15,
 		fontWeight: 'bold',
 		marginVertical: 10,
 		lineHeight: 25,
 		letterSpacing: 0.7,
+	},
+	addToCartButton: {
+		width: 50,
+		height: 50,
+		marginRight: 20,
+		borderRadius: 30,
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		elevation: 2,
 	},
 	descriptionContainer: {
 		width: '100%',
