@@ -5,12 +5,15 @@ import ViewOrderScreen from "../screens/staff/ViewOrderScreen";
 import DeliveryProgress from "../screens/staff/DeliveryProgress";
 import ProductManagement from "../screens/staff/ProductManagement";
 import ViewDetail from "../screens/staff/ViewDetail";
+import ProfileScreen from "../screens/ProfileScreen";
+import Voucher from "../screens/staff/Voucher";
 
 const Tab = createBottomTabNavigator();
 
 const StaffNavigator = () => {
   const screenOptions = ({ route }) => ({
     headerShown: false,
+    tabBarShowLabel: false,
     tabBarIcon: ({ focused, color }) => {
       let iconName;
       switch (route.name) {
@@ -19,6 +22,12 @@ const StaffNavigator = () => {
           break;
         case "Product Management":
           iconName = focused ? "copy" : "copy-outline";
+          break;
+        case "Voucher":
+          iconName = focused ? "ticket" : "ticket-outline";
+          break;
+        case "Profile":
+          iconName = focused ? "person" : "person-outline";
           break;
       }
       return <Ionicons name={iconName} size={26} color={color} />;
@@ -48,6 +57,8 @@ const StaffNavigator = () => {
         component={ViewDetail}
         options={tabOptions}
       />
+      <Tab.Screen name="Voucher" component={Voucher}/>
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 };

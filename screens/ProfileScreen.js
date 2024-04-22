@@ -1,20 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
+import useAuth from "../utils/useAuth";
 
 const ProfileScreen = () => {
-  const [isLoggedin, setIsLoggedin] = useState(true);
   const navigation = useNavigation();
-
+  const {user, isLoggedIn, logout} = useAuth()
+  const [profile, setProfile] = useState({
+    phone: "",
+    gender: true,
+    address: "",
+    dateOfBirth: "",
+});
   const handleEditProfile = () => {};
 
-  const handleLogout = () => {
-    // Logout logic
-  };
 
   return (
     <View style={styles.screen}>
-      {isLoggedin ? (
+      {isLoggedIn ? (
         <>
           <View style={styles.header}>
             <Text style={styles.headerText}>Hồ sơ cá nhân</Text>
@@ -26,30 +29,30 @@ const ProfileScreen = () => {
 				</View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Tên</Text>
-                <Text style={[styles.value, styles.bold]}>Nguyễn Văn A</Text>
+                <Text style={[styles.value, styles.bold]}>{user.fullName}</Text>
               </View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Giới tính</Text>
-                <Text style={[styles.value, styles.bold]}>Nam</Text>
+                <Text style={[styles.value, styles.bold]}>{user.gender ? "Nam" : "Nữ"}</Text>
               </View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Ngày sinh</Text>
-                <Text style={[styles.value, styles.bold]}>04-07-2003</Text>
+                <Text style={[styles.value, styles.bold]}>{user.dateOfBirth}</Text>
               </View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Số điện thoại</Text>
-                <Text style={[styles.value, styles.bold]}>04*****84</Text>
+                <Text style={[styles.value, styles.bold]}>{user.phone}</Text>
               </View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Email</Text>
                 <Text style={[styles.value, styles.bold]}>
-                  s*****@gmail.com
+                  {user.email}
                 </Text>
               </View>
               <View style={[styles.row, styles.rowWithBorder]}>
                 <Text style={[styles.label, styles.bold]}>Địa chỉ</Text>
                 <Text style={[styles.value, styles.bold]}>
-                  Quận Thủ Đức TpHcm
+                  {user.address}
                 </Text>
               </View>
             </View>
@@ -59,7 +62,7 @@ const ProfileScreen = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.loginButton}
-                onPress={() => setIsLoggedin(false)}
+                onPress={() => logout()}
               >
                 <Text style={styles.loginButtonText}>Đăng xuất</Text>
               </TouchableOpacity>
@@ -71,8 +74,7 @@ const ProfileScreen = () => {
           <Text style={styles.loginText}>Đăng nhập để xem hồ sơ</Text>
           <TouchableOpacity
             style={styles.loginButton}
-            // onPress={() => navigation.navigate("login")}
-            onPress={() => setIsLoggedin(true)}
+            onPress={() => navigation.navigate("login")}
           >
             <Text style={styles.loginButtonText}>Đăng nhập</Text>
           </TouchableOpacity>
