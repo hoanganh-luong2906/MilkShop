@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AuthContext = createContext({
 	isLoggedIn: false,
 	user: {},
-	setIsLoggedIn: () => {},
-	setRole: () => {},
+	setIsLoggedIn: () => { },
+	setRole: () => { },
 });
 
 const AuthProvider = ({ children }) => {

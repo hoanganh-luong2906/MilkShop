@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -21,6 +21,17 @@ export default function AddProduct() {
         importedDate: "",
         expiredDate: "",
         imageURL: "",
+    })
+    const [errors, setErrors] = useState({
+        "brandName": false,
+        "category": false,
+        "description": false,
+        "expiredDate": false,
+        "importedDate": false,
+        "name": false,
+        "price": false,
+        "quantity": false,
+        "sales": false
     })
     const navigation = useNavigation();
 
@@ -74,7 +85,7 @@ export default function AddProduct() {
     const saveChanges = () => {
         // Validate the form
         const { isValid, errors } = validateForm();
-
+        setErrors(errors);
         if (isValid) {
             // Implement logic to save the edited product information
             // For simplicity, just logging the edited product name
@@ -82,7 +93,40 @@ export default function AddProduct() {
         } else {
             // Display errors or handle invalid form
             console.log("Form is invalid. Errors:", errors);
+            showError(errors);
         }
+    };
+
+    const showError = (errors) => {
+        let message = "";
+        if (errors.name) {
+            message += "Empty product name.\n"
+        }
+        if (errors.brandName) {
+            message += "Empty brand name.\n"
+        }
+        if (errors.description) {
+            message += "Empty description.\n"
+        }
+        if (errors.category) {
+            message += "Empty category.\n"
+        }
+        if (errors.price) {
+            message += "Empty price.\n"
+        }
+        if (errors.quantity) {
+            message += "Empty quantity.\n"
+        }
+        if (errors.sales) {
+            message += "Empty sales.\n"
+        }
+        if (errors.importedDate) {
+            message += "Empty imported date.\n"
+        }
+        if (errors.expiredDate) {
+            message += "Empty expired date.\n"
+        }
+        ToastAndroid.show(message, ToastAndroid.CENTER);
     };
 
     return (
