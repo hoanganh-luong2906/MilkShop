@@ -6,7 +6,7 @@ import useAuth from '../utils/useAuth';
 const ProfileScreen = ({ navigation }) => {
 	const { user, isLoggedin } = useAuth();
 
-	const handleEditProfile = () => {};
+	const handleEditProfile = () => { };
 
 	const handleLogout = () => {
 		// Logout logic
