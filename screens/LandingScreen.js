@@ -36,7 +36,7 @@ const LandingScreen = ({ navigation }) => {
 	const [isTopProductsLoaded, setIsTopProductsLoaded] = useState(false);
 	const [isVoucherLoaded, setIsVoucherLoaded] = useState(false);
 	const [isCategoryLoaded, setIsCategoryLoaded] = useState(false);
-	const { isLoggedIn, user } = useAuth();
+	const { isLoggedIn, user, logout } = useAuth();
 
 	useEffect(() => {
 		const loadTopProducts = async () => {
@@ -142,7 +142,7 @@ const LandingScreen = ({ navigation }) => {
 					{isLoggedIn ? (
 						<Pressable
 							style={styles.button}
-							onPress={() => navigation.push('profile')}
+							onPress={() => logout()}
 						>
 							<Icon name='person' size={23} color='gray' />
 						</Pressable>
