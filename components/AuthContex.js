@@ -4,8 +4,8 @@ import React, { createContext, useEffect, useState } from 'react';
 const AuthContext = createContext({
 	isLoggedIn: false,
 	user: {},
-	setIsLoggedIn: () => { },
-	setRole: () => { },
+	setIsLoggedIn: () => {},
+	setRole: () => {},
 });
 
 const AuthProvider = ({ children }) => {
@@ -39,6 +39,7 @@ const AuthProvider = ({ children }) => {
 		setUser('');
 		await AsyncStorage.removeItem('isLoggedIn');
 		await AsyncStorage.removeItem('user');
+		setIsChanged(!isChanged);
 	};
 
 	return (
