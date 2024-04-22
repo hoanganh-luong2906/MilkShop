@@ -6,7 +6,6 @@ import {
 	TouchableOpacity,
 	Pressable,
 	Dimensions,
-	Modal,
 } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,19 +13,16 @@ import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
-import AddProduct from '../../components/admin/AddProduct';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '../../utils/useAuth';
 
 export function AdminProfileScreen({ navigation }) {
 	const [isLoggedin, setIsLoggedin] = useState(true);
-	const [isOpenCreate, setIsOpenCreate] = useState(false);
 	const [isSetting, setSetting] = useState(false);
-	const navigate = useNavigation();
 	const { logout } = useAuth();
 
-	const handleNavigate = () => {
-		navigation.navigate('admin-product-form');
+	const handleNavigate = (nameRoute) => {
+		navigation.navigate(nameRoute);
 	};
 
 	return (
@@ -62,8 +58,7 @@ export function AdminProfileScreen({ navigation }) {
 						<Pressable
 							style={styles.functionContainerStyle}
 							onPress={() => {
-								// setIsOpenCreate(!isOpenCreate)
-								handleNavigate();
+								handleNavigate("admin-create-product");
 							}}
 						>
 							<View style={styles.functionPressable}>
@@ -84,7 +79,12 @@ export function AdminProfileScreen({ navigation }) {
 							/>
 						</Pressable>
 						{/* Function 2 */}
-						<Pressable style={styles.functionContainerStyle}>
+						<Pressable
+							style={styles.functionContainerStyle}
+							onPress={() => {
+								handleNavigate("admin-update-product");
+							}}
+						>
 							<View style={styles.functionPressable}>
 								<FontAwesome6
 									name='box-open'
@@ -134,10 +134,6 @@ export function AdminProfileScreen({ navigation }) {
 							setSetting={setSetting}
 						/>
 					)}
-					{/* {
-                        isOpenCreate &&
-                        <AddProduct isOpenCreate={isOpenCreate} setIsOpenCreate={setIsOpenCreate} />
-                    } */}
 				</>
 			) : (
 				<View style={styles.loginContainer}>

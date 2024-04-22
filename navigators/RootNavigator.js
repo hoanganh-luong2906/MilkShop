@@ -13,6 +13,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AddProduct from '../components/admin/AddProduct';
 import { Text, View } from 'react-native';
 import LoadingScreen from '../screens/Loading';
+import UpdateProduct from '../components/admin/UpdateProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -75,17 +76,32 @@ const RootNavigator = () => {
 										component={AdminNavigator}
 									/>
 									<Stack.Screen
-										name='admin-product-form'
+										name='admin-create-product'
 										component={AddProduct}
 										options={{
-											headerTitle: 'Product Form',
+											headerTitle: 'Thêm sản phẩm',
 											headerShown: true,
 											headerTitleAlign: 'center',
 											headerTintColor: 'black',
 											headerStyle: {
 												backgroundColor: '#FFBE98',
 											},
-											headerTitleStyle: { fontSize: 30 },
+											headerTitleStyle: { fontSize: 25 },
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
+										name='admin-update-product'
+										component={UpdateProduct}
+										options={{
+											headerTitle: 'Cập nhật sản phẩm',
+											headerShown: true,
+											headerTitleAlign: 'center',
+											headerTintColor: 'black',
+											headerStyle: {
+												backgroundColor: '#FFBE98',
+											},
+											headerTitleStyle: { fontSize: 25 },
 											statusBarColor: 'black',
 										}}
 									/>
