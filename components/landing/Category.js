@@ -69,6 +69,7 @@ const LandingCategory = ({ categoryList, products, vouchers, navigation }) => {
 													product,
 													vouchers
 												),
+												navigation: navigation,
 											});
 										}}
 									>

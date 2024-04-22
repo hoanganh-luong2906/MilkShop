@@ -50,6 +50,7 @@ const LandingTopProduct = ({ topProducts, navigation, vouchers }) => {
 										product,
 										vouchers
 									),
+									navigation: navigation,
 								});
 							}}
 							key={index}

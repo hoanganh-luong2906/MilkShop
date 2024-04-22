@@ -10,13 +10,50 @@ import {
 } from "react-native";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/Ionicons";
+import ConfirmModal from "../../components/admin/ConfirmModal";
 
-const Item = ({ name, address, phone, status }) => {
+const removeVietnameseDiacritics = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
+const Item = ({ id, name, address, phone, status }) => {
   const [showAddress, setShowAddress] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
   const [isEnabled, setIsEnabled] = useState(status);
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
+  const handleConfirm = () => {
+    setConfirmVisible(!confirmVisible);
+  };
+
+  const saveChanges = async () => {
+    try {
+      const response = await fetch(
+        `https://milk-shop-eight.vercel.app/api/account/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: !isEnabled, // Pass the new status value
+          }),
+        }
+      );
+
+      if (response.ok) {
+        // Update the switch state and close the ConfirmModal
+        toggleSwitch();
+        setConfirmVisible(false);
+      } else {
+        console.error("Failed to update account status");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <View style={styles.item}>
       <Ionicons name="person-circle" size={100} color="black" />
@@ -72,8 +109,14 @@ const Item = ({ name, address, phone, status }) => {
             trackColor={{ false: "#767577", true: "#767577" }}
             thumbColor={isEnabled ? "#FFBE98" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
+            onValueChange={handleConfirm}
             value={isEnabled}
+          />
+          <ConfirmModal
+            textTitle={"Bạn có chắc chắn muốn cập nhật trạng thái tài khoản?"}
+            visible={confirmVisible}
+            onClose={() => setConfirmVisible(false)}
+            onConfirm={saveChanges}
           />
         </View>
       </View>
@@ -92,14 +135,34 @@ const AccountScreen = () => {
       .catch((error) => console.error(error));
   }, []);
 
-  const renderItem = ({ item }) => (
-    <Item
-      name={item.fullName}
-      address={item.address}
-      phone={item.phone}
-      status={item.status}
-    />
-  );
+  const renderItem = ({ item }) => {
+    const { fullName } = item;
+    const normalizedSearchQuery = removeVietnameseDiacritics(
+      searchQuery.toLowerCase()
+    );
+    const normalizedName = removeVietnameseDiacritics(fullName.toLowerCase());
+
+    if (normalizedName.includes(normalizedSearchQuery)) {
+      return (
+        <Item
+          id={item._id}
+          name={fullName}
+          address={item.address}
+          phone={item.phone}
+          status={item.status}
+        />
+      );
+    } else {
+      return null;
+    }
+    // <Item
+    //   id={item._id}
+    //   name={item.fullName}
+    //   address={item.address}
+    //   phone={item.phone}
+    //   status={item.status}
+    // />
+  };
 
   return (
     <View style={styles.container}>
@@ -107,8 +170,7 @@ const AccountScreen = () => {
         <Octicons name="search" size={20} color="black" />
         <TextInput
           style={styles.searchInput}
-          onChangeText={setSearchQuery}
-          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
           placeholder="Nhập tên tài khoản"
         />
       </View>

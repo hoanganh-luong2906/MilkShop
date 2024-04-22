@@ -16,6 +16,7 @@ import LoadingScreen from '../screens/Loading';
 import UpdateProduct from '../components/admin/UpdateProduct';
 import AddVoucher from '../components/staff/AddVoucher';
 import UpdateVoucher from '../components/staff/UpdateVoucher';
+import CartScreen from '../screens/CartScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +62,13 @@ const RootNavigator = () => {
 							<Stack.Screen
 								name='voucher'
 								component={VoucherScreen}
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name='cart'
+								component={CartScreen}
 								options={{
 									headerShown: false,
 								}}
@@ -168,6 +176,13 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='voucher'
 										component={VoucherScreen}
+										options={{
+											headerShown: false,
+										}}
+									/>
+									<Stack.Screen
+										name='cart'
+										component={CartScreen}
 										options={{
 											headerShown: false,
 										}}
