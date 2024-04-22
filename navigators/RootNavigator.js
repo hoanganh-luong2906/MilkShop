@@ -14,6 +14,8 @@ import AddProduct from '../components/admin/AddProduct';
 import { Text, View } from 'react-native';
 import LoadingScreen from '../screens/Loading';
 import UpdateProduct from '../components/admin/UpdateProduct';
+import AddVoucher from '../components/staff/AddVoucher';
+import UpdateVoucher from '../components/staff/UpdateVoucher';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,7 +29,7 @@ const RootNavigator = () => {
 			) : (
 				<NavigationContainer>
 					{!isLoggedIn ? (
-						<Stack.Navigator initialRouteName='landing'>
+						<Stack.Navigator initialRouteName='landing' screenOptions={{ statusBarColor: 'black' }}>
 							<Stack.Screen
 								name='landing'
 								component={MainNavigator}
@@ -67,7 +69,7 @@ const RootNavigator = () => {
 					) : (
 						<Stack.Navigator
 							initialRouteName={`${user?.role?.toLowerCase()}-home`}
-							screenOptions={{ headerShown: false }}
+							screenOptions={{ headerShown: false, statusBarColor: 'black' }}
 						>
 							{user?.role?.toLowerCase() === 'admin' ? (
 								<>
@@ -114,6 +116,36 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='staff-home'
 										component={StaffNavigator}
+									/>
+									<Stack.Screen
+										name='staff-create-voucher'
+										component={AddVoucher}
+										options={{
+											headerTitle: 'Thêm mã giảm giá',
+											headerShown: true,
+											headerTitleAlign: 'center',
+											headerTintColor: 'black',
+											headerStyle: {
+												backgroundColor: '#FFBE98',
+											},
+											headerTitleStyle: { fontSize: 25 },
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
+										name='staff-update-voucher'
+										component={UpdateVoucher}
+										options={{
+											headerTitle: 'Cập nhật mã giảm giá',
+											headerShown: true,
+											headerTitleAlign: 'center',
+											headerTintColor: 'black',
+											headerStyle: {
+												backgroundColor: '#FFBE98',
+											},
+											headerTitleStyle: { fontSize: 25 },
+											statusBarColor: 'black',
+										}}
 									/>
 								</>
 							) : (
