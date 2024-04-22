@@ -1,5 +1,6 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const AuthContext = createContext({
 	isLoggedIn: false,
 	user: {},
@@ -8,8 +9,10 @@ const AuthContext = createContext({
 });
 
 const AuthProvider = ({ children }) => {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [user, setUser] = useState('');
+	const [isLoggedIn, setIsLoggedIn] = useState(
+		AsyncStorage.getItem('isLoggedIn') ?? false
+	);
+	const [user, setUser] = useState(AsyncStorage.getItem('user') ?? {});
 
 	const login = async (userAccount) => {
 		setIsLoggedIn(true);

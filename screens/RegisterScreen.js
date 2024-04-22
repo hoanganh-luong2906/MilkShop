@@ -10,11 +10,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LottieView from 'lottie-react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DatePickerCustom from '../components/admin/DatePickerCustom';
 
 const RegisterScreen = ({ navigation }) => {
 	const [username, setUsername] = useState('');
 	const [fullName, setFullName] = useState('');
 	const [phoneNumber, setPhoneNumber] = useState('');
+	const [birthday, setBirthday] = useState();
 	const [password, setPassword] = useState('');
 	const [passwordConfirm, setPasswordConfirm] = useState('');
 
@@ -79,6 +82,7 @@ const RegisterScreen = ({ navigation }) => {
 									setPasswordConfirm(text)
 								}
 							/>
+							<DatePickerCustom />
 						</KeyboardAvoidingView>
 					</View>
 					<Pressable style={styles.registerButton}>

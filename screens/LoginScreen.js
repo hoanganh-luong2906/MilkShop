@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
 			);
 			const data = await response.json();
 			if (data && data?.status === 200) {
-				login(data.data);
+				await login(data.data);
 			}
 		} catch (error) {
 			alert('ERROR: ' + error);
@@ -90,7 +90,10 @@ const LoginScreen = ({ navigation }) => {
 					</View>
 				</View>
 				<Text style={styles.forgotPassword}>Quên mật khẩu?</Text>
-				<Pressable style={styles.loginButton}>
+				<Pressable
+					style={styles.loginButton}
+					onPress={() => handleLoginBtn()}
+				>
 					<Text
 						style={{
 							color: 'white',
@@ -98,7 +101,6 @@ const LoginScreen = ({ navigation }) => {
 							letterSpacing: 1,
 							fontSize: 18,
 						}}
-						onPress={() => handleLoginBtn()}
 					>
 						ĐĂNG NHẬP
 					</Text>
