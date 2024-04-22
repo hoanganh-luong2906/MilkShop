@@ -74,6 +74,9 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='admin-home'
 										component={AdminNavigator}
+										options={{
+											statusBarColor: 'black',
+										}}
 									/>
 									<Stack.Screen
 										name='admin-create-product'

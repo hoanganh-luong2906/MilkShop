@@ -20,20 +20,13 @@ export default function UpdateProduct() {
     const [dateChooseExpiredDate, setDateChooseExpiredDate] = useState(new Date());
 
     const [product, setProduct] = useState({
+        _id: "",
         name: "",
         description: "",
-        brandName: "",
-        category: {
-            _id: "",
-            name: "",
-            products: []
-        },
         price: undefined,
-        percentageRating: 0,
         quantity: undefined,
         sales: undefined,
         status: true,
-        importedDate: "",
         expiredDate: "",
         imageURL: "",
     });
@@ -46,12 +39,9 @@ export default function UpdateProduct() {
     const [errors, setErrors] = useState({
         "name": false,
         "description": false,
-        "brandName": false,
-        "category": false,
         "price": false,
         "quantity": false,
         "sales": false,
-        "importedDate": false,
         "expiredDate": false,
         "imageURL": false,
         "errorFinal": false,
@@ -59,12 +49,9 @@ export default function UpdateProduct() {
     const [errorsString, setErrorsString] = useState({
         "name": "",
         "description": "",
-        "brandName": "",
-        "category": "",
         "price": "",
         "quantity": "",
         "sales": "",
-        "importedDate": "",
         "expiredDate": "",
         "imageURL": "",
         "errorFinal": ""
@@ -109,9 +96,14 @@ export default function UpdateProduct() {
             return false;
         }
 
+        // Check if the value contains commas
+        if (value.includes(',') || value.includes('.')) {
+            return false;
+        }
+
         // Check if the value is a valid positive integer
         const integerValue = parseInt(value, 10);
-        if (isNaN(integerValue) || integerValue <= 0) {
+        if (isNaN(integerValue) || integerValue <= 0 || !Number.isInteger(integerValue)) {
             return false;
         }
 
@@ -123,9 +115,14 @@ export default function UpdateProduct() {
             return false;
         }
 
+        // Check if the value contains commas
+        if (value.includes(',') || value.includes('.')) {
+            return false;
+        }
+
         // Check if the value is a valid positive integer
         const integerValue = parseInt(value, 10);
-        if (isNaN(integerValue) || integerValue < 0) {
+        if (isNaN(integerValue) || integerValue < 0 || !Number.isInteger(integerValue)) {
             return false;
         }
 
@@ -137,12 +134,9 @@ export default function UpdateProduct() {
         const validations = {
             name: product.name === "", // Name should not be empty
             description: product.description === "", // Description should not be empty
-            brandName: product.brandName === "", // Brand name should not be empty
-            category: product.category.name === "", // Category should not be empty
             price: product.price === "" || product.price == undefined, // Price should be a valid number
             quantity: product.quantity === "" || product.quantity == undefined, // Quantity should be a valid number
             sales: product.sales === "" || product.sales == undefined, // Sales should be a valid number
-            importedDate: product.importedDate === "", // Imported date should not be empty
             expiredDate: product.expiredDate === "", // Expired date should not be empty
             imageURL: product.imageURL === "",
             errorFinal: false,
@@ -151,12 +145,9 @@ export default function UpdateProduct() {
         const validationsString = {
             name: undefined,
             description: undefined,
-            brandName: undefined,
-            category: undefined,
             price: undefined,
             quantity: undefined,
             sales: undefined,
-            importedDate: undefined,
             expiredDate: undefined,
             imageURL: undefined,
             errorFinal: undefined
@@ -178,28 +169,12 @@ export default function UpdateProduct() {
             validations.description = false;
         }
 
-        //Brand
-        if (product.brandName === "") {
-            validationsString.brandName = "Tên hãng trống";
-            validations.brandName = true;
-        } else {
-            validations.brandName = false;
-        }
-
-        //Category
-        if (product.category.name === "") {
-            validationsString.category = "Thể loại trống";
-            validations.category = true;
-        } else {
-            validations.category = false;
-        }
-
         //Price
         if (product.price === "" || product.price == undefined) {
             validationsString.price = "Giá trống";
             validations.price = true;
         } else if (!isPositiveIntegerAndGreater(product.price)) {
-            validationsString.price = "Giá phải lớn hơn 0";
+            validationsString.price = "Giá phải lớn hơn 0 và đúng định dạng. VD: 10000";
             validations.price = true;
         } else {
             validations.price = false;
@@ -210,7 +185,7 @@ export default function UpdateProduct() {
             validationsString.quantity = "Số lượng trống";
             validations.quantity = true;
         } else if (!isPositiveIntegerAndGreater(product.quantity)) {
-            validationsString.quantity = "Số lượng phải lớn hơn 0";
+            validationsString.quantity = "Số lượng phải lớn hơn 0 và đúng định dạng. VD: 10";
             validations.quantity = true;
         } else {
             validations.quantity = false;
@@ -221,7 +196,7 @@ export default function UpdateProduct() {
             validationsString.sales = "Giảm giá trống";
             validations.sales = true;
         } else if (!isPositiveInteger(product.sales)) {
-            validationsString.sales = "Giảm giá phải là số nguyên dương";
+            validationsString.sales = "Giảm giá phải là số nguyên dương. VD: 35 => 35%";
             validations.sales = true;
         } else {
             validations.sales = false;
@@ -247,27 +222,6 @@ export default function UpdateProduct() {
             validations.expiredDate = false;
         }
 
-        //Imported date
-        if (product.importedDate === "") {
-            validationsString.importedDate = "Ngày nhập kho trống";
-            validations.importedDate = true;
-        } else if (compareDates(product.importedDate, currentDate) < 0) {
-            validationsString.importedDate = "Ngày nhập kho nhỏ hơn ngày hiện tại";
-            validations.importedDate = true;
-        } else {
-            validations.importedDate = false;
-        }
-
-        if (product.importedDate !== "" && product.expiredDate !== "") {
-            if (compareDates(product.importedDate, product.expiredDate) == 1) {
-                validationsString.errorFinal = "Hạn sử dụng không được nhỏ hơn ngày nhập kho";
-                validations.errorFinal = true;
-            } else {
-                validations.errorFinal = false;
-            }
-        }
-
-
         // Check if all fields are valid
         const isValid = Object.values(validations).every(value => !value);
 
@@ -283,12 +237,10 @@ export default function UpdateProduct() {
         if (isValid) {
             // Implement logic to save the edited product information
             // For simplicity, just logging the edited product name
-            const copyProduct = {
-                ...product,
-                category: product.category._id,
-            };
+            const copyProduct = { ...product };
+            delete copyProduct._id;
             const data = await putProduct(copyProduct);
-            if (data.status == 201) {
+            if (data.status == 200) {
                 setProduct({
                     name: "",
                     description: "",
@@ -307,9 +259,8 @@ export default function UpdateProduct() {
                     expiredDate: "",
                     imageURL: "",
                 })
-                showError("Tạo sản phẩm thành công");
+                showError("Cập nhật sản phẩm thành công");
             } else if (data.status == 400) {
-                // showError(`${data.message}`);
                 setErrors(prev => ({
                     ...prev,
                     errorFinal: true
@@ -332,7 +283,7 @@ export default function UpdateProduct() {
     };
 
     async function putProduct(productData) {
-        const url = 'https://milk-shop-eight.vercel.app/api/product';
+        const url = `https://milk-shop-eight.vercel.app/api/product/${product._id}`;
 
         try {
             const response = await fetch(url, {
@@ -347,8 +298,7 @@ export default function UpdateProduct() {
             console.log('Product putted response:', data);
             return data; // Return the posted product data if needed
         } catch (error) {
-            console.error('Error putting product:', error);
-            throw error; // Rethrow the error to handle it further up the call stack
+            showError("Có lỗi xảy ra", error);
         }
     }
 
@@ -410,10 +360,11 @@ export default function UpdateProduct() {
                     <View style={{ marginVertical: 10 }} />
 
                     {/* Product list for choosing */}
-                    <Pressable style={[styles.filterContainer, { marginBottom: isShowedProductData ? -5 : 5 }]} onPress={() => { setShowedProductData(!isShowedProductData) }} >
+                    <Pressable style={[styles.filterContainer, { marginBottom: isShowedProductData ? -5 : 5, }]} onPress={() => { setShowedProductData(!isShowedProductData) }} >
                         <View style={styles.filterWrapper}>
                             <Text style={[
                                 styles.inputFilter,
+                                { backgroundColor: "#FFBE98" },
                                 { color: `${product?._id ? "grey" : "black"}` },
                                 errors.category ? styles.inputError : null
                             ]}>
@@ -452,10 +403,17 @@ export default function UpdateProduct() {
                                             borderRightWidth: 1,
                                         }]}
                                         onPress={() => {
-                                            setProduct(pre => ({
-                                                ...pre,
-                                                price: item.price.toString()
-                                            }))
+                                            setProduct({
+                                                _id: item._id,
+                                                name: item.name,
+                                                description: item.description,
+                                                price: item.price.toString(),
+                                                quantity: item.quantity.toString(),
+                                                sales: item.sales.toString(),
+                                                status: item.status,
+                                                expiredDate: item.expiredDate,
+                                                imageURL: item.imageURL,
+                                            })
                                             setShowedProductData(!isShowedProductData)
                                         }}
                                         key={index}

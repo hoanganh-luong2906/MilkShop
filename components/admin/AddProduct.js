@@ -107,9 +107,14 @@ export default function AddProduct() {
             return false;
         }
 
+        // Check if the value contains commas
+        if (value.includes(',') || value.includes('.')) {
+            return false;
+        }
+
         // Check if the value is a valid positive integer
         const integerValue = parseInt(value, 10);
-        if (isNaN(integerValue) || integerValue <= 0) {
+        if (isNaN(integerValue) || integerValue <= 0 || !Number.isInteger(integerValue)) {
             return false;
         }
 
@@ -121,9 +126,14 @@ export default function AddProduct() {
             return false;
         }
 
+        // Check if the value contains commas
+        if (value.includes(',') || value.includes('.')) {
+            return false;
+        }
+
         // Check if the value is a valid positive integer
         const integerValue = parseInt(value, 10);
-        if (isNaN(integerValue) || integerValue < 0) {
+        if (isNaN(integerValue) || integerValue < 0 || !Number.isInteger(integerValue)) {
             return false;
         }
 
@@ -197,7 +207,7 @@ export default function AddProduct() {
             validationsString.price = "Giá trống";
             validations.price = true;
         } else if (!isPositiveIntegerAndGreater(product.price)) {
-            validationsString.price = "Giá phải lớn hơn 0";
+            validationsString.price = "Giá phải lớn hơn 0 và đúng định dạng. VD: 10000";
             validations.price = true;
         } else {
             validations.price = false;
@@ -208,7 +218,7 @@ export default function AddProduct() {
             validationsString.quantity = "Số lượng trống";
             validations.quantity = true;
         } else if (!isPositiveIntegerAndGreater(product.quantity)) {
-            validationsString.quantity = "Số lượng phải lớn hơn 0";
+            validationsString.quantity = "Số lượng phải lớn hơn 0 và đúng định dạng. VD: 10";
             validations.quantity = true;
         } else {
             validations.quantity = false;
@@ -219,7 +229,7 @@ export default function AddProduct() {
             validationsString.sales = "Giảm giá trống";
             validations.sales = true;
         } else if (!isPositiveInteger(product.sales)) {
-            validationsString.sales = "Giảm giá phải là số nguyên dương";
+            validationsString.sales = "Giảm giá phải là số nguyên dương. VD: 35 => 35%";
             validations.sales = true;
         } else {
             validations.sales = false;
@@ -346,7 +356,7 @@ export default function AddProduct() {
             return data; // Return the posted product data if needed
         } catch (error) {
             console.error('Error posting product:', error);
-            throw error; // Rethrow the error to handle it further up the call stack
+            showError("Có lỗi xảy ra", error);
         }
     }
 
