@@ -50,10 +50,39 @@ export default function AddProduct() {
         setDateChooseExpiredDate(selectedDate);
     };
 
+    const validateForm = () => {
+        // Define your validation criteria for each field
+        const validations = {
+            name: product.name.trim() !== "", // Name should not be empty
+            description: product.description.trim() !== "", // Description should not be empty
+            brandName: product.brandName.trim() !== "", // Brand name should not be empty
+            category: product.category.trim() !== "", // Category should not be empty
+            price: !!product.price, // Price should be a valid number
+            quantity: !!product.quantity, // Quantity should be a valid number
+            sales: !!product.sales, // Sales should be a valid number
+            importedDate: product.importedDate.trim() !== "", // Imported date should not be empty
+            expiredDate: product.expiredDate.trim() !== "" // Expired date should not be empty
+        };
+
+        // Check if all fields are valid
+        const isValid = Object.values(validations).every(value => value);
+
+        // Return validation result and errors
+        return { isValid, errors: validations };
+    };
+
     const saveChanges = () => {
-        // Implement logic to save the edited product information
-        // For simplicity, just logging the edited product name
-        console.log("Edited product name:", product.name);
+        // Validate the form
+        const { isValid, errors } = validateForm();
+
+        if (isValid) {
+            // Implement logic to save the edited product information
+            // For simplicity, just logging the edited product name
+            console.log("Edited product name:", product.name);
+        } else {
+            // Display errors or handle invalid form
+            console.log("Form is invalid. Errors:", errors);
+        }
     };
 
     return (
