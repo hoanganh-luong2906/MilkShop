@@ -112,12 +112,12 @@ export default function StaffScreen() {
   //     </View>
   //   );
   // };
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
   return (
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-      <Pressable style={{ alignItems: "flex-end" }} onPress={() => logout()}>
+      {/* <Pressable style={{ alignItems: "flex-end" }} onPress={() => logout()}>
         <MaterialIcons name="logout" size={30} color="black" />
-      </Pressable>
+      </Pressable> */}
       <Text style={styles.title}>Quản lí đơn hàng</Text>
       {orders.map((order, index) => (
         <OrderItem
