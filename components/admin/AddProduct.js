@@ -5,6 +5,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import moment from "moment";
 import DatePickerCustom from './DatePickerCustom';
 import { AntDesign } from '@expo/vector-icons';
+import ConfirmModal from './ConfirmModal';
 
 export default function AddProduct() {
     const arrImages = [
@@ -15,8 +16,8 @@ export default function AddProduct() {
     ];
     const [isShowedImg, setShowedImg] = useState(false);
 
-    const [dateChooseImportedDate, setDateChooseImportedDate] = useState(new Date(1598051730000));
-    const [dateChooseExpiredDate, setDateChooseExpiredDate] = useState(new Date(1598051730000));
+    const [dateChooseImportedDate, setDateChooseImportedDate] = useState(new Date());
+    const [dateChooseExpiredDate, setDateChooseExpiredDate] = useState(new Date());
 
     const [product, setProduct] = useState({
         name: "",
@@ -66,6 +67,11 @@ export default function AddProduct() {
         "imageURL": "",
         "errorFinal": ""
     });
+
+    const [confirmVisible, setConfirmVisible] = useState(false);
+    const handleConfirm = () => {
+        setConfirmVisible(!confirmVisible)
+    }
 
     const navigation = useNavigation();
 
@@ -300,14 +306,23 @@ export default function AddProduct() {
                     imageURL: "",
                 })
                 showError("Tạo sản phẩm thành công");
+            } else if (data.status == 400) {
+                // showError(`${data.message}`);
+                setErrors(prev => ({
+                    ...prev,
+                    errorFinal: true
+                }))
+                setErrorsString(prev => ({
+                    ...prev,
+                    errorFinal: data.message
+                }))
             } else {
-                showError(`Lỗi Server: ${data.messageError}`);
+                showError(`Lỗi Server: ${data.message}`);
             }
         } else {
-            // Display errors or handle invalid form
-            // console.log("Form is invalid. Errors:", errors);
             showError("Có lỗi xảy ra");
         }
+        handleConfirm();
     };
 
     const showError = (message) => {
@@ -326,12 +341,8 @@ export default function AddProduct() {
                 body: JSON.stringify(productData)
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to post product');
-            }
-
             const data = await response.json();
-            console.log('Product posted successfully:', data);
+            console.log('Product posted response:', data);
             return data; // Return the posted product data if needed
         } catch (error) {
             console.error('Error posting product:', error);
@@ -386,12 +397,10 @@ export default function AddProduct() {
                     paddingHorizontal: 20,
                 }}
             >
-                <ScrollView>
-                    <View style={{ marginVertical: 10 }}>
-                        <Text style={styles.title}>Thêm mới sản phẩm</Text>
-                    </View>
+                <ScrollView >
+                    <View style={{ marginVertical: 10 }} />
                     {/* Name */}
-                    <View style={styles.inputContainer}>
+                    <View style={[styles.inputContainer]}>
                         <View style={styles.inputWrapper}>
                             <TextInput
                                 style={[styles.input, errors.name ? styles.inputError : null]}
@@ -699,7 +708,7 @@ export default function AddProduct() {
                                 justifyContent: "space-between",
                             }}
                         >
-                            <TouchableOpacity style={styles.saveButton} onPress={async () => { await saveChanges() }}>
+                            <TouchableOpacity style={styles.saveButton} onPress={() => { handleConfirm() }}>
                                 <Text style={styles.buttonText}>Tạo</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -710,6 +719,7 @@ export default function AddProduct() {
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <ConfirmModal textTitle={"Bạn có chắc chắn tạo sản phẩm?"} visible={confirmVisible} onClose={() => setConfirmVisible(false)} onConfirm={saveChanges} />
                 </ScrollView>
             </LinearGradient >
         </KeyboardAvoidingView>
