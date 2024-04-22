@@ -32,6 +32,7 @@ const AuthProvider = ({ children }) => {
 		setUser(userAccount);
 		await AsyncStorage.setItem('isLoggedIn', 'true');
 		await AsyncStorage.setItem('user', JSON.stringify(userAccount));
+		setIsChanged(!isChanged);
 	};
 
 	const logout = async () => {
