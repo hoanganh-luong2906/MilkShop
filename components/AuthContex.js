@@ -4,8 +4,8 @@ import React, { createContext, useEffect, useState } from 'react';
 const AuthContext = createContext({
 	isLoggedIn: false,
 	user: {},
-	setIsLoggedIn: () => {},
-	setRole: () => {},
+	setIsLoggedIn: () => { },
+	setRole: () => { },
 });
 
 const AuthProvider = ({ children }) => {

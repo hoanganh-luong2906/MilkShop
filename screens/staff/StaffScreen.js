@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,164 +7,271 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Pressable,
 } from "react-native";
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import useAuth from "../../utils/useAuth";
 export default function StaffScreen() {
   const navigation = useNavigation();
-
-  const OrderItem = ({
-    productName,
-    originPrice,
-    unitPrice,
-    quantity,
-    numOfProducts,
-    total,
-    status,
-  }) => {
-    switch (status) {
-      case "Giao hàng thành công":
-        iconColor = "green";
-        textColor = "green";
-        break;
-      case "Đang giao hàng":
-        iconColor = "orange";
-        textColor = "orange";
-        break;
-      case "Giao hàng thất bại":
-        iconColor = "red";
-        textColor = "red";
-        break;
-      default:
-        iconColor = "black";
-        textColor = "black";
-    }
-
-    const viewOrder = () => {
-      navigation.navigate("View Order");
+  const [orders, setOrders] = useState([]);
+  useEffect(() => {
+    const getOrders = async () => {
+      try {
+        const response = await fetch(
+          "https://milk-shop-eight.vercel.app/api/order"
+        );
+        const data = await response.json();
+        setOrders(data.data);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
     };
-    const viewDeliveyProgress = () => {
-      navigation.navigate("Delivery Progress");
-    }
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <Image
-            source={{
-              uri: "https://concung.com/2022/05/57007-87855-large_mobile/dielac-alpha-gold-iq-2-800g.jpg",
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>
-              {productName}
-              <Text style={styles.quantity}>
-                {"   "}x{quantity}
-              </Text>
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Text style={styles.originPrice}>{originPrice}Đ</Text>
-              <Text style={styles.unitPrice}>{unitPrice}Đ</Text>
-            </View>
-            <View style={styles.retradeContainer}>
-              <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
-            </View>
-            <TouchableOpacity style={styles.seeMoreButton} onPress={viewOrder}>
-              <Text style={styles.buttonText}>Xem thêm sản phẩm</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={styles.otherProducts}>({numOfProducts} sản phẩm)</Text>
-          <Text style={styles.total}>Tổng: {total}Đ</Text>
-        </View>
-        <View style={styles.line}>
-          <Text></Text>
-        </View>
-        <TouchableOpacity
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginVertical: 10,
-            marginHorizontal: 10
-          }}
-          onPress={viewDeliveyProgress}
-        >
-          <FontAwesome name="truck" size={26} color={iconColor} />
-          <Text
-            style={{
-              fontSize: 20,
-              color: textColor,
-              fontWeight: "bold",
-              marginLeft: 5,
-            }}
-          >
-            {status}
-          </Text>
-          <FontAwesome name="chevron-right" size={22} style={{ fontWeight: "200" }} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+    getOrders();
+  }, []);
 
+  const viewOrder = (id) => {
+    navigation.navigate("View Order", { orderId: id });
+  };
+  const viewDeliveyProgress = (id) => {
+    navigation.navigate("Delivery Progress", { orderId: id });
+  };
+  //   return (
+  //     <View style={styles.card}>
+  //       <View style={styles.cardContent}>
+  //         <Image
+  //           source={{
+  //             uri: "https://concung.com/2022/05/57007-87855-large_mobile/dielac-alpha-gold-iq-2-800g.jpg",
+  //           }}
+  //           style={styles.image}
+  //           resizeMode="cover"
+  //         />
+  //         <View style={styles.productDetails}>
+  //           <Text style={styles.productName}>
+  //             {productName}
+  //             <Text style={styles.quantity}>
+  //               {"   "}x{quantity}
+  //             </Text>
+  //           </Text>
+  //           <View
+  //             style={{
+  //               display: "flex",
+  //               flexDirection: "row",
+  //             }}
+  //           >
+  //             <Text style={styles.originPrice}>{originPrice}Đ</Text>
+  //             <Text style={styles.unitPrice}>{unitPrice}Đ</Text>
+  //           </View>
+  //           <View style={styles.retradeContainer}>
+  //             <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
+  //           </View>
+  //           <TouchableOpacity style={styles.seeMoreButton} onPress={viewOrder}>
+  //             <Text style={styles.buttonText}>Xem thêm sản phẩm</Text>
+  //           </TouchableOpacity>
+  //         </View>
+  //       </View>
+  //       <View
+  //         style={{
+  //           display: "flex",
+  //           flexDirection: "row",
+  //           justifyContent: "space-between",
+  //         }}
+  //       >
+  //         <Text style={styles.otherProducts}>({numOfProducts} sản phẩm)</Text>
+  //         <Text style={styles.total}>Tổng: {total}Đ</Text>
+  //       </View>
+  //       <View style={styles.line}>
+  //         <Text></Text>
+  //       </View>
+  //       <TouchableOpacity
+  //         style={{
+  //           display: "flex",
+  //           flexDirection: "row",
+  //           justifyContent: "space-between",
+  //           marginVertical: 10,
+  //           marginHorizontal: 10,
+  //         }}
+  //         onPress={viewDeliveyProgress}
+  //       >
+  //         <FontAwesome name="truck" size={26} color={iconColor} />
+  //         <Text
+  //           style={{
+  //             fontSize: 20,
+  //             color: textColor,
+  //             fontWeight: "bold",
+  //             marginLeft: 5,
+  //           }}
+  //         >
+  //           {status}
+  //         </Text>
+  //         <FontAwesome
+  //           name="chevron-right"
+  //           size={22}
+  //           style={{ fontWeight: "200" }}
+  //         />
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // };
+  // const { logout } = useAuth();
   return (
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
+      {/* <Pressable style={{ alignItems: "flex-end" }} onPress={() => logout()}>
+        <MaterialIcons name="logout" size={30} color="black" />
+      </Pressable> */}
       <Text style={styles.title}>Quản lí đơn hàng</Text>
-      <OrderItem
-        productName="Sữa bột Alphagold"
-        originPrice={139000}
-        unitPrice={90000}
-        quantity={2}
-        numOfProducts={3}
-        total={450000}
-        status="Giao hàng thành công"
-      />
-      <OrderItem
-        productName="Sữa bột Alphagold"
-        originPrice={139000}
-        unitPrice={90000}
-        quantity={3}
-        numOfProducts={4}
-        total={650000}
-        status="Đang giao hàng"
-      />
-      <OrderItem
-        productName="Sữa bột Alphagold"
-        originPrice={139000}
-        unitPrice={90000}
-        quantity={4}
-        numOfProducts={2}
-        total={420000}
-        status="Giao hàng thất bại"
-      />
+      {orders.map((order, index) => (
+        <OrderItem
+          key={index}
+          orderId={order._id}
+          productName={order.productList[0].name}
+          image={order.productList[0].imageURL}
+          unitPrice={order.productList[0].price}
+          quantity={order.productList[0].quantity}
+          numOfProducts={order.productList.length}
+          time={order.timeCompletion}
+          total={order.totalPrice}
+          discount={order.totalDiscount}
+          onPress1={() => viewOrder(order._id)}
+          onPress2={() => viewDeliveyProgress(order._id)}
+        />
+      ))}
     </ScrollView>
   );
 }
+
+const OrderItem = ({
+  orderId,
+  productName,
+  image,
+  unitPrice,
+  quantity,
+  numOfProducts,
+  total,
+  discount,
+  onPress1,
+  onPress2,
+  time,
+}) => {
+  switch (time) {
+    case "":
+      iconColor = "orange";
+      textColor = "orange";
+      statusText = "Đang xử lí";
+      break;
+    default:
+      iconColor = "green";
+      textColor = "green";
+      statusText = "Hoàn thành đơn hàng";
+  }
+  return (
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <Image
+          source={{
+            uri: `${image}`,
+          }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+        <View style={styles.productDetails}>
+          <Text style={{ display: "none" }}>{orderId}</Text>
+          <Text style={styles.productName}>
+            {productName.length < 35
+              ? `${productName}`
+              : `${productName.substring(0, 32)}...`}
+            <Text style={styles.quantity}>
+              {"   "}x{quantity}
+            </Text>
+          </Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <Text style={styles.unitPrice}>{unitPrice}Đ</Text>
+          </View>
+          <View style={styles.retradeContainer}>
+            <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
+          </View>
+          <TouchableOpacity style={styles.seeMoreButton} onPress={onPress1}>
+            <Text style={styles.buttonText}>Xem thêm sản phẩm</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={styles.otherProducts}>({numOfProducts} sản phẩm)</Text>
+        <Text style={styles.total}>Tổng: {total}Đ</Text>
+      </View>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={styles.sale}>Giảm: {discount}Đ</Text>
+        <Text style={styles.final}>Thành tiền: {total - discount}Đ</Text>
+      </View>
+      <View style={styles.line}>
+        <Text></Text>
+      </View>
+      <TouchableOpacity
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginVertical: 10,
+          marginHorizontal: 10,
+        }}
+        onPress={onPress2}
+      >
+        <FontAwesome name="truck" size={26} color={iconColor} />
+        <Text
+          style={{
+            display: "none",
+          }}
+        >
+          {time}
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            color: textColor,
+            fontWeight: "bold",
+            marginLeft: 5,
+          }}
+        >
+          {statusText}
+        </Text>
+        <FontAwesome
+          name="chevron-right"
+          size={22}
+          style={{ fontWeight: "200" }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingTop: 20,
   },
   title: {
     textAlign: "center",
     fontSize: 24,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   card: {
     backgroundColor: "#FEECE2",
@@ -185,6 +292,7 @@ const styles = StyleSheet.create({
   },
   productDetails: {
     flex: 1,
+    marginLeft: 10,
   },
   quantity: {
     flex: 1,
@@ -245,9 +353,21 @@ const styles = StyleSheet.create({
   total: {
     marginTop: 10,
     marginRight: 5,
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 20,
     color: "#000000",
+  },
+  sale: {
+    fontSize: 16,
+    color: "red",
+    marginTop: 12,
+    marginLeft: 5,
+  },
+  final: {
+    fontSize: 20,
+    color: "green",
+    marginTop: 10,
+    marginRight: 5,
+    fontWeight: "bold",
   },
   line: {
     backgroundColor: "#D9D9D9",

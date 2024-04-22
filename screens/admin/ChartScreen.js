@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     showItem: {
         position: "absolute",
         bottom: -150,
-        backgroundColor: "green",
         flex: 1,
         zIndex: 1,
         width: "80%",

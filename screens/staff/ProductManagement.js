@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingTop: 20,
   },
   title: {
     textAlign: "center",
     fontSize: 24,
     fontWeight: "bold",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   searchBarContainer: {
     flexDirection: "row",
