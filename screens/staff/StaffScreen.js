@@ -7,8 +7,10 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Pressable,
 } from "react-native";
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import useAuth from '../../utils/useAuth';
 export default function StaffScreen() {
   const navigation = useNavigation();
 
@@ -44,7 +46,8 @@ export default function StaffScreen() {
     };
     const viewDeliveyProgress = () => {
       navigation.navigate("Delivery Progress");
-    }
+    };
+    
     return (
       <View style={styles.card}>
         <View style={styles.cardContent}>
@@ -98,7 +101,7 @@ export default function StaffScreen() {
             flexDirection: "row",
             justifyContent: "space-between",
             marginVertical: 10,
-            marginHorizontal: 10
+            marginHorizontal: 10,
           }}
           onPress={viewDeliveyProgress}
         >
@@ -113,14 +116,21 @@ export default function StaffScreen() {
           >
             {status}
           </Text>
-          <FontAwesome name="chevron-right" size={22} style={{ fontWeight: "200" }} />
+          <FontAwesome
+            name="chevron-right"
+            size={22}
+            style={{ fontWeight: "200" }}
+          />
         </TouchableOpacity>
       </View>
     );
   };
-
+  const { logout } = useAuth();
   return (
     <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
+      <Pressable style={{ alignItems: "flex-end" }} onPress={() => logout()}>
+        <MaterialIcons name="logout" size={30} color="black" />
+      </Pressable>
       <Text style={styles.title}>Quản lí đơn hàng</Text>
       <OrderItem
         productName="Sữa bột Alphagold"
@@ -158,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 25,
   },
   title: {
     textAlign: "center",
