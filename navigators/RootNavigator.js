@@ -13,6 +13,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AddProduct from '../components/admin/AddProduct';
 import { Text, View } from 'react-native';
 import LoadingScreen from '../screens/Loading';
+import CartScreen from '../screens/CartScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,13 @@ const RootNavigator = () => {
 							<Stack.Screen
 								name='voucher'
 								component={VoucherScreen}
+								options={{
+									headerShown: false,
+								}}
+							/>
+							<Stack.Screen
+								name='cart'
+								component={CartScreen}
 								options={{
 									headerShown: false,
 								}}
@@ -117,6 +125,13 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='voucher'
 										component={VoucherScreen}
+										options={{
+											headerShown: false,
+										}}
+									/>
+									<Stack.Screen
+										name='cart'
+										component={CartScreen}
 										options={{
 											headerShown: false,
 										}}

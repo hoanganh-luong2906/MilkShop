@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
+	Image,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -133,18 +134,19 @@ const LandingScreen = ({ navigation }) => {
 						color='gray'
 						style={styles.searchIcon}
 					/>
-					<Pressable
-						style={styles.button}
-						onPress={() => navigation.push('cart')}
-					>
-						<Icon name='cart' size={23} color='black' />
-					</Pressable>
 					{isLoggedIn ? (
 						<Pressable
 							style={styles.button}
 							onPress={() => logout()}
 						>
-							<Icon name='person' size={23} color='gray' />
+							<Image
+								source={require('../assets/user-logo.jpg')}
+								style={{
+									width: 35,
+									height: 35,
+									borderRadius: 30,
+								}}
+							/>
 						</Pressable>
 					) : (
 						<Pressable
@@ -206,7 +208,7 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 	},
 	searchBox: {
-		width: '70%',
+		width: '80%',
 		backgroundColor: 'white',
 		paddingVertical: 8,
 		paddingRight: 30,
@@ -217,6 +219,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		fontSize: 16,
+		marginLeft: 10,
 	},
 	button: {
 		width: 40,
@@ -226,11 +229,12 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginRight: 10,
 	},
 	searchIcon: {
 		position: 'absolute',
 		top: 12,
-		left: 15,
+		left: 25,
 	},
 });
 

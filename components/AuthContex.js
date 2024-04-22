@@ -12,6 +12,7 @@ const AuthProvider = ({ children }) => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [user, setUser] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
+	const [isChanged, setIsChanged] = useState(false);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -42,7 +43,15 @@ const AuthProvider = ({ children }) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ isLoggedIn, user, login, logout, isLoading }}
+			value={{
+				isLoggedIn,
+				user,
+				login,
+				logout,
+				isLoading,
+				isChanged,
+				setIsChanged,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>

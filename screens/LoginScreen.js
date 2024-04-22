@@ -9,9 +9,12 @@ const LoginScreen = ({ navigation }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const [errorMsg, setErrorMsg] = useState('');
+	const [isRecentPushed, setIsRecentPushed] = useState(false);
 	const { login } = useAuth();
 
 	const handleLoginBtn = async () => {
+		setIsRecentPushed(true);
 		try {
 			const response = await fetch(
 				'https://milk-shop-eight.vercel.app/api/authen/login',
@@ -27,12 +30,16 @@ const LoginScreen = ({ navigation }) => {
 				}
 			);
 			const data = await response.json();
+			console.log(data);
 			if (data && data?.status === 200) {
 				await login(data.data);
+			} else if (data?.status !== 200) {
+				setErrorMsg(data?.messageError);
 			}
 		} catch (error) {
 			alert('ERROR: ' + error);
 		}
+		setIsRecentPushed(false);
 	};
 
 	return (
@@ -89,10 +96,20 @@ const LoginScreen = ({ navigation }) => {
 						)}
 					</View>
 				</View>
-				<Text style={styles.forgotPassword}>Quên mật khẩu?</Text>
+				{errorMsg?.length > 0 ? (
+					<Text style={styles.errorMessage}>{errorMsg}</Text>
+				) : (
+					<View style={{ height: 38 }}></View>
+				)}
 				<Pressable
-					style={styles.loginButton}
+					style={[
+						styles.loginButton,
+						isRecentPushed
+							? { backgroundColor: 'gray' }
+							: { backgroundColor: 'black' },
+					]}
 					onPress={() => handleLoginBtn()}
+					disabled={isRecentPushed}
 				>
 					<Text
 						style={{
@@ -150,9 +167,9 @@ const styles = StyleSheet.create({
 		top: 0,
 		left: 0,
 		width: '100%',
-		height: '100%',
+		height: '85%',
 		zIndex: 0,
-		opacity: 0.8,
+		opacity: 0.4,
 	},
 	backArrow: {
 		position: 'absolute',
@@ -164,7 +181,7 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		fontWeight: 'bold',
 		marginTop: 60,
-		marginBottom: 30,
+		marginBottom: 40,
 		width: '100%',
 		textAlign: 'center',
 	},
@@ -186,20 +203,21 @@ const styles = StyleSheet.create({
 		right: 20,
 		top: 14,
 	},
-	forgotPassword: {
+	errorMessage: {
 		marginTop: 15,
-		textAlign: 'right',
+		textAlign: 'left',
 		paddingHorizontal: 10,
 		fontSize: 17,
+		color: 'red',
+		fontWeight: '600',
 	},
 	loginButton: {
 		display: 'flex',
 		alignItems: 'center',
 		paddingVertical: 13,
 		paddingHorizontal: 20,
-		backgroundColor: 'black',
 		borderRadius: 50,
-		marginTop: 20,
+		marginTop: 30,
 	},
 	registerButton: {
 		display: 'flex',
