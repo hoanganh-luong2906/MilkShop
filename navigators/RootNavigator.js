@@ -16,6 +16,7 @@ import UpdateProduct from '../components/admin/UpdateProduct';
 import AddVoucher from '../components/staff/AddVoucher';
 import CartScreen from '../screens/CartScreen';
 import ProductDetailScreen from '../screens/admin/ProductDetailScreen';
+import StaffUpdateProduct from '../components/staff/StaffUpdateProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -148,6 +149,21 @@ const RootNavigator = () => {
 										component={AddVoucher}
 										options={{
 											headerTitle: 'Thêm mã giảm giá',
+											headerShown: true,
+											headerTitleAlign: 'center',
+											headerTintColor: 'black',
+											headerStyle: {
+												backgroundColor: '#FFBE98',
+											},
+											headerTitleStyle: { fontSize: 25 },
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
+										name='staff-update-product'
+										component={StaffUpdateProduct}
+										options={{
+											headerTitle: 'Cập nhật sản phẩm',
 											headerShown: true,
 											headerTitleAlign: 'center',
 											headerTintColor: 'black',

@@ -1,266 +1,320 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
   Image,
-  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  FlatList,
+  View,
 } from "react-native";
+import { Octicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 
-export default function ProductManagement() {
-  const navigation = useNavigation();
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editedProductName, setEditedProductName] = useState("");
-  
-  const viewDetail = () => {
-    navigation.navigate("View Detail");
-  };
-  const toggleEditModal = () => {
-    setIsEditModalVisible(!isEditModalVisible);
-  };
+function formatToVND(value) {
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "decimal" /* Use "decimal" style instead of "currency" */,
+    minimumFractionDigits: 0, // Adjust for desired decimal places
+  });
 
-  const saveChanges = () => {
-    // Implement logic to save the edited product information
-    // For simplicity, just logging the edited product name
-    console.log("Edited product name:", editedProductName);
-    toggleEditModal(); // Close the edit modal after saving changes
-  };
-  return (
-    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Quản lí hàng hóa</Text>
-      <View style={styles.searchBarContainer}>
-        <FontAwesome name="search" style={styles.icon} />
-        <TextInput style={styles.searchInput} placeholder="Tìm sản phẩm" />
-        <FontAwesome name="filter" style={styles.icon} />
-      </View>
-      <View style={styles.cardContainer}>
-        <View style={styles.card}>
-          <TouchableOpacity onPress={viewDetail}>
-            <Image
-              source={{
-                uri: "https://concung.com/2022/05/57007-87855-large_mobile/dielac-alpha-gold-iq-2-800g.jpg",
-              }}
-              style={styles.productImage}
-              resizeMode="cover"
-            />
-            <Text style={styles.cardText}>Sữa bột Alphagold</Text>
-            <View style={styles.priceContainer}>
-              <Text style={styles.originalPrice}>139000Đ</Text>
-              <Text style={styles.discountPrice}>90000Đ</Text>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.availabilityContainer}>
-            <Text style={styles.availability}>Còn hàng</Text>
-            <TouchableOpacity onPress={toggleEditModal}>
-              <FontAwesome name="pencil" style={styles.editIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <TouchableOpacity onPress={viewDetail}>
-            <Image
-              source={{
-                uri: "https://concung.com/2022/05/57007-87855-large_mobile/dielac-alpha-gold-iq-2-800g.jpg",
-              }}
-              style={styles.productImage}
-              resizeMode="cover"
-            />
-            <Text style={styles.cardText}>Sữa bột Alphagold</Text>
-            <View style={styles.priceContainer}>
-              <Text style={styles.originalPrice}>139000Đ</Text>
-              <Text style={styles.discountPrice}>90000Đ</Text>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.availabilityContainer}>
-            <Text style={styles.availability}>Còn hàng</Text>
-            <TouchableOpacity onPress={toggleEditModal}>
-              <FontAwesome name="pencil" style={styles.editIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-      <Modal visible={isEditModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Cập nhật hàng hóa</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Tên sản phẩm"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Dòng"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Giá"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Giảm giá"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Tình trạng"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Ngày nhập kho"
-            value={editedProductName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Ngày hết hạn"
-            value={editedProductName}
-          />
-          <View
-            style={{
-              display: "flex",
-              width: 250,
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-            }}
-          >
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={toggleEditModal}
-            >
-              <Text style={styles.buttonText}>Hủy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={saveChanges}>
-              <Text style={styles.buttonText}>Cập nhật</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </ScrollView>
-  );
+  const formattedNumber = formatter.format(value);
+  return `${formattedNumber} VNĐ`; // Prepend "VND " manually
 }
 
+function removeVietnameseDiacritics(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
+
+const ProductManagement = ({ navigation }) => {
+  const categories = [
+    {
+      id: 1,
+      title: "Sữa tươi các loại",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzeoWXfn3vxRKqAI6MWlQ4jX45LNZRfJFF1UKkuDEEQg&s",
+    },
+    {
+      id: 2,
+      title: "Sữa cho mẹ mang thai",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2ssLBbXs5hb8zcdy7ryTVQ434v-GAELGPGZX6L4_qJQ&s",
+    },
+    {
+      id: 3,
+      title: "Sữa thực vật",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRE-5Hd_EV06614cxhufCT63nyVIV-VoUoQYpfh9iEEw&s",
+    },
+    {
+      id: 4,
+      title: "Sữa bột cao cấp",
+      imageUrl:
+        "https://static.vecteezy.com/system/resources/previews/020/880/179/original/milk-powder-icon-style-free-vector.jpg",
+    },
+    {
+      id: 5,
+      title: "Sữa cho người cao tuổi",
+      imageUrl:
+        "https://previews.123rf.com/images/vectorchef/vectorchef1506/vectorchef150600531/40648993-milk-icon.jpg",
+    },
+    {
+      id: 6,
+      title: "Sữa chua",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn3qWtJz7QhOMuwwfhDQAk_W7ys8-tE4Y8BgPmS9q4GA&s",
+    },
+  ];
+  const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  useEffect(() => {
+    fetch("https://milk-shop-eight.vercel.app/api/product/top")
+      .then((response) => response.json())
+      .then((json) =>
+        setData(
+          json.data.filter(
+            (product) =>
+              (!selectedCategory ||
+                product.category.name === selectedCategory) &&
+              removeVietnameseDiacritics(product.name.toLowerCase()).includes(
+                removeVietnameseDiacritics(searchQuery.toLowerCase())
+              )
+          )
+        )
+      )
+      .catch((error) => console.error(error));
+  }, [selectedCategory, searchQuery, data]);
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchBar}>
+        <Octicons name="search" size={20} color="black" />
+        <TextInput
+          style={styles.searchInput}
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          placeholder="Nhập tên sản phẩm"
+        />
+      </View>
+      <CategoryContainer
+        categories={categories}
+        onCategoryPress={setSelectedCategory}
+        selectedCategory={selectedCategory}
+      />
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <ProductCard
+            product={item}
+            name={item.name}
+            imageUrl={item.imageURL}
+            price={item.price}
+            rating={item.percentageRating}
+            count={item.count}
+            sales={item.sales}
+            navigation={navigation}
+          />
+        )}
+        numColumns={2}
+      />
+    </View>
+  );
+};
+
+const CategoryContainer = ({
+  categories,
+  onCategoryPress,
+  selectedCategory,
+}) => {
+  return (
+    <View style={styles.categoryContainer}>
+      {categories.map((category) => (
+        <Pressable
+          style={[
+            styles.categoryIcon,
+            selectedCategory === category.title
+              ? styles.selectedCategory
+              : null,
+          ]}
+          key={category.id}
+          onPress={() => onCategoryPress(category.title)}
+        >
+          <Image
+            source={{ uri: category.imageUrl }}
+            style={styles.categoryImage}
+          />
+          <Text style={styles.categoryText}>{category.title}</Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+};
+
+const ProductCard = ({
+  product,
+  name,
+  imageUrl,
+  price,
+  rating,
+  count,
+  sales,
+  navigation,
+}) => {
+  return (
+    <ScrollView>
+      <Pressable
+        style={[styles.productCard, { position: "relative" }]}
+        onPress={() => navigation.navigate("staff-update-product", { product: product })}
+      >
+        <FontAwesome style={{ position: "absolute", top: 10, right: 10 }} name="pencil" size={18} color={"grey"} />
+        <Image
+          src={imageUrl}
+          style={styles.productImages}
+          resizeMode="contain"
+        />
+        <Text
+          numberOfLines={2}
+          style={{
+            width: "100%",
+            textAlign: "left",
+            fontWeight: 500,
+          }}
+        >
+          {name}
+        </Text>
+        <View style={styles.productBody}>
+          <View style={styles.productRating}>
+            {[...Array(5)].map((_, i) => (
+              <MaterialIcons
+                key={i}
+                name={i < Math.round(rating) ? "star" : "star-border"}
+                size={15}
+                color="gold"
+              />
+            ))}
+          </View>
+          <Text
+            style={{
+              fontWeight: 500,
+              opacity: 0.6,
+              fontSize: 12,
+              lineHeight: 20,
+            }}
+          >
+            Đã bán {count < 1000 ? count : "999+"}
+          </Text>
+        </View>
+        <View style={styles.productPrice}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+            }}
+          >
+            {formatToVND(price)}
+          </Text>
+          {sales > 0 && <Text style={styles.productSale}>-{sales}%</Text>}
+        </View>
+      </Pressable>
+    </ScrollView>
+  );
+};
+
 const styles = StyleSheet.create({
-  screen: {
+  container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 10,
+    backgroundColor: "#FFF3ED",
   },
-  title: {
-    textAlign: "center",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginVertical: 20,
-  },
-  searchBarContainer: {
+  searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFBE98",
     height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
     borderRadius: 10,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  icon: {
-    fontSize: 20,
-    color: "#000000",
+    marginHorizontal: 40,
+    marginVertical: 10,
+    paddingLeft: 10,
+    backgroundColor: "#FFBE98",
   },
   searchInput: {
+    marginLeft: 30,
     flex: 1,
-    paddingHorizontal: 10,
   },
-  cardContainer: {
+  categoryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  card: {
+    flexWrap: "wrap",
+    marginBottom: 10,
     backgroundColor: "#FEECE2",
-    width: "48%",
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
+    borderRadius: 20,
   },
-  productImage: {
+  categoryIcon: {
+    alignItems: "center",
+    width: "33%",
+    marginBottom: 10,
+    paddingVertical: 10,
+  },
+  selectedCategory: {
+    backgroundColor: "#FFDAB9",
+    borderRadius: 20,
+  },
+  categoryImage: {
+    width: 50,
+    height: 50,
+  },
+  categoryText: {
+    fontSize: 12,
+  },
+  productCard: {
+    width: 170,
+    height: 200,
+    backgroundColor: "#FEECE2",
+    elevation: 5,
+    marginHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    marginBottom: 10,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-evently",
+  },
+  productImages: {
     width: "100%",
-    height: 150,
-    resizeMode: "cover",
-    borderRadius: 10,
-    marginBottom: 10,
+    height: 100,
   },
-  cardText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  priceContainer: {
+  productBody: {
+    display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-  },
-  originalPrice: {
-    fontSize: 14,
-    color: "#CDC8C5",
-    textDecorationLine: "line-through",
-    marginRight: 5,
-  },
-  discountPrice: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000000",
-  },
-  availabilityContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 10,
-  },
-  availability: {
-    color: "green",
-    fontWeight: "700",
-  },
-  editIcon: {
-    fontSize: 16,
-    color: "#000000",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    padding: 20,
   },
-  input: {
-    width: "100%",
-    height: 40,
-    borderColor: "#CCCCCC",
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
+  productRating: {
+    marginTop: 3,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
-  saveButton: {
-    backgroundColor: "#FFBE98",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    marginTop: 10,
+  productPrice: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  cancelButton: {
-    backgroundColor: "#CDC8C5",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 18
+  productSale: {
+    marginLeft: 10,
+    borderWidth: 2,
+    padding: 5,
+    borderRadius: 10,
+    borderColor: "#FFBE98",
   },
 });
+
+export default ProductManagement;
