@@ -61,30 +61,6 @@ export default function Voucher({ navigation }) {
                 color='black'
               />
             </Pressable>
-            {/* Function 2 */}
-            <Pressable
-              style={styles.functionContainerStyle}
-              onPress={() => {
-                handleNavigate("staff-update-voucher");
-              }}
-            >
-              <View style={styles.functionPressable}>
-                <FontAwesome6
-                  name='ticket'
-                  size={24}
-                  color='black'
-                  style={styles.functionIcon}
-                />
-                <Text style={styles.functionDescription}>
-                  Cập nhật mã giảm giá
-                </Text>
-              </View>
-              <AntDesign
-                name='caretright'
-                size={15}
-                color='black'
-              />
-            </Pressable>
           </ScrollView>
         </>
       )
