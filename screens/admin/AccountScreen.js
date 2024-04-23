@@ -59,9 +59,9 @@ const Item = ({ id, name, address, phone, status }) => {
       <Ionicons name="person-circle" size={100} color="black" />
       <View style={styles.details}>
         <Text style={styles.text}>Họ và tên: {name}</Text>
-        <View style={styles.addressContent}>
-          <Text style={styles.text}>Địa chỉ: </Text>
-          <View style={styles.addressInfo}>
+        <View style={{ justifyContent: "space-between" }}>
+          <View style={styles.addressContent}>
+            <Text style={styles.text}>Địa chỉ: </Text>
             <TextInput
               style={styles.addressText}
               secureTextEntry={showAddress ? false : true}
@@ -80,10 +80,8 @@ const Item = ({ id, name, address, phone, status }) => {
               />
             </Pressable>
           </View>
-        </View>
-        <View style={styles.phoneContent}>
-          <Text style={styles.text}>SĐT: </Text>
-          <View style={styles.phoneInfo}>
+          <View style={styles.phoneContent}>
+            <Text style={styles.text}>SĐT: </Text>
             <TextInput
               style={styles.phoneText}
               secureTextEntry={showPhone ? false : true}
@@ -142,7 +140,7 @@ const AccountScreen = () => {
     );
     const normalizedName = removeVietnameseDiacritics(fullName.toLowerCase());
 
-    if (normalizedName.includes(normalizedSearchQuery) && role !== 'Admin') {
+    if (normalizedName.includes(normalizedSearchQuery) && role !== "Admin") {
       return (
         <Item
           id={item._id}
@@ -155,13 +153,6 @@ const AccountScreen = () => {
     } else {
       return null;
     }
-    // <Item
-    //   id={item._id}
-    //   name={item.fullName}
-    //   address={item.address}
-    //   phone={item.phone}
-    //   status={item.status}
-    // />
   };
 
   return (
@@ -217,30 +208,22 @@ const styles = StyleSheet.create({
   },
   addressContent: {
     flexDirection: "row",
-    justifyContent: "left",
-    alignItems: "center",
-  },
-  addressInfo: {
-    flexDirection: "row",
-    position: "relative",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   addressText: {
-    fontSize: 12,
-    marginRight: 5,
+    fontSize: 18,
+    marginLeft: 20,
     color: "black",
   },
   phoneContent: {
     flexDirection: "row",
-  },
-  phoneInfo: {
-    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginLeft: 22,
   },
   phoneText: {
-    fontSize: 12,
-    marginRight: 5,
+    fontSize: 18,
+    marginLeft: 16,
     color: "black",
   },
   text: {
@@ -249,7 +232,6 @@ const styles = StyleSheet.create({
   statusContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 10,
     alignItems: "center",
   },
 });

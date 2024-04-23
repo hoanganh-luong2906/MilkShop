@@ -12,7 +12,7 @@ import {
 import { Octicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
 function formatToVND(value) {
@@ -39,26 +39,25 @@ const ProductManagement = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [arrSearch, setArrSearch] = useState([]);
   const [arrFilter, setArrFilter] = useState([]);
-  const [arrCategoriesData, setCategoriesData] = useState([{ _id: "", name: "" }]);
+  const [arrCategoriesData, setCategoriesData] = useState([
+    { _id: "", name: "" },
+  ]);
 
   const handleGetProduct = () => {
     fetch("https://milk-shop-eight.vercel.app/api/product/top")
       .then((response) => response.json())
       .then((res) => {
         if (res.status == 200) {
-          setData(
-            res.data
-          )
+          setData(res.data);
         } else {
-          setData([])
+          setData([]);
         }
-      }
-      )
+      })
       .catch((error) => {
         console.log(error);
-        setData([])
+        setData([]);
       });
-  }
+  };
 
   const handleSearchProduct = (searchValue) => {
     setSelectedCategory(null); // Unselect category
@@ -67,38 +66,37 @@ const ProductManagement = ({ navigation }) => {
     setSearchQuery(searchValue);
     if (searchValue.length != 0) {
       setArrSearch(
-        data.filter(
-          (product) =>
-            removeVietnameseDiacritics(product.name.toLowerCase()).includes(
-              removeVietnameseDiacritics(searchQuery.toLowerCase())
-            )
+        data.filter((product) =>
+          removeVietnameseDiacritics(product.name.toLowerCase()).includes(
+            removeVietnameseDiacritics(searchQuery.toLowerCase())
+          )
         )
-      )
+      );
     } else {
       setArrSearch([]);
     }
-  }
+  };
 
   const handleFilter = (selectedCategory) => {
     setArrFilter(
-      data.filter(
-        (product) => product.category._id === selectedCategory
-      )
-    )
-  }
+      data.filter((product) => product.category._id === selectedCategory)
+    );
+  };
 
   const getCategories = async () => {
-    const response = await fetch("https://milk-shop-eight.vercel.app/api/category")
+    const response = await fetch(
+      "https://milk-shop-eight.vercel.app/api/category"
+    );
     const data = await response.json();
     setCategoriesData(data.data);
-  }
+  };
 
   useFocusEffect(
     useCallback(() => {
       handleGetProduct();
       getCategories();
     }, [])
-  )
+  );
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
@@ -119,7 +117,13 @@ const ProductManagement = ({ navigation }) => {
         setArrFilter={setArrFilter}
       />
       <FlatList
-        data={arrSearch.length == 0 && arrFilter.length == 0 ? data : arrSearch.length != 0 ? arrSearch : arrFilter}
+        data={
+          arrSearch.length == 0 && arrFilter.length == 0
+            ? data
+            : arrSearch.length != 0
+            ? arrSearch
+            : arrFilter
+        }
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ProductCard
@@ -145,7 +149,7 @@ const CategoryContainer = ({
   selectedCategory,
   setArrSearch,
   handleFilter,
-  setArrFilter
+  setArrFilter,
 }) => {
   return (
     <View style={styles.categoryContainer}>
@@ -153,9 +157,7 @@ const CategoryContainer = ({
         <Pressable
           style={[
             styles.categoryIcon,
-            selectedCategory === category._id
-              ? styles.selectedCategory
-              : null,
+            selectedCategory === category._id ? styles.selectedCategory : null,
           ]}
           key={category._id}
           onPress={() => {
@@ -191,9 +193,17 @@ const ProductCard = ({
     <ScrollView>
       <Pressable
         style={[styles.productCard, { position: "relative" }]}
-        onPress={() => navigation.navigate("staff-update-product", { product: product })}
+        onPress={() =>
+          navigation.navigate("staff-product-detail", { product: product })
+        }
       >
-        <FontAwesome style={{ position: "absolute", top: 10, right: 10 }} name="pencil" size={18} color={"grey"} />
+        <Pressable
+          onPress={() => {
+            navigation.navigate("staff-update-product", { product: product });
+          }}
+        >
+          <FontAwesome name="pencil" size={18} color={"grey"} />
+        </Pressable>
         <Image
           src={imageUrl}
           style={styles.productImages}
@@ -297,7 +307,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: 170,
-    height: 200,
+    height: 220,
     backgroundColor: "#FEECE2",
     elevation: 5,
     marginHorizontal: 10,

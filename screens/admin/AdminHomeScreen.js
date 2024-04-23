@@ -10,7 +10,6 @@ import {
   View,
 } from "react-native";
 import { Octicons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from "@react-navigation/native";
