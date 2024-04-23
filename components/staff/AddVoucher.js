@@ -105,6 +105,26 @@ export default function AddVoucher() {
         return true;
     }
 
+    const toggleItemInArray = (item) => {
+        // Check if the item exists in the array based on a specific property
+        const index = voucher.categories_applied.findIndex(existingItem => existingItem === item._id.toString());
+
+        if (index !== -1) {
+            // Item exists, remove it
+            const newArray = [...voucher.categories_applied];
+            newArray.splice(index, 1);
+            setVoucher(prev => ({ ...prev, categories_applied: newArray }));
+        } else {
+            // Item doesn't exist, add it
+            setVoucher(prev => ({ ...prev, categories_applied: [...prev.categories_applied, item._id.toString()] }));
+        }
+    };
+
+    const isItemInArray = (item) => {
+        // Check if the item exists in the array based on a specific property
+        return voucher.categories_applied.some(existingItem => existingItem === item._id.toString());
+    };
+
     const validateForm = () => {
         // Define your validation criteria for each field
         const validations = {
@@ -123,13 +143,22 @@ export default function AddVoucher() {
 
         //discount
         if (voucher.discount === "" || voucher.discount == undefined) {
-            validationsString.discount = "Giảm giá trống";
-            validations.discount = true;
-        } else if (!isPositiveIntegerAndGreater(voucher.discount)) {
-            validationsString.discount = "Giá phải lớn hơn 0 và đúng định dạng. VD: 10000";
+            validationsString.discount = "Giá giảm trống";
             validations.discount = true;
         } else {
             validations.discount = false;
+        }
+        if (voucher.isPercent) {
+            if (!isPositiveIntegerAndGreater(voucher.discount)) {
+                validationsString.discount = `Giá giảm phải đúng định dạng. VD: "50"`;
+                if (voucher.discount <= 0 || voucher.discount > 100) {
+                    validationsString.discount = `Giá giảm phải nằm trong khoảng`;
+                }
+                validations.discount = true;
+            } else {
+                validations.discount = false;
+            }
+
         }
 
         // //Description
@@ -299,6 +328,7 @@ export default function AddVoucher() {
             >
                 <ScrollView >
                     <View style={{ marginVertical: 10 }} />
+
                     {/* discount */}
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
@@ -406,7 +436,7 @@ export default function AddVoucher() {
                         </View>
                     </Pressable>
                     {isShowedCategory &&
-                        <View style={{ marginTop: -10 }}>
+                        <View style={{ marginTop: -10, marginBottom: 10 }}>
                             {
                                 arrCategoriesData.map((item, index) => (
                                     <Pressable
@@ -415,22 +445,21 @@ export default function AddVoucher() {
                                             borderTopRightRadius: index == 0 ? 20 : 0,
                                             borderBottomLeftRadius: index == arrCategoriesData.length - 1 ? 20 : 0,
                                             borderBottomRightRadius: index == arrCategoriesData.length - 1 ? 20 : 0,
-                                            backgroundColor: false ? "#FFBE98" : "#FEECE2",
-                                            borderTopWidth: index == 0 || false ? 1 : 0,
-                                            borderBottomWidth: index == arrCategoriesData.length - 1 || false ? 1 : 0,
+                                            backgroundColor: isItemInArray(item) ? "#FFBE98" : "#FEECE2",
+                                            borderTopWidth: 0.5,
+                                            borderBottomWidth: 0.5,
                                             borderLeftWidth: 1,
                                             borderRightWidth: 1,
                                         }]}
                                         onPress={() => {
-                                            setVoucher(prev => ({
-                                                ...prev,
-                                                isPercent: item.isPercent
-                                            }))
-                                            setShowedCategory(!isShowedCategory)
+                                            toggleItemInArray(item);
                                         }}
                                         key={index}
                                     >
-                                        <Text style={{ textAlign: "left", textAlignVertical: "center", paddingLeft: 10 }}>{item.name}</Text>
+                                        <Text style={{ flex: 0.9, textAlign: "left", textAlignVertical: "center", paddingLeft: 10 }}>{item.name}</Text>
+                                        <View style={{ flex: 0.1, justifyContent: "center" }}>
+                                            <AntDesign name={isItemInArray(item) ? "minuscircleo" : "pluscircleo"} size={24} color="black" />
+                                        </View>
                                     </Pressable>
                                 ))
                             }
@@ -550,7 +579,8 @@ const styles = StyleSheet.create({
     },
     item: {
         height: 50,
-        justifyContent: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
         borderColor: "black"
     },
     inputError: {
