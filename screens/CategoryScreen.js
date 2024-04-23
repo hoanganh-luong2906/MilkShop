@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -8,16 +8,16 @@ import {
 	TextInput,
 	FlatList,
 	View,
-} from "react-native";
-import { Octicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+} from 'react-native';
+import { Octicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 function formatToVND(value) {
-	const formatter = new Intl.NumberFormat("vi-VN", {
-		style: "decimal" /* Use "decimal" style instead of "currency" */,
+	const formatter = new Intl.NumberFormat('vi-VN', {
+		style: 'decimal' /* Use "decimal" style instead of "currency" */,
 		minimumFractionDigits: 0, // Adjust for desired decimal places
 	});
 
@@ -27,40 +27,39 @@ function formatToVND(value) {
 
 function removeVietnameseDiacritics(str) {
 	return str
-		.normalize("NFD")
-		.replace(/[\u0300-\u036f]/g, "")
-		.replace(/đ/g, "d")
-		.replace(/Đ/g, "D");
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/đ/g, 'd')
+		.replace(/Đ/g, 'D');
 }
 
 const CategoryScreen = ({ navigation }) => {
-	const [searchQuery, setSearchQuery] = useState("");
+	const [searchQuery, setSearchQuery] = useState('');
 	const [data, setData] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState(null);
 	const [arrSearch, setArrSearch] = useState([]);
 	const [arrFilter, setArrFilter] = useState([]);
-	const [arrCategoriesData, setCategoriesData] = useState([{ _id: "", name: "" }]);
+	const [arrCategoriesData, setCategoriesData] = useState([
+		{ _id: '', name: '' },
+	]);
 
 	const [vouchers, setVouchers] = useState([]);
 
 	const handleGetProduct = () => {
-		fetch("https://milk-shop-eight.vercel.app/api/product/top")
+		fetch('https://milk-shop-eight.vercel.app/api/product/top')
 			.then((response) => response.json())
 			.then((res) => {
 				if (res.status == 200) {
-					setData(
-						res.data
-					)
+					setData(res.data);
 				} else {
-					setData([])
+					setData([]);
 				}
-			}
-			)
+			})
 			.catch((error) => {
 				console.log(error);
-				setData([])
+				setData([]);
 			});
-	}
+	};
 
 	const handleSearchProduct = (searchValue) => {
 		setSelectedCategory(null); // Unselect category
@@ -69,35 +68,34 @@ const CategoryScreen = ({ navigation }) => {
 		setSearchQuery(searchValue);
 		if (searchValue.length != 0) {
 			setArrSearch(
-				data.filter(
-					(product) =>
-						removeVietnameseDiacritics(product.name.toLowerCase()).includes(
-							removeVietnameseDiacritics(searchQuery.toLowerCase())
-						)
+				data.filter((product) =>
+					removeVietnameseDiacritics(
+						product.name.toLowerCase()
+					).includes(
+						removeVietnameseDiacritics(searchQuery.toLowerCase())
+					)
 				)
-			)
+			);
 		} else {
 			setArrSearch([]);
 		}
-	}
+	};
 
 	const handleFilter = (selectedCategory) => {
 		setArrFilter(
-			data.filter(
-				(product) => product.category._id === selectedCategory
-			)
-		)
-	}
+			data.filter((product) => product.category._id === selectedCategory)
+		);
+	};
 
 	const getCategories = async () => {
-		const response = await fetch("https://milk-shop-eight.vercel.app/api/category")
+		const response = await fetch(
+			'https://milk-shop-eight.vercel.app/api/category'
+		);
 		const data = await response.json();
 		setCategoriesData(data.data);
-	}
+	};
 
-	function updateStateValue({
-		voucherData,
-	}) {
+	function updateStateValue({ voucherData }) {
 		setVouchers([...voucherData]);
 	}
 
@@ -121,7 +119,7 @@ const CategoryScreen = ({ navigation }) => {
 
 			fetchProducts();
 		}, [])
-	)
+	);
 
 	return (
 		<View style={styles.container}>
@@ -132,18 +130,20 @@ const CategoryScreen = ({ navigation }) => {
 				style={styles.linearGradient}
 			>
 				<View style={styles.searchBar}>
-					<Octicons name="search" size={20} color="black" />
+					<Octicons name='search' size={20} color='black' />
 					<TextInput
 						style={styles.searchInput}
 						onChangeText={handleSearchProduct}
 						value={searchQuery}
-						placeholder="Nhập tên sản phẩm"
+						placeholder='Nhập tên sản phẩm'
 					/>
 				</View>
 
 				{/* category list */}
 				<View style={styles.topProductTitle}>
-					<Text style={styles.topProductTitleText}>LOẠI SẢN PHẨM</Text>
+					<Text style={styles.topProductTitleText}>
+						LOẠI SẢN PHẨM
+					</Text>
 				</View>
 				<CategoryContainer
 					categories={arrCategoriesData}
@@ -154,7 +154,13 @@ const CategoryScreen = ({ navigation }) => {
 					setArrFilter={setArrFilter}
 				/>
 				<FlatList
-					data={arrSearch.length == 0 && arrFilter.length == 0 ? data : arrSearch.length != 0 ? arrSearch : arrFilter}
+					data={
+						arrSearch.length == 0 && arrFilter.length == 0
+							? data
+							: arrSearch.length != 0
+							? arrSearch
+							: arrFilter
+					}
 					keyExtractor={(item) => item._id}
 					renderItem={({ item }) => (
 						<ProductCard
@@ -182,7 +188,7 @@ const CategoryContainer = ({
 	selectedCategory,
 	setArrSearch,
 	handleFilter,
-	setArrFilter
+	setArrFilter,
 }) => {
 	return (
 		<LinearGradient
@@ -212,7 +218,11 @@ const CategoryContainer = ({
 							}
 						}}
 					>
-						<MaterialCommunityIcons name="cow" size={35} color="black" />
+						<MaterialCommunityIcons
+							name='cow'
+							size={35}
+							color='black'
+						/>
 						<Text style={styles.categoryText}>{category.name}</Text>
 					</Pressable>
 				))}
@@ -230,7 +240,7 @@ const ProductCard = ({
 	count,
 	sales,
 	navigation,
-	vouchers
+	vouchers,
 }) => {
 	function getProductVoucher(product, vouchers) {
 		try {
@@ -251,14 +261,11 @@ const ProductCard = ({
 	return (
 		<ScrollView>
 			<Pressable
-				style={[styles.productCard, { position: "relative" }]}
+				style={[styles.productCard, { position: 'relative' }]}
 				onPress={() => {
 					navigation.navigate('detail', {
 						product: product,
-						vouchers: getProductVoucher(
-							product,
-							vouchers
-						),
+						vouchers: getProductVoucher(product, vouchers),
 						navigation: navigation,
 					});
 				}}
@@ -266,13 +273,13 @@ const ProductCard = ({
 				<Image
 					src={imageUrl}
 					style={styles.productImages}
-					resizeMode="contain"
+					resizeMode='contain'
 				/>
 				<Text
 					numberOfLines={2}
 					style={{
-						width: "100%",
-						textAlign: "left",
+						width: '100%',
+						textAlign: 'left',
 						fontWeight: 500,
 					}}
 				>
@@ -283,9 +290,13 @@ const ProductCard = ({
 						{[...Array(5)].map((_, i) => (
 							<MaterialIcons
 								key={i}
-								name={i < Math.round(rating) ? "star" : "star-border"}
+								name={
+									i < Math.round(rating)
+										? 'star'
+										: 'star-border'
+								}
 								size={15}
-								color="gold"
+								color='gold'
 							/>
 						))}
 					</View>
@@ -297,19 +308,21 @@ const ProductCard = ({
 							lineHeight: 20,
 						}}
 					>
-						Đã bán {count < 1000 ? count : "999+"}
+						Đã bán {count < 1000 ? count : '999+'}
 					</Text>
 				</View>
 				<View style={styles.productPrice}>
 					<Text
 						style={{
 							fontSize: 16,
-							fontWeight: "bold",
+							fontWeight: 'bold',
 						}}
 					>
-						{formatToVND(price)}
+						{formatToVND(price - (price * sales) / 100)}
 					</Text>
-					{sales > 0 && <Text style={styles.productSale}>-{sales}%</Text>}
+					{sales > 0 && (
+						<Text style={styles.productSale}>-{sales}%</Text>
+					)}
 				</View>
 			</Pressable>
 		</ScrollView>
@@ -320,7 +333,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: 10,
-		backgroundColor: "#FFF3ED",
+		backgroundColor: '#FFF3ED',
 	},
 	linearGradient: {
 		flex: 1,
@@ -331,19 +344,19 @@ const styles = StyleSheet.create({
 	},
 	linearGradientTopProduct: {
 		borderRadius: 20,
-		marginBottom: 10
+		marginBottom: 10,
 	},
 	searchBar: {
-		flexDirection: "row",
-		alignItems: "center",
+		flexDirection: 'row',
+		alignItems: 'center',
 		height: 50,
-		borderColor: "gray",
+		borderColor: 'gray',
 		borderWidth: 1,
 		borderRadius: 50,
 		marginHorizontal: 40,
 		marginVertical: 10,
 		paddingLeft: 20,
-		backgroundColor: "white",
+		backgroundColor: 'white',
 	},
 	searchInput: {
 		marginLeft: 30,
@@ -373,20 +386,20 @@ const styles = StyleSheet.create({
 		lineHeight: 24,
 	},
 	categoryContainer: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		flexWrap: "wrap",
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		flexWrap: 'wrap',
 		marginBottom: 10,
 	},
 	categoryIcon: {
-		alignItems: "center",
-		justifyContent: "center",
-		width: "33%",
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: '33%',
 		marginBottom: 10,
 		paddingVertical: 10,
 	},
 	selectedCategory: {
-		backgroundColor: "#FEECE2",
+		backgroundColor: '#FEECE2',
 		borderRadius: 20,
 	},
 	categoryImage: {
@@ -399,43 +412,43 @@ const styles = StyleSheet.create({
 	productCard: {
 		width: 170,
 		height: 200,
-		backgroundColor: "white",
+		backgroundColor: 'white',
 		elevation: 5,
 		marginHorizontal: 10,
 		borderRadius: 10,
 		paddingHorizontal: 5,
 		paddingVertical: 5,
 		marginBottom: 10,
-		display: "flex",
-		flexDirection: "column",
-		justifyContent: "space-evently",
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-evently',
 	},
 	productImages: {
-		width: "100%",
+		width: '100%',
 		height: 100,
 	},
 	productBody: {
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
 	},
 	productRating: {
 		marginTop: 3,
-		display: "flex",
-		flexDirection: "row",
-		justifyContent: "flex-end",
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
 	},
 	productPrice: {
-		flexDirection: "row",
-		alignItems: "center",
+		flexDirection: 'row',
+		alignItems: 'center',
 	},
 	productSale: {
 		marginLeft: 10,
 		borderWidth: 2,
 		padding: 5,
 		borderRadius: 10,
-		borderColor: "#FFBE98",
+		borderColor: '#FFBE98',
 	},
 });
 

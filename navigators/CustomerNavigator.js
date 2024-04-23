@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from 'react-native';
 import useAuth from '../utils/useAuth';
 import UserprofileScreen from '../screens/UserProfileScreen';
+import UpdateProfile from '../screens/UpdateProfile';
 const Tab = createBottomTabNavigator();
 
 const CustomerNavigator = () => {
@@ -98,6 +99,14 @@ const CustomerNavigator = () => {
 					),
 				}}
 			/>
+			{/* <Tab.Screen
+				name='Update Profile'
+				component={UpdateProfile}
+				options={{
+					tabBarButton: () => null,
+					tabBarStyle: { display: 'none' },
+				}}
+			/> */}
 		</Tab.Navigator>
 	);
 };

@@ -1,8 +1,16 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+	Image,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import useAuth from '../utils/useAuth';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const ORDER_STATUS = [
 	{
@@ -33,7 +41,12 @@ const ORDER_STATUS = [
 		title: 'Tất cả',
 		icon: 'https://cdn-icons-png.flaticon.com/128/3979/3979423.png',
 		color: 'black',
-		values: ['Đã giao thành công', 'Đang giao hàng', 'Người gửi hẹn lại ngày giao', 'Đang chuẩn bị hàng'],
+		values: [
+			'Đã giao thành công',
+			'Đang giao hàng',
+			'Người gửi hẹn lại ngày giao',
+			'Đang chuẩn bị hàng',
+		],
 	},
 ];
 
@@ -56,12 +69,16 @@ const UserprofileScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await fetch('https://milk-shop-eight.vercel.app/api/order');
+			const response = await fetch(
+				'https://milk-shop-eight.vercel.app/api/order'
+			);
 			const data = await response.json();
 			if (data) {
 				let tmpData = data.data.filter((order) => {
 					let index = order.shippingList.length;
-					return order.shippingList[index - 1].receiver === user.fullName;
+					return (
+						order.shippingList[index - 1].receiver === user.fullName
+					);
 				});
 				setOrder([...tmpData]);
 				setOriginOrder([...tmpData]);
@@ -76,7 +93,9 @@ const UserprofileScreen = ({ navigation }) => {
 	function filterOrder() {
 		let tmpData = originOrder.filter((order) => {
 			let index = order.shippingList.length;
-			return selectedStatus.values.includes(order.shippingList[index - 1].statusString);
+			return selectedStatus.values.includes(
+				order.shippingList[index - 1].statusString
+			);
 		});
 		setOrder([...tmpData]);
 	}
@@ -179,7 +198,10 @@ const UserprofileScreen = ({ navigation }) => {
 							</Pressable>
 						</View>
 					) : (
-						<View>
+						<Pressable
+							style={{ display: 'flex', flexDirection: 'row' }}
+							onPress={() => navigation.navigate('profile-spec')}
+						>
 							<Text
 								style={{
 									fontSize: 20,
@@ -191,7 +213,13 @@ const UserprofileScreen = ({ navigation }) => {
 							>
 								{user?.fullName}
 							</Text>
-						</View>
+							<Icon
+								name='chevron-forward'
+								size={20}
+								color={'black'}
+								style={{ lineHeight: 20 }}
+							/>
+						</Pressable>
 					)}
 				</View>
 				<ScrollView showsVerticalScrollIndicator={false}>
@@ -201,7 +229,9 @@ const UserprofileScreen = ({ navigation }) => {
 								<Pressable
 									style={[
 										styles.orderCategories,
-										selectedStatus?.title === category.title ? { backgroundColor: 'lightgray' } : { backgroundColor: 'white' },
+										selectedStatus?.title === category.title
+											? { backgroundColor: 'lightgray' }
+											: { backgroundColor: 'white' },
 									]}
 									key={index}
 									onPress={() => {
@@ -209,8 +239,14 @@ const UserprofileScreen = ({ navigation }) => {
 										filterOrder();
 									}}
 								>
-									<Image src={category.icon} resizeMode='contain' style={{ width: 35, height: 35 }} />
-									<Text style={styles.orderHeaderText}>{category.title}</Text>
+									<Image
+										src={category.icon}
+										resizeMode='contain'
+										style={{ width: 35, height: 35 }}
+									/>
+									<Text style={styles.orderHeaderText}>
+										{category.title}
+									</Text>
 								</Pressable>
 							))}
 						</View>
@@ -228,90 +264,200 @@ const UserprofileScreen = ({ navigation }) => {
 															marginVertical: 10,
 														}}
 													>
-														<View style={styles.orderHeaderStatus}>
+														<View
+															style={
+																styles.orderHeaderStatus
+															}
+														>
 															<Text
 																style={{
 																	fontSize: 16,
-																	fontWeight: '500',
+																	fontWeight:
+																		'500',
 																}}
 															>
-																Đơn hàng {index2 + 1}
+																Đơn hàng{' '}
+																{index2 + 1}
 															</Text>
 															<Text
 																style={{
 																	fontSize: 16,
 																	color: getStatusColor(
-																		order.shippingList[order.shippingList.length - 1].statusString
+																		order
+																			.shippingList[
+																			order
+																				.shippingList
+																				.length -
+																				1
+																		]
+																			.statusString
 																	),
 																}}
 															>
-																{getShortStatus(order.shippingList[order.shippingList.length - 1].statusString)}
+																{getShortStatus(
+																	order
+																		.shippingList[
+																		order
+																			.shippingList
+																			.length -
+																			1
+																	]
+																		.statusString
+																)}
 															</Text>
 														</View>
-														<View style={{ borderBottomColor: 'gray', borderBottomWidth: 1, paddingVertical: 5 }}>
+														<View
+															style={{
+																borderBottomColor:
+																	'gray',
+																borderBottomWidth: 1,
+																paddingVertical: 5,
+															}}
+														>
 															<Text
 																style={{
 																	fontSize: 16,
-																	fontWeight: '500',
+																	fontWeight:
+																		'500',
 																}}
 															>
 																Sản phẩm
 															</Text>
-															{order.productList.map((product, index) => (
-																<View style={{ display: 'flex', flexDirection: 'row' }} key={index + Math.random()}>
-																	<View style={{ backgroundColor: 'white', width: '30%' }}>
-																		<Image
-																			src={product.imageURL}
-																			resizeMode='contain'
-																			style={{ width: 100, height: 100 }}
-																		/>
-																	</View>
+															{order.productList.map(
+																(
+																	product,
+																	index
+																) => (
 																	<View
 																		style={{
-																			width: '65%',
-																			display: 'flex',
-																			flexDirection: 'column',
-																			justifyContent: 'space-between',
-																			paddingBottom: 10,
+																			display:
+																				'flex',
+																			flexDirection:
+																				'row',
 																		}}
+																		key={
+																			index +
+																			Math.random()
+																		}
 																	>
-																		<Text style={{ fontSize: 18, fontWeight: '500', textAlign: 'justify' }}>
-																			{product.name}
-																		</Text>
 																		<View
 																			style={{
-																				display: 'flex',
-																				flexDirection: 'row',
-																				justifyContent: 'space-between',
+																				backgroundColor:
+																					'white',
+																				width: '30%',
 																			}}
 																		>
-																			<Text style={{ fontSize: 18, fontWeight: 'bold' }}>
-																				{formatToVND(product.price)}
+																			<Image
+																				src={
+																					product.imageURL
+																				}
+																				resizeMode='contain'
+																				style={{
+																					width: 100,
+																					height: 100,
+																				}}
+																			/>
+																		</View>
+																		<View
+																			style={{
+																				width: '65%',
+																				display:
+																					'flex',
+																				flexDirection:
+																					'column',
+																				justifyContent:
+																					'space-between',
+																				paddingBottom: 10,
+																			}}
+																		>
+																			<Text
+																				style={{
+																					fontSize: 18,
+																					fontWeight:
+																						'500',
+																					textAlign:
+																						'justify',
+																				}}
+																			>
+																				{
+																					product.name
+																				}
 																			</Text>
-																			<Text style={{ fontSize: 18 }}>x {product.quantity}</Text>
+																			<View
+																				style={{
+																					display:
+																						'flex',
+																					flexDirection:
+																						'row',
+																					justifyContent:
+																						'space-between',
+																				}}
+																			>
+																				<Text
+																					style={{
+																						fontSize: 18,
+																						fontWeight:
+																							'bold',
+																					}}
+																				>
+																					{formatToVND(
+																						product.price
+																					)}
+																				</Text>
+																				<Text
+																					style={{
+																						fontSize: 18,
+																					}}
+																				>
+																					x{' '}
+																					{
+																						product.quantity
+																					}
+																				</Text>
+																			</View>
 																		</View>
 																	</View>
-																</View>
-															))}
+																)
+															)}
 														</View>
 														<View
 															style={{
 																display: 'flex',
-																flexDirection: 'row',
-																justifyContent: 'space-between',
+																flexDirection:
+																	'row',
+																justifyContent:
+																	'space-between',
 																paddingRight: 15,
-																borderBottomColor: 'gray',
+																borderBottomColor:
+																	'gray',
 																borderBottomWidth: 1,
 																paddingVertical: 5,
 															}}
 														>
-															<Text style={{ fontSize: 16 }}>Tổng thành tiền</Text>
-															<Text style={{ fontSize: 16, fontWeight: 'bold' }}>{formatToVND(order.totalPrice)}</Text>
+															<Text
+																style={{
+																	fontSize: 16,
+																}}
+															>
+																Tổng thành tiền
+															</Text>
+															<Text
+																style={{
+																	fontSize: 16,
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{formatToVND(
+																	order.totalPrice
+																)}
+															</Text>
 														</View>
 														<View
 															style={{
 																padding: 2,
-																borderBottomColor: 'gray',
+																borderBottomColor:
+																	'gray',
 																borderBottomWidth: 1,
 																paddingVertical: 5,
 															}}
@@ -319,25 +465,56 @@ const UserprofileScreen = ({ navigation }) => {
 															<Text
 																style={{
 																	color: getStatusColor(
-																		order.shippingList[order.shippingList.length - 1].statusString
+																		order
+																			.shippingList[
+																			order
+																				.shippingList
+																				.length -
+																				1
+																		]
+																			.statusString
 																	),
 																}}
 															>
-																{order.shippingList[order.shippingList.length - 1].statusString}
+																{
+																	order
+																		.shippingList[
+																		order
+																			.shippingList
+																			.length -
+																			1
+																	]
+																		.statusString
+																}
 															</Text>
 														</View>
-														<View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+														<View
+															style={{
+																display: 'flex',
+																flexDirection:
+																	'row',
+																justifyContent:
+																	'flex-end',
+															}}
+														>
 															<Pressable
 																style={{
 																	paddingVertical: 6,
 																	paddingHorizontal: 15,
-																	backgroundColor: 'tomato',
+																	backgroundColor:
+																		'tomato',
 																	marginVertical: 10,
 																	borderRadius: 5,
 																}}
 															>
 																<Text
-																	style={{ fontSize: 16, fontWeight: 'bold', letterSpacing: 0.2, color: 'white' }}
+																	style={{
+																		fontSize: 16,
+																		fontWeight:
+																			'bold',
+																		letterSpacing: 0.2,
+																		color: 'white',
+																	}}
 																>
 																	Chi tiết
 																</Text>
@@ -386,13 +563,20 @@ const UserprofileScreen = ({ navigation }) => {
 										marginBottom: 20,
 									}}
 								>
-									<LottieView source={require('../assets/orderStatus.json')} style={{ width: 200, height: 200 }} autoPlay loop />
+									<LottieView
+										source={require('../assets/orderStatus.json')}
+										style={{ width: 200, height: 200 }}
+										autoPlay
+										loop
+									/>
 									<Text
 										style={{
 											fontWeight: 'bold',
 											color: 'tomato',
 										}}
-										onPress={() => navigation.navigate('login')}
+										onPress={() =>
+											navigation.navigate('login')
+										}
 									>
 										Đăng nhập / Đăng ký{' '}
 										<Text
@@ -409,7 +593,15 @@ const UserprofileScreen = ({ navigation }) => {
 						</View>
 					</View>
 					{isLoggedIn && (
-						<View style={{ width: '100%', marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+						<View
+							style={{
+								width: '100%',
+								marginTop: 20,
+								display: 'flex',
+								flexDirection: 'row',
+								justifyContent: 'center',
+							}}
+						>
 							<Pressable
 								style={{
 									backgroundColor: 'lightgray',
@@ -421,7 +613,14 @@ const UserprofileScreen = ({ navigation }) => {
 									height: 40,
 								}}
 							>
-								<Text style={{ fontSize: 18, fontWeight: 'bold', letterSpacing: 1 }} onPress={() => logout()}>
+								<Text
+									style={{
+										fontSize: 18,
+										fontWeight: 'bold',
+										letterSpacing: 1,
+									}}
+									onPress={() => logout()}
+								>
 									ĐĂNG XUẤT
 								</Text>
 							</Pressable>

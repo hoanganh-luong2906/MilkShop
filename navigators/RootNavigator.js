@@ -18,6 +18,8 @@ import CartScreen from '../screens/CartScreen';
 import ProductDetailScreen from '../screens/admin/ProductDetailScreen';
 import StaffUpdateProduct from '../components/staff/StaffUpdateProduct';
 import UpdateAdminProfile from '../components/admin/UpdateAdminProfile';
+import UserprofileScreen from '../screens/UserProfileScreen';
+import UpdateProfile from '../screens/UpdateProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +33,10 @@ const RootNavigator = () => {
 			) : (
 				<NavigationContainer>
 					{!isLoggedIn ? (
-						<Stack.Navigator initialRouteName='landing' screenOptions={{ statusBarColor: 'black' }}>
+						<Stack.Navigator
+							initialRouteName='landing'
+							screenOptions={{ statusBarColor: 'black' }}
+						>
 							<Stack.Screen
 								name='landing'
 								component={MainNavigator}
@@ -62,7 +67,7 @@ const RootNavigator = () => {
 										fontWeight: 'bold',
 									},
 									statusBarColor: 'black',
-									headerBackVisible: false
+									headerBackVisible: false,
 								}}
 							/>
 							<Stack.Screen
@@ -90,7 +95,10 @@ const RootNavigator = () => {
 					) : (
 						<Stack.Navigator
 							initialRouteName={`${user?.role?.toLowerCase()}-home`}
-							screenOptions={{ headerShown: false, statusBarColor: 'black' }}
+							screenOptions={{
+								headerShown: false,
+								statusBarColor: 'black',
+							}}
 						>
 							{user?.role?.toLowerCase() === 'admin' ? (
 								<>
@@ -206,7 +214,15 @@ const RootNavigator = () => {
 									/>
 									<Stack.Screen
 										name='profile'
+										component={UserprofileScreen}
+									/>
+									<Stack.Screen
+										name='profile-spec'
 										component={ProfileScreen}
+									/>
+									<Stack.Screen
+										name='Update Profile'
+										component={UpdateProfile}
 									/>
 									<Stack.Screen
 										name='detail'
