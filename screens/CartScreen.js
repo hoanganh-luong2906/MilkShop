@@ -1,15 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
-import {
-	Text,
-	View,
-	StyleSheet,
-	FlatList,
-	TouchableOpacity,
-	Image,
-	ScrollView,
-	Pressable,
-} from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView, Pressable } from 'react-native';
 import useAuth from '../utils/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -45,9 +36,7 @@ const CartScreen = ({ navigation }) => {
 
 				setTotal(0);
 				tmpCart.map((item) => {
-					setTotal(
-						(prev) => prev + item.product.price * item.quantity
-					);
+					setTotal((prev) => prev + item.product.price * item.quantity);
 				});
 			}
 		};
@@ -57,7 +46,7 @@ const CartScreen = ({ navigation }) => {
 	function subtractQuantityProduct(addedProduct) {
 		try {
 			let newCart = originCart.map((item) => {
-				if ((item?.product._id ?? '') === addedProduct._id) {
+				if ((item?.product._id ?? '') === addedProduct._id && item?.user === (user?._id ? user?._id : 'guest')) {
 					if (item.quantity !== 0) {
 						item.quantity -= 1;
 					}
@@ -65,7 +54,7 @@ const CartScreen = ({ navigation }) => {
 				return item; // Add this line to return the updated item
 			});
 			newCart = newCart.filter((item) => item?.quantity > 0); // Assign the filtered array back to newCart
-			setCart([...newCart]);
+			//setCart([...newCart]);
 			AsyncStorage.setItem('cart', JSON.stringify(newCart));
 			setIsChanged(!isChanged);
 		} catch (error) {
@@ -76,18 +65,29 @@ const CartScreen = ({ navigation }) => {
 	function addQuantityProduct(product) {
 		try {
 			let newCart = originCart.map((item) => {
-				if ((item?.product._id ?? '') === product._id) {
+				if ((item?.product._id ?? '') === product._id && item?.user === (user?._id ? user?._id : 'guest')) {
 					if (item.quantity >= product.quantity) {
-						alert(
-							'Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.'
-						);
+						alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
 						return;
 					}
 					item.quantity += 1;
 				}
 				return item;
 			});
-			setCart([...newCart]);
+			//setCart([...newCart]);
+			AsyncStorage.setItem('cart', JSON.stringify(newCart));
+			setIsChanged(!isChanged);
+		} catch (error) {
+			alert('Có lỗi xảy ra: ' + error);
+		}
+	}
+
+	function deleteCart() {
+		try {
+			let newCart = originCart.filter((item) => {
+				return item.user !== (user?._id ? user?._id : 'guest');
+			});
+			setCart([]);
 			AsyncStorage.setItem('cart', JSON.stringify(newCart));
 			setIsChanged(!isChanged);
 		} catch (error) {
@@ -104,15 +104,8 @@ const CartScreen = ({ navigation }) => {
 				style={styles.linearGradient}
 			>
 				<View style={styles.navigationContainer}>
-					<Pressable
-						style={styles.button}
-						onPress={() => navigation.goBack()}
-					>
-						<Icon
-							name='arrow-back-outline'
-							size={23}
-							color='gray'
-						/>
+					<Pressable style={styles.button} onPress={() => navigation.goBack()}>
+						<Icon name='arrow-back-outline' size={23} color='gray' />
 					</Pressable>
 					<Text
 						style={{
@@ -123,31 +116,15 @@ const CartScreen = ({ navigation }) => {
 					>
 						Giỏ hàng
 					</Text>
-					<Pressable
-						style={styles.button}
-						onPress={() =>
-							navigation.reset({
-								index: 0,
-								routes: [{ name: 'landing' }],
-							})
-						}
-					>
-						<Icon
-							name='trash-bin'
-							size={23}
-							color='red'
-							style={{ opacity: 0.6 }}
-						/>
+					<Pressable style={styles.button} onPress={deleteCart}>
+						<Icon name='trash-bin' size={23} color='red' style={{ opacity: 0.6 }} />
 					</Pressable>
 				</View>
 				<View style={styles.productContainer}>
 					{cart.length > 0 ? (
 						<ScrollView showsVerticalScrollIndicator={false}>
 							{cart.map((item, index) => (
-								<View
-									key={index}
-									style={[styles.productContent]}
-								>
+								<View key={index} style={[styles.productContent]}>
 									<View
 										style={{
 											backgroundColor: 'white',
@@ -197,9 +174,7 @@ const CartScreen = ({ navigation }) => {
 													lineHeight: 24,
 												}}
 											>
-												{formatToVND(
-													item.product.price
-												)}
+												{formatToVND(item.product.price)}
 											</Text>
 											<View
 												style={{
@@ -212,22 +187,13 @@ const CartScreen = ({ navigation }) => {
 												<Pressable
 													style={{
 														padding: 2,
-														backgroundColor:
-															'lightgray',
+														backgroundColor: 'lightgray',
 														borderRadius: 5,
 														marginRight: 10,
 													}}
-													onPress={() =>
-														subtractQuantityProduct(
-															item?.product
-														)
-													}
+													onPress={() => subtractQuantityProduct(item?.product)}
 												>
-													<Icon
-														name='remove-outline'
-														size={20}
-														color={'black'}
-													/>
+													<Icon name='remove-outline' size={20} color={'black'} />
 												</Pressable>
 												<Text
 													style={{
@@ -241,22 +207,13 @@ const CartScreen = ({ navigation }) => {
 												<Pressable
 													style={{
 														padding: 2,
-														backgroundColor:
-															'lightgray',
+														backgroundColor: 'lightgray',
 														borderRadius: 5,
 														marginLeft: 10,
 													}}
-													onPress={() =>
-														addQuantityProduct(
-															item?.product
-														)
-													}
+													onPress={() => addQuantityProduct(item?.product)}
 												>
-													<Icon
-														name='add-outline'
-														size={20}
-														color={'black'}
-													/>
+													<Icon name='add-outline' size={20} color={'black'} />
 												</Pressable>
 											</View>
 										</View>
@@ -274,12 +231,7 @@ const CartScreen = ({ navigation }) => {
 								marginTop: '20%',
 							}}
 						>
-							<LottieView
-								style={{ flex: 1, width: '100%' }}
-								source={require('../assets/empty.json')}
-								autoPlay
-								loop
-							/>
+							<LottieView style={{ flex: 1, width: '100%' }} source={require('../assets/empty.json')} autoPlay loop />
 							<Text
 								style={{
 									textAlign: 'center',
@@ -309,10 +261,7 @@ const CartScreen = ({ navigation }) => {
 					}}
 				>
 					<Text style={{ fontSize: 16 }}>
-						Tạm tính:{' '}
-						<Text style={{ fontWeight: '500' }}>
-							{formatToVND(total)}
-						</Text>
+						Tạm tính: <Text style={{ fontWeight: '500' }}>{formatToVND(total)}</Text>
 					</Text>
 					<Text
 						style={{
@@ -322,8 +271,7 @@ const CartScreen = ({ navigation }) => {
 							textAlign: 'right',
 						}}
 					>
-						Tiến hành thanh toán để có thể áp dụng thêm nhiều mã
-						giảm giá hấp dẫn
+						Tiến hành thanh toán để có thể áp dụng thêm nhiều mã giảm giá hấp dẫn
 					</Text>
 				</View>
 				<View
@@ -348,14 +296,10 @@ const CartScreen = ({ navigation }) => {
 								justifyContent: 'center',
 								alignItems: 'center',
 							},
-							cart.length === 0
-								? { backgroundColor: 'gray' }
-								: { backgroundColor: 'tomato' },
+							cart.length === 0 ? { backgroundColor: 'gray' } : { backgroundColor: 'tomato' },
 						]}
 					>
-						<Text style={{ fontWeight: 'bold', color: 'white' }}>
-							THANH TOÁN
-						</Text>
+						<Text style={{ fontWeight: 'bold', color: 'white' }}>THANH TOÁN</Text>
 					</Pressable>
 				</View>
 			</View>
