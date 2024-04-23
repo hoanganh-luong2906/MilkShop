@@ -10,6 +10,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function ViewOrderScreen({ route }) {
   const navigation = useNavigation();
@@ -36,24 +37,32 @@ export default function ViewOrderScreen({ route }) {
   };
 
   return (
-    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-      <View style={styles.title}>
-        <TouchableOpacity onPress={goBack}>
-          <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
-        </TouchableOpacity>
-        <Text style={styles.titleText}>Chi tiết đơn hàng</Text>
-      </View>
-      <OrderDetail
-        productList={order.productList}
-        total={order.totalPrice}
-        discount={order.totalDiscount}
-        paymentMethod={order.paymentMethod}
-        timeOrder={order.timeOrder}
-        timePaid={order.timePayed}
-        timeStartShip={order.timeStartShip}
-        timeCompletion={order.timeCompletion}
-      />
-    </ScrollView>
+    <>
+      <LinearGradient colors={["#FFF3ED", "#FFFFFF"]} style={styles.screen}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.title}>
+            <TouchableOpacity onPress={goBack}>
+              <FontAwesome
+                name="chevron-left"
+                size={22}
+                style={styles.goBack}
+              />
+            </TouchableOpacity>
+            <Text style={styles.titleText}>Chi tiết đơn hàng</Text>
+          </View>
+          <OrderDetail
+            productList={order.productList}
+            total={order.totalPrice}
+            discount={order.totalDiscount}
+            paymentMethod={order.paymentMethod}
+            timeOrder={order.timeOrder}
+            timePaid={order.timePayed}
+            timeStartShip={order.timeStartShip}
+            timeCompletion={order.timeCompletion}
+          />
+        </ScrollView>
+      </LinearGradient>
+    </>
   );
 }
 
@@ -67,6 +76,16 @@ const OrderDetail = ({
   timeStartShip,
   timeCompletion,
 }) => {
+  function formatToVND(value) {
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      minimumFractionDigits: 0,
+    });
+
+    const formattedNumber = formatter.format(value);
+    return `${formattedNumber} VNĐ`;
+  }
+
   return (
     <View style={styles.card}>
       {productList?.map((product, index) => (
@@ -94,7 +113,9 @@ const OrderDetail = ({
                   flexDirection: "row-reverse",
                 }}
               >
-                <Text style={styles.unitPrice}>Đơn giá: {product.price}Đ</Text>
+                <Text style={styles.unitPrice}>
+                  Đơn giá: {formatToVND(product.price)}
+                </Text>
               </View>
             </View>
           </View>
@@ -102,17 +123,17 @@ const OrderDetail = ({
         </View>
       ))}
       <View style={styles.infoBox}>
-      <View style={styles.totalContainer}>
+        <View style={styles.totalContainer}>
           <Text style={styles.totalText}>Tổng</Text>
-          <Text style={styles.totalPrice}>{total}Đ</Text>
+          <Text style={styles.totalPrice}>{formatToVND(total)}</Text>
         </View>
         <View style={styles.totalContainer}>
           <Text style={styles.totalText}>Giảm</Text>
-          <Text style={styles.totalPrice}>{discount}Đ</Text>
+          <Text style={styles.totalPrice}>{formatToVND(discount)}</Text>
         </View>
         <View style={styles.totalContainer}>
           <Text style={styles.totalText}>Thành tiền</Text>
-          <Text style={styles.totalPrice}>{total - discount}Đ</Text>
+          <Text style={styles.totalPrice}>{formatToVND(total - discount)}</Text>
         </View>
         <View style={styles.grayLine}>
           <Text></Text>
@@ -157,7 +178,7 @@ const styles = StyleSheet.create({
   title: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 20
+    marginVertical: 20,
   },
   titleText: {
     flex: 1,
@@ -174,6 +195,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 10,
+    borderWidth: 2,
+    borderColor: "#FFBE98",
+    elevation: 5
   },
   item: {
     flexDirection: "row",
@@ -218,8 +242,8 @@ const styles = StyleSheet.create({
   unitPrice: {
     textAlign: "right",
     fontWeight: "bold",
-    fontSize: 22,
-    marginTop: 10
+    fontSize: 20,
+    marginTop: 10,
   },
   blackLine: {
     height: 2,
