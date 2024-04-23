@@ -1,19 +1,38 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import useAuth from "../utils/useAuth";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  const { user, isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, isChanged } = useAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Fetch user data from AsyncStorage
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem("user");
+        if (userData !== null) {
+          // User data found, parse and set it to state
+          setUser(JSON.parse(userData));
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    // Call the fetchUserData function when the component mounts
+    fetchUserData();
+  }, [isChanged]);
 
   const handleEditProfile = (id) => {
     navigation.navigate("Update Profile", { userId: id });
   };
-
   return (
     <View style={styles.screen}>
-      {isLoggedIn ? (
+      {isLoggedIn && user ? (
         <>
           <View style={styles.header}>
             <Text style={styles.headerText}>Hồ sơ cá nhân</Text>
@@ -87,12 +106,13 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    paddingVertical: 30,
+    paddingVertical: 0,
     marginVertical: 0,
   },
   header: {
     backgroundColor: "#FEBE98",
     padding: 10,
+    height: 70,
   },
   headerText: {
     textAlign: "center",

@@ -15,6 +15,7 @@ const StaffNavigator = () => {
   const screenOptions = ({ route }) => ({
     headerShown: false,
     tabBarShowLabel: false,
+    tabBarActiveTintColor: 'tomato',
     tabBarHideOnKeyboard: true,
     tabBarIcon: ({ focused, color }) => {
       let iconName;

@@ -6,30 +6,62 @@ import {
   TextInput,
   TouchableOpacity,
   ToastAndroid,
+  KeyboardAvoidingView,
+  ScrollView,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-// import moment from "moment";
+import moment from "moment";
 import ConfirmModal from "../components/admin/ConfirmModal";
 import DatePickerCustom from "../components/admin/DatePickerCustom";
+import { FontAwesome, AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import useAuth from "../utils/useAuth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function UpdateProfile({ route }) {
   const { userId } = route.params;
+  const { user, setUser, isChanged, setIsChanged } = useAuth();
+  const navigation = useNavigation();
+  const goBack = () => {
+    navigation.navigate("Profile");
+  };
+
   const [dateChooseDateOfBirth, setDateChooseDateOfBirth] = useState(
     new Date()
   );
-
+  const arrChooseGender = [
+    { title: "Nam", gender: true },
+    { title: "Nữ", gender: false },
+  ];
+  const [isShowedGender, setShowedGender] = useState(false);
   const [profile, setProfile] = useState({
-    gender: true, // true for male, false for female
-    dateOfBirth: new Date(),
-    phone: "",
-    address: "",
+    fullName: user.fullName || "",
+    gender: user.gender, // true for male, false for female
+    dateOfBirth: user.dateOfBirth || "",
+    phone: user.phone || "",
+    email: user.email || "",
+    address: user.address || "",
   });
 
   const [errors, setErrors] = useState({
     dateOfBirth: false,
     phone: false,
     address: false,
+    errorFinal: false,
   });
+
+  const [errorsString, setErrorsString] = useState({
+    dateOfBirth: "",
+    phone: "",
+    address: "",
+    errorFinal: "",
+  });
+
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const handleConfirm = () => {
+    setConfirmVisible(!confirmVisible);
+  };
 
   const handleChooseDateOfBirth = (event, selectedDate) => {
     // const currentDate = selectedDate;
@@ -53,35 +85,81 @@ export default function UpdateProfile({ route }) {
       dateOfBirth: profile.dateOfBirth === "",
       phone: profile.phone === "",
       address: profile.address === "",
+      errorFinal: false,
     };
+    const validationsString = {
+      dateOfBirth: undefined,
+      phone: undefined,
+      address: undefined,
+      errorFinal: undefined,
+    };
+    if (profile.dateOfBirth === "") {
+      validationsString.dateOfBirth = "Ngày sinh trống";
+      validations.dateOfBirth = true;
+    } else {
+      validations.dateOfBirth = false;
+    }
 
+    if (profile.phone === "") {
+      validationsString.phone = "SĐT trống";
+      validations.phone = true;
+    } else {
+      validations.phone = false;
+    }
+
+    if (profile.address === "") {
+      validationsString.address = "Địa chỉ trống";
+      validations.address = true;
+    } else {
+      validations.address = false;
+    }
     const isValid = Object.values(validations).every((value) => !value);
     setErrors(validations);
-    return isValid;
+    return {
+      isValid,
+      errors: validations,
+      validationsString: validationsString,
+    };
   };
 
   const saveChanges = async () => {
-    if (validateForm()) {
+    const { isValid, errors, validationsString } = validateForm();
+    setErrors(errors);
+    setErrorsString(validationsString);
+    if (isValid) {
       try {
         const data = await putProfile(profile);
         if (data.status === 201) {
           // Clear form after successful update
-          setProfile({
-            gender: true,
-            dateOfBirth: new Date(),
-            phone: "",
-            address: "",
-          });
-          showError("Profile updated successfully");
+          // setUser(profile)
+          showError("Cập nhật thành công");
+        } else if (data.status == 400) {
+          setErrors((prev) => ({
+            ...prev,
+            errorFinal: true,
+          }));
+          setErrorsString((prev) => ({
+            ...prev,
+            errorFinal: data.message,
+          }));
         } else {
-          showError(`Server Error: ${data.message}`);
+          // setProfile({
+          //   gender: true,
+          //   dateOfBirth: new Date(),
+          //   phone: "",
+          //   address: "",
+          // });
+          showError("Cập nhật thành công");
+          setConfirmVisible(false)
+          await AsyncStorage.setItem("user", JSON.stringify(profile))
+          setIsChanged(!isChanged)
         }
       } catch (error) {
-        console.error("Error updating profile:", error);
+        console.error("Lỗi cập nhât:", error);
         showError("An error occurred while updating profile");
       }
     } else {
-      showError("Please fill all required fields");
+      showError("Làm ơn điền đủ");
     }
   };
 
@@ -90,7 +168,7 @@ export default function UpdateProfile({ route }) {
   };
 
   async function putProfile(profileData) {
-    const url = `https://your-api-url/account/${userId}`;
+    const url = `https://milk-shop-eight.vercel.app/api/account/${userId}`;
     try {
       const response = await fetch(url, {
         method: "PUT",
@@ -101,76 +179,259 @@ export default function UpdateProfile({ route }) {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error putting profile:", error);
+      console.error("Có lỗi xảy ra:", error);
       throw error;
     }
   }
 
   return (
-    <LinearGradient colors={["#FFF3ED", "#FFFFFF"]} style={styles.container}>
-      <View style={styles.inputContainer}>
-        <Text>Gender:</Text>
-        <TextInput
-          style={styles.input}
-          value={profile.gender ? "Male" : "Female"}
-          editable={false}
-        />
-      </View>
-      <DatePickerCustom
-        isError={errors.dateOfBirth}
-        date={dateChooseDateOfBirth}
-        dateShow={
-          profile.dateOfBirth.length == 0 ? "Ngày sinh" : profile.dateOfBirth
-        }
-        onChange={handleChooseDateOfBirth}
-      />
-      <View style={styles.inputContainer}>
-        <Text>Phone:</Text>
-        <TextInput
-          style={[styles.input, errors.phone && styles.inputError]}
-          placeholder="Phone"
-          value={profile.phone}
-          onChangeText={(value) => handleChangeData("phone", value)}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text>Address:</Text>
-        <TextInput
-          style={[styles.input, errors.address && styles.inputError]}
-          placeholder="Address"
-          value={profile.address}
-          onChangeText={(value) => handleChangeData("address", value)}
-        />
-      </View>
-      <TouchableOpacity style={styles.saveButton} onPress={saveChanges}>
-        <Text style={styles.buttonText}>Update Profile</Text>
-      </TouchableOpacity>
-    </LinearGradient>
+    <KeyboardAvoidingView
+      behavior="padding"
+      style={{
+        flex: 1,
+      }}
+    >
+      <ScrollView>
+        <View style={styles.title}>
+          <TouchableOpacity onPress={goBack}>
+            <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
+          </TouchableOpacity>
+          <Text style={styles.titleText}>Cập nhật hồ sơ</Text>
+        </View>
+        <LinearGradient
+          colors={["#FFF3ED", "#FFFFFF"]}
+          style={styles.container}
+        >
+          <Text>Giới tính:</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <Pressable
+                style={[styles.filterContainer, { zIndex: 2 }]}
+                onPress={() => {
+                  setShowedGender(!isShowedGender);
+                }}
+              >
+                <View style={styles.filterWrapper}>
+                  <Text
+                    style={[
+                      styles.inputFilter,
+                      errors.gender ? styles.inputError : null,
+                    ]}
+                  >
+                    {profile.gender ? "Nam" : "Nữ"}
+                  </Text>
+                  <View style={styles.iconFilterContainer}>
+                    <AntDesign
+                      name={isShowedGender ? "caretup" : "caretdown"}
+                      size={15}
+                      color={"black"}
+                    />
+                  </View>
+                </View>
+                {isShowedGender && (
+                  <View style={styles.showItem}>
+                    {arrChooseGender.map((gender, index) => (
+                      <Pressable
+                        style={[
+                          styles.item,
+                          {
+                            borderTopLeftRadius: index === 0 ? 20 : 0,
+                            borderTopRightRadius: index === 0 ? 20 : 0,
+                            borderBottomLeftRadius: index === 1 ? 20 : 0,
+                            borderBottomRightRadius: index === 1 ? 20 : 0,
+                            backgroundColor:
+                              profile.gender === (index === 0)
+                                ? "#FFBE98"
+                                : "#FEECE2",
+                            borderWidth: 1,
+                          },
+                        ]}
+                        onPress={() => {
+                          setProfile((prev) => ({
+                            ...prev,
+                            gender: index === 0 ? true : false,
+                          }));
+                          setShowedGender(!isShowedGender);
+                        }}
+                        key={index}
+                      >
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            textAlignVertical: "center",
+                            paddingLeft: 10,
+                          }}
+                        >
+                          {gender.title}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+              </Pressable>
+            </View>
+          </View>
+          <Text>Ngày sinh:</Text>
+          <DatePickerCustom
+            isError={errors.dateOfBirth}
+            date={dateChooseDateOfBirth}
+            dateShow={
+              profile?.dateOfBirth?.length == 0
+                ? "Ngày sinh"
+                : profile.dateOfBirth
+            }
+            onChange={handleChooseDateOfBirth}
+          />
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              {errors.dateOfBirth && (
+                <Text style={[styles.textError]}>
+                  {errorsString.dateOfBirth}
+                </Text>
+              )}
+            </View>
+          </View>
+          <Text>SĐT:</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={[styles.input, errors.phone && styles.inputError]}
+                placeholder="SĐT"
+                value={profile.phone}
+                onChangeText={(value) => handleChangeData("phone", value)}
+              />
+            </View>
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              {errors.phone && (
+                <Text style={[styles.textError]}>{errorsString.phone}</Text>
+              )}
+            </View>
+          </View>
+          <Text>Địa chỉ:</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={[styles.input, errors.address && styles.inputError]}
+                placeholder="Địa chỉ"
+                value={profile.address}
+                onChangeText={(value) => handleChangeData("address", value)}
+              />
+            </View>
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              {errors.address && (
+                <Text style={[styles.textError]}>{errorsString.address}</Text>
+              )}
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => handleConfirm()}
+          >
+            <Text style={styles.buttonText}>Cập nhật</Text>
+          </TouchableOpacity>
+          <ConfirmModal
+            textTitle={"Bạn có chắc chắn sửa hồ sơ?"}
+            visible={confirmVisible}
+            onClose={() => setConfirmVisible(false)}
+            onConfirm={saveChanges}
+          />
+        </LinearGradient>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    marginBottom: 5,
+  },
+  title: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    height: 70,
+    backgroundColor: "#FFBE98",
+  },
+  titleText: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  goBack: {
+    marginLeft: 20,
+  },
   container: {
     flex: 1,
     padding: 20,
   },
   inputContainer: {
-    marginBottom: 10,
+    flex: 1,
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  inputWrapper: {
+    flex: 1,
   },
   input: {
     borderColor: "grey",
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginTop: 5,
+  },
+  filterContainer: {
+    flex: 1,
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  filterWrapper: {
+    flex: 1,
+    position: "relative",
+  },
+  inputFilter: {
+    borderColor: "grey",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 3.5,
+  },
+  iconFilterContainer: {
+    position: "absolute",
+    right: 10,
+    top: 5,
+  },
+  showItem: {
+    position: "absolute",
+    bottom: -100,
+    backgroundColor: "#FEECE2",
+    flex: 1,
+    width: "100%",
+    height: 100,
+    borderRadius: 20,
+  },
+  item: {
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderColor: "black",
   },
   inputError: {
-    borderColor: "red",
+    borderColor: "red", // Change border color to red for invalid input
+  },
+  textError: {
+    color: "red", // Change border color to red for invalid input
+    fontSize: 12,
+    paddingLeft: 10,
   },
   saveButton: {
     backgroundColor: "#FFBE98",
     paddingVertical: 10,
     borderRadius: 15,
+    marginTop: 260,
     alignItems: "center",
   },
   buttonText: {
