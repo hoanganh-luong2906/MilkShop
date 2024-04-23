@@ -128,7 +128,12 @@ const LandingCategory = ({ categoryList, products, vouchers, navigation }) => {
 												fontWeight: 'bold',
 											}}
 										>
-											{formatToVND(product.price)}
+											{formatToVND(
+												product.price -
+													(product.price *
+														product.sales) /
+														100
+											)}
 										</Text>
 									</Pressable>
 								))}

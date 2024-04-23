@@ -93,7 +93,7 @@ const LoginScreen = ({ navigation }) => {
 				{errorMsg?.length > 0 ? (
 					<Text style={styles.errorMessage}>{errorMsg}</Text>
 				) : (
-					<View style={{ height: 38 }}></View>
+					<View style={{ height: 10 }}></View>
 				)}
 				<Pressable
 					style={[
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 		fontWeight: 'bold',
-		marginTop: 50,
+		marginTop: 30,
 		marginBottom: 40,
 		width: '100%',
 		textAlign: 'center',
