@@ -737,12 +737,6 @@ export default function AddProduct() {
 }
 
 const styles = StyleSheet.create({
-    title: {
-        textAlign: "center",
-        textAlignVertical: "center",
-        fontSize: 24,
-        fontWeight: "bold",
-    },
     inputContainer: {
         flex: 1,
         flexDirection: "row",
