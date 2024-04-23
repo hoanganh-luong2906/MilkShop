@@ -145,66 +145,61 @@ export default function AddVoucher() {
         if (voucher.discount === "" || voucher.discount == undefined) {
             validationsString.discount = "Giá giảm trống";
             validations.discount = true;
+        } else if (!isPositiveIntegerAndGreater(voucher.discount)) {
+            validationsString.discount = `Giá giảm phải đúng định dạng. VD: "50"`;
+            if (voucher.isPercent) {
+                if (parseInt(voucher.discount, 10) <= 0 || parseInt(voucher.discount, 10) > 100) {
+                    validationsString.discount = `Giá giảm phải nằm trong khoảng từ 1 đến 100. VD: "50"`;
+                }
+            } else {
+                if (parseInt(voucher.discount, 10) <= 0) {
+                    validationsString.discount = `Giá giảm phải lớn hơn 0`;
+                }
+            }
+            validations.discount = true;
+        } else if (isPositiveIntegerAndGreater(voucher.discount)) {
+            if (voucher.isPercent) {
+                if (parseInt(voucher.discount, 10) > 100) {
+                    validationsString.discount = `Giá giảm phải nằm trong khoảng từ 1 đến 100. VD: "50"`;
+                    validations.discount = true;
+                }
+            } else {
+                if (parseInt(voucher.discount, 10) <= 0) {
+                    validationsString.discount = `Giá giảm phải lớn hơn 0`;
+                    validations.discount = true;
+                }
+            }
         } else {
             validations.discount = false;
         }
-        if (voucher.isPercent) {
-            if (!isPositiveIntegerAndGreater(voucher.discount)) {
-                validationsString.discount = `Giá giảm phải đúng định dạng. VD: "50"`;
-                if (voucher.discount <= 0 || voucher.discount > 100) {
-                    validationsString.discount = `Giá giảm phải nằm trong khoảng`;
-                }
-                validations.discount = true;
-            } else {
-                validations.discount = false;
-            }
 
+        //Description
+        if (voucher.description === "") {
+            validationsString.description = "Mô tả trống";
+            validations.description = true;
+        } else {
+            validations.description = false;
         }
 
-        // //Description
-        // if (voucher.description === "") {
-        //     validationsString.description = "Mô tả trống";
-        //     validations.description = true;
-        // } else {
-        //     validations.description = false;
-        // }
+        //categories_applied
+        if (voucher.categories_applied.length == 0) {
+            validationsString.categories_applied = "Phải chọn ít nhất 1 thể loại để áp dụng";
+            validations.categories_applied = true;
+        } else {
+            validations.categories_applied = false;
+        }
 
-        // //Brand
-        // if (voucher.brandName === "") {
-        //     validationsString.brandName = "Tên hãng trống";
-        //     validations.brandName = true;
-        // } else {
-        //     validations.brandName = false;
-        // }
-
-        // //Category
-        // if (voucher.category.name === "") {
-        //     validationsString.category = "Thể loại trống";
-        //     validations.category = true;
-        // } else {
-        //     validations.category = false;
-        // }
-
-        // //Image
-        // if (voucher.imageURL === "") {
-        //     validationsString.imageURL = "Hình ảnh trống";
-        //     validations.imageURL = true;
-        // } else {
-        //     validations.imageURL = false;
-        // }
-
-        // const currentDate = moment(new Date()).format('DD/MM/YYYY');
-        // //Expired date
-        // if (voucher.expiredDate === "") {
-        //     validationsString.expiredDate = "Hạn sử dụng trống";
-        //     validations.expiredDate = true;
-        // } else if (compareDates(voucher.expiredDate, currentDate) < 0) {
-        //     validationsString.expiredDate = "Hạn sử dụng nhỏ hơn ngày hiện tại";
-        //     validations.expiredDate = true;
-        // } else {
-        //     validations.expiredDate = false;
-        // }
-
+        const currentDate = moment(new Date()).format('DD/MM/YYYY');
+        //Expired date
+        if (voucher.endAt === "") {
+            validationsString.endAt = "Ngày hết hạn trống";
+            validations.endAt = true;
+        } else if (compareDates(voucher.endAt, currentDate) <= 0) {
+            validationsString.endAt = "Ngày hết hạn phải lớn hơn ngày hiện tại";
+            validations.endAt = true;
+        } else {
+            validations.endAt = false;
+        }
 
         // Check if all fields are valid
         const isValid = Object.values(validations).every(value => !value);
@@ -219,13 +214,7 @@ export default function AddVoucher() {
         setErrors(errors);
         setErrorsString(validationsString);
         if (isValid) {
-            // Implement logic to save the edited voucher information
-            // For simplicity, just logging the edited voucher name
-            const copyProduct = {
-                ...voucher,
-                category: voucher.category._id,
-            };
-            const data = await postVoucher(copyProduct);
+            const data = await postVoucher(voucher);
             if (data.status == 201) {
                 setVoucher({
                     discount: undefined,
@@ -234,7 +223,7 @@ export default function AddVoucher() {
                     categories_applied: [],
                     endAt: "",
                 })
-                showError("Tạo sản phẩm thành công");
+                showError("Tạo mã giảm giá thành công");
             } else if (data.status == 400) {
                 // showError(`${data.message}`);
                 setErrors(prev => ({
@@ -426,7 +415,7 @@ export default function AddVoucher() {
                         <View style={styles.filterWrapper}>
                             <Text style={[
                                 styles.inputFilter,
-                                errors.category ? styles.inputError : null
+                                errors.categories_applied ? styles.inputError : null
                             ]}>
                                 Chọn thể loại áp dụng mã giảm giá
                             </Text>
@@ -465,13 +454,24 @@ export default function AddVoucher() {
                             }
                         </View>
                     }
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputWrapper}>
+                            {
+                                errors.categories_applied &&
+                                <Text style={[
+                                    styles.textError
+                                ]}
+                                >{errorsString.categories_applied}</Text>
+                            }
+                        </View>
+                    </View>
 
                     {/* endAt */}
                     <DatePickerCustom isError={errors.endAt} date={dateChooseEndDate} dateShow={voucher.endAt.length == 0 ? "Ngày hết hạn" : voucher.endAt} onChange={handleChooseEndDate} />
                     <View style={styles.inputContainer}>
                         <View style={styles.inputWrapper}>
                             {
-                                errors.expiredDate &&
+                                errors.endAt &&
                                 <Text style={[
                                     styles.textError
                                 ]}
@@ -519,7 +519,7 @@ export default function AddVoucher() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <ConfirmModal textTitle={"Bạn có chắc chắn tạo sản phẩm?"} visible={confirmVisible} onClose={() => setConfirmVisible(false)} onConfirm={saveChanges} />
+                    <ConfirmModal textTitle={"Bạn có chắc chắn tạo mã giảm giá này?"} visible={confirmVisible} onClose={() => setConfirmVisible(false)} onConfirm={saveChanges} />
                 </ScrollView>
             </LinearGradient >
         </KeyboardAvoidingView>

@@ -11,12 +11,11 @@ import MainNavigator from './MainNavigator';
 import StaffNavigator from './StaffNavigator';
 import ProfileScreen from '../screens/ProfileScreen';
 import AddProduct from '../components/admin/AddProduct';
-import { Text, View } from 'react-native';
 import LoadingScreen from '../screens/Loading';
 import UpdateProduct from '../components/admin/UpdateProduct';
 import AddVoucher from '../components/staff/AddVoucher';
-import UpdateVoucher from '../components/staff/UpdateVoucher';
 import CartScreen from '../screens/CartScreen';
+import ProductDetailScreen from '../screens/admin/ProductDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,7 +48,19 @@ const RootNavigator = () => {
 								name='register'
 								component={RegisterScreen}
 								options={{
-									headerShown: false,
+									headerTitle: 'ĐĂNG KÝ',
+									headerShown: true,
+									headerTitleAlign: 'center',
+									headerTintColor: 'black',
+									headerStyle: {
+										backgroundColor: '#FFBE98',
+									},
+									headerTitleStyle: {
+										fontSize: 25,
+										fontWeight: 'bold',
+									},
+									statusBarColor: 'black',
+									headerBackVisible: false
 								}}
 							/>
 							<Stack.Screen
@@ -84,6 +95,13 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='admin-home'
 										component={AdminNavigator}
+										options={{
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
+										name='admin-product-detail'
+										component={ProductDetailScreen}
 										options={{
 											statusBarColor: 'black',
 										}}
@@ -130,21 +148,6 @@ const RootNavigator = () => {
 										component={AddVoucher}
 										options={{
 											headerTitle: 'Thêm mã giảm giá',
-											headerShown: true,
-											headerTitleAlign: 'center',
-											headerTintColor: 'black',
-											headerStyle: {
-												backgroundColor: '#FFBE98',
-											},
-											headerTitleStyle: { fontSize: 25 },
-											statusBarColor: 'black',
-										}}
-									/>
-									<Stack.Screen
-										name='staff-update-voucher'
-										component={UpdateVoucher}
-										options={{
-											headerTitle: 'Cập nhật mã giảm giá',
 											headerShown: true,
 											headerTitleAlign: 'center',
 											headerTintColor: 'black',

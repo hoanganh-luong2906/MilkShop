@@ -31,7 +31,7 @@ function removeVietnameseDiacritics(str) {
     .replace(/Đ/g, "D");
 }
 
-const AdminHomeScreen = () => {
+const AdminHomeScreen = ({ navigation }) => {
   const categories = [
     {
       id: 1,
@@ -90,7 +90,7 @@ const AdminHomeScreen = () => {
         )
       )
       .catch((error) => console.error(error));
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, data]);
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
@@ -112,12 +112,14 @@ const AdminHomeScreen = () => {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ProductCard
+            product={item}
             name={item.name}
             imageUrl={item.imageURL}
             price={item.price}
             rating={item.percentageRating}
             count={item.count}
             sales={item.sales}
+            navigation={navigation}
           />
         )}
         numColumns={2}
@@ -155,10 +157,22 @@ const CategoryContainer = ({
   );
 };
 
-const ProductCard = ({ name, imageUrl, price, rating, count, sales }) => {
+const ProductCard = ({
+  product,
+  name,
+  imageUrl,
+  price,
+  rating,
+  count,
+  sales,
+  navigation,
+}) => {
   return (
     <ScrollView>
-      <Pressable style={styles.productCard}>
+      <Pressable
+        style={styles.productCard}
+        onPress={() => navigation.navigate("admin-product-detail", {product: product, navigation: navigation})}
+      >
         <Image
           src={imageUrl}
           style={styles.productImages}
