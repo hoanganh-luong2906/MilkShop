@@ -27,28 +27,80 @@ function formatToVND(value) {
 
 const CartScreen = ({ navigation }) => {
 	const [cart, setCart] = useState([]);
-	const { isChanged, user } = useAuth();
+	const [originCart, setOriginCart] = useState([]);
+	const { isChanged, user, setIsChanged } = useAuth();
+	const [total, setTotal] = useState(0);
 
 	useEffect(() => {
 		const loadCart = async () => {
 			const cartDB = await AsyncStorage.getItem('cart');
 			if (cartDB) {
+				setOriginCart(JSON.parse(cartDB));
+
 				let tmpCart = JSON.parse(cartDB);
 				tmpCart = tmpCart.filter((product) => {
 					return product?.user === (user?._id ? user?._id : 'guest');
 				});
 				setCart([...tmpCart]);
+
+				setTotal(0);
+				tmpCart.map((item) => {
+					setTotal(
+						(prev) => prev + item.product.price * item.quantity
+					);
+				});
 			}
 		};
 		loadCart();
 	}, [isChanged]);
+
+	function subtractQuantityProduct(addedProduct) {
+		try {
+			let newCart = originCart.map((item) => {
+				if ((item?.product._id ?? '') === addedProduct._id) {
+					if (item.quantity !== 0) {
+						item.quantity -= 1;
+					}
+				}
+				return item; // Add this line to return the updated item
+			});
+			newCart = newCart.filter((item) => item?.quantity > 0); // Assign the filtered array back to newCart
+			setCart([...newCart]);
+			AsyncStorage.setItem('cart', JSON.stringify(newCart));
+			setIsChanged(!isChanged);
+		} catch (error) {
+			alert('Có lỗi xảy ra: ' + error);
+		}
+	}
+
+	function addQuantityProduct(product) {
+		try {
+			let newCart = originCart.map((item) => {
+				if ((item?.product._id ?? '') === product._id) {
+					if (item.quantity >= product.quantity) {
+						alert(
+							'Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.'
+						);
+						return;
+					}
+					item.quantity += 1;
+				}
+				return item;
+			});
+			setCart([...newCart]);
+			AsyncStorage.setItem('cart', JSON.stringify(newCart));
+			setIsChanged(!isChanged);
+		} catch (error) {
+			alert('Có lỗi xảy ra: ' + error);
+		}
+	}
 
 	return (
 		<View style={styles.container}>
 			<LinearGradient
 				start={{ x: 0, y: 0 }}
 				end={{ x: 0, y: 1.2 }}
-				colors={['#FFF3ED', '#FFF3ED', '#FFFFFF']}
+				colors={['#FFF3ED', '#FFF3ED', '#FFFFFF', '#FFFFFF']}
 				style={styles.linearGradient}
 			>
 				<View style={styles.navigationContainer}>
@@ -141,7 +193,7 @@ const CartScreen = ({ navigation }) => {
 												style={{
 													fontSize: 21,
 													fontWeight: 'bold',
-													letterSpacing: 1,
+													letterSpacing: 0.3,
 													lineHeight: 24,
 												}}
 											>
@@ -165,6 +217,11 @@ const CartScreen = ({ navigation }) => {
 														borderRadius: 5,
 														marginRight: 10,
 													}}
+													onPress={() =>
+														subtractQuantityProduct(
+															item?.product
+														)
+													}
 												>
 													<Icon
 														name='remove-outline'
@@ -176,6 +233,7 @@ const CartScreen = ({ navigation }) => {
 													style={{
 														fontSize: 20,
 														fontWeight: 'bold',
+														lineHeight: 23,
 													}}
 												>
 													{item.quantity}
@@ -188,6 +246,11 @@ const CartScreen = ({ navigation }) => {
 														borderRadius: 5,
 														marginLeft: 10,
 													}}
+													onPress={() =>
+														addQuantityProduct(
+															item?.product
+														)
+													}
 												>
 													<Icon
 														name='add-outline'
@@ -234,6 +297,68 @@ const CartScreen = ({ navigation }) => {
 					)}
 				</View>
 			</LinearGradient>
+			<View style={styles.summaryContainer}>
+				<View
+					style={{
+						width: '65%',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'flex-end',
+						paddingHorizontal: 15,
+					}}
+				>
+					<Text style={{ fontSize: 16 }}>
+						Tạm tính:{' '}
+						<Text style={{ fontWeight: '500' }}>
+							{formatToVND(total)}
+						</Text>
+					</Text>
+					<Text
+						style={{
+							fontSize: 14,
+							fontStyle: 'italic',
+							opacity: 0.5,
+							textAlign: 'right',
+						}}
+					>
+						Tiến hành thanh toán để có thể áp dụng thêm nhiều mã
+						giảm giá hấp dẫn
+					</Text>
+				</View>
+				<View
+					style={{
+						width: '35%',
+						paddingVertical: 10,
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+				>
+					<Pressable
+						style={[
+							{
+								width: 115,
+								paddingHorizontal: 10,
+								paddingVertical: 10,
+								backgroundColor: 'tomato',
+								borderRadius: 20,
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							},
+							cart.length === 0
+								? { backgroundColor: 'gray' }
+								: { backgroundColor: 'tomato' },
+						]}
+					>
+						<Text style={{ fontWeight: 'bold', color: 'white' }}>
+							THANH TOÁN
+						</Text>
+					</Pressable>
+				</View>
+			</View>
 		</View>
 	);
 };
@@ -241,6 +366,7 @@ const CartScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		position: 'relative',
 	},
 	linearGradient: {
 		flex: 1,
@@ -252,9 +378,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginTop: 40,
+		marginTop: 20,
 		paddingHorizontal: 30,
-		paddingBottom: 10,
 	},
 	button: {
 		width: 40,
@@ -268,6 +393,7 @@ const styles = StyleSheet.create({
 	productContainer: {
 		flex: 1,
 		padding: 15,
+		marginBottom: 95,
 	},
 	productContent: {
 		width: '98%',
@@ -275,12 +401,25 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		paddingVertical: 15,
 		paddingHorizontal: 10,
-		marginVertical: 10,
+		marginVertical: 5,
 		marginHorizontal: 2,
 		borderRadius: 10,
 		elevation: 2,
 		backgroundColor: 'white',
 		overflow: 'hidden',
+	},
+	summaryContainer: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		width: '100%',
+		height: 80,
+		backgroundColor: 'white',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		elevation: 10,
+		zIndex: 999,
 	},
 });
 
