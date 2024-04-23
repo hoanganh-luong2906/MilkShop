@@ -145,20 +145,20 @@ export default function AddVoucher() {
         if (voucher.discount === "" || voucher.discount == undefined) {
             validationsString.discount = "Giá giảm trống";
             validations.discount = true;
+        } else if (!isPositiveIntegerAndGreater(voucher.discount)) {
+            validationsString.discount = `Giá giảm phải đúng định dạng. VD: "50"`;
+            if (voucher.isPercent) {
+                if (voucher.discount <= 0 || voucher.discount > 100) {
+                    validationsString.discount = `Giá giảm phải nằm trong khoảng từ 1 đến 100. VD: "50"`;
+                }
+            } else {
+                if (voucher.discount <= 0) {
+                    validationsString.discount = `Giá giảm phải lớn hơn 0`;
+                }
+            }
+            validations.discount = true;
         } else {
             validations.discount = false;
-        }
-        if (voucher.isPercent) {
-            if (!isPositiveIntegerAndGreater(voucher.discount)) {
-                validationsString.discount = `Giá giảm phải đúng định dạng. VD: "50"`;
-                if (voucher.discount <= 0 || voucher.discount > 100) {
-                    validationsString.discount = `Giá giảm phải nằm trong khoảng`;
-                }
-                validations.discount = true;
-            } else {
-                validations.discount = false;
-            }
-
         }
 
         // //Description
