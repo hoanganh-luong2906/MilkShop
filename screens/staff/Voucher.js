@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Pressable,
   Dimensions,
+  Image,
 } from 'react-native';
 import React, { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -42,6 +43,7 @@ export default function Voucher({ navigation }) {
       {isLoggedIn && (
         <>
           <ScrollView style={styles.mainScreen}>
+          <Text style={styles.title}>Quản lí mã giảm giá</Text>
             {/* Function 1 */}
             <Pressable
               style={styles.functionContainerStyle}
@@ -61,6 +63,7 @@ export default function Voucher({ navigation }) {
                 color='black'
               />
             </Pressable>
+            <Image style={styles.image} source={require('../../assets/voucher.png')} resizeMode='cover'  />
           </ScrollView>
         </>
       )
@@ -79,6 +82,12 @@ const styles = StyleSheet.create({
   },
   mainScreen: {
     flex: 1,
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 20,
   },
   functionContainerStyle: {
     flex: 1,
@@ -103,4 +112,10 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 15,
   },
+  image: {
+    width: 300,
+    height: 350,
+    alignSelf: "center",
+    backgroundColor: "#FFFFFF"
+  }
 });

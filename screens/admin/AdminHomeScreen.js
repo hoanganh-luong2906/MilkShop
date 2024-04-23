@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Image,
   Pressable,
@@ -9,9 +9,10 @@ import {
   FlatList,
   View,
 } from "react-native";
-import { Ionicons, Octicons } from "@expo/vector-icons";
-import Icon from "react-native-vector-icons/Ionicons";
+import { Octicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from "@react-navigation/native";
 
 function formatToVND(value) {
   const formatter = new Intl.NumberFormat("vi-VN", {
@@ -32,83 +33,92 @@ function removeVietnameseDiacritics(str) {
 }
 
 const AdminHomeScreen = ({ navigation }) => {
-  const categories = [
-    {
-      id: 1,
-      title: "Sữa tươi các loại",
-      imageUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzeoWXfn3vxRKqAI6MWlQ4jX45LNZRfJFF1UKkuDEEQg&s",
-    },
-    {
-      id: 2,
-      title: "Sữa cho mẹ mang thai",
-      imageUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2ssLBbXs5hb8zcdy7ryTVQ434v-GAELGPGZX6L4_qJQ&s",
-    },
-    {
-      id: 3,
-      title: "Sữa thực vật",
-      imageUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRE-5Hd_EV06614cxhufCT63nyVIV-VoUoQYpfh9iEEw&s",
-    },
-    {
-      id: 4,
-      title: "Sữa bột cao cấp",
-      imageUrl:
-        "https://static.vecteezy.com/system/resources/previews/020/880/179/original/milk-powder-icon-style-free-vector.jpg",
-    },
-    {
-      id: 5,
-      title: "Sữa cho người cao tuổi",
-      imageUrl:
-        "https://previews.123rf.com/images/vectorchef/vectorchef1506/vectorchef150600531/40648993-milk-icon.jpg",
-    },
-    {
-      id: 6,
-      title: "Sữa chua",
-      imageUrl:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn3qWtJz7QhOMuwwfhDQAk_W7ys8-tE4Y8BgPmS9q4GA&s",
-    },
-  ];
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [arrSearch, setArrSearch] = useState([]);
+  const [arrFilter, setArrFilter] = useState([]);
+  const [arrCategoriesData, setCategoriesData] = useState([{ _id: "", name: "" }]);
 
-  useEffect(() => {
+  const handleGetProduct = () => {
     fetch("https://milk-shop-eight.vercel.app/api/product/top")
       .then((response) => response.json())
-      .then((json) =>
-        setData(
-          json.data.filter(
-            (product) =>
-              (!selectedCategory ||
-                product.category.name === selectedCategory) &&
-              removeVietnameseDiacritics(product.name.toLowerCase()).includes(
-                removeVietnameseDiacritics(searchQuery.toLowerCase())
-              )
+      .then((res) => {
+        if (res.status == 200) {
+          setData(
+            res.data
           )
+        } else {
+          setData([])
+        }
+      }
+      )
+      .catch((error) => {
+        console.log(error);
+        setData([])
+      });
+  }
+
+  const handleSearchProduct = (searchValue) => {
+    setSelectedCategory(null); // Unselect category
+    setArrFilter([]);
+
+    setSearchQuery(searchValue);
+    if (searchValue.length != 0) {
+      setArrSearch(
+        data.filter(
+          (product) =>
+            removeVietnameseDiacritics(product.name.toLowerCase()).includes(
+              removeVietnameseDiacritics(searchQuery.toLowerCase())
+            )
         )
       )
-      .catch((error) => console.error(error));
-  }, [selectedCategory, searchQuery, data]);
+    } else {
+      setArrSearch([]);
+    }
+  }
+
+  const handleFilter = (selectedCategory) => {
+    setArrFilter(
+      data.filter(
+        (product) => product.category._id === selectedCategory
+      )
+    )
+  }
+
+  const getCategories = async () => {
+    const response = await fetch("https://milk-shop-eight.vercel.app/api/category")
+    const data = await response.json();
+    setCategoriesData(data.data);
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      handleGetProduct();
+      getCategories();
+    }, [])
+  )
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
         <Octicons name="search" size={20} color="black" />
         <TextInput
           style={styles.searchInput}
-          onChangeText={setSearchQuery}
+          onChangeText={handleSearchProduct}
           value={searchQuery}
           placeholder="Nhập tên sản phẩm"
         />
       </View>
       <CategoryContainer
-        categories={categories}
-        onCategoryPress={setSelectedCategory}
+        categories={arrCategoriesData}
+        setSelectedCategory={setSelectedCategory}
         selectedCategory={selectedCategory}
+        setArrSearch={setArrSearch}
+        handleFilter={handleFilter}
+        setArrFilter={setArrFilter}
       />
       <FlatList
-        data={data}
+        data={arrSearch.length == 0 && arrFilter.length == 0 ? data : arrSearch.length != 0 ? arrSearch : arrFilter}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <ProductCard
@@ -130,27 +140,36 @@ const AdminHomeScreen = ({ navigation }) => {
 
 const CategoryContainer = ({
   categories,
-  onCategoryPress,
+  setSelectedCategory,
   selectedCategory,
+  setArrSearch,
+  handleFilter,
+  setArrFilter
 }) => {
   return (
     <View style={styles.categoryContainer}>
-      {categories.map((category) => (
+      {categories.map((category, index) => (
         <Pressable
           style={[
             styles.categoryIcon,
-            selectedCategory === category.title
+            selectedCategory === category._id
               ? styles.selectedCategory
               : null,
           ]}
-          key={category.id}
-          onPress={() => onCategoryPress(category.title)}
+          key={category._id}
+          onPress={() => {
+            if (selectedCategory === category._id) {
+              setSelectedCategory(null); // Unselect category
+              setArrFilter([]);
+            } else {
+              setSelectedCategory(category._id); // Select the clicked category
+              handleFilter(category._id);
+              setArrSearch([]);
+            }
+          }}
         >
-          <Image
-            source={{ uri: category.imageUrl }}
-            style={styles.categoryImage}
-          />
-          <Text style={styles.categoryText}>{category.title}</Text>
+          <MaterialCommunityIcons name="cow" size={35} color="black" />
+          <Text style={styles.categoryText}>{category.name}</Text>
         </Pressable>
       ))}
     </View>
@@ -165,13 +184,13 @@ const ProductCard = ({
   rating,
   count,
   sales,
-  navigation,
+  navigation
 }) => {
   return (
     <ScrollView>
       <Pressable
-        style={styles.productCard}
-        onPress={() => navigation.navigate("admin-product-detail", {product: product, navigation: navigation})}
+        style={[styles.productCard, { position: "relative" }]}
+        onPress={() => navigation.navigate("admin-product-detail", { product: product })}
       >
         <Image
           src={imageUrl}
@@ -258,6 +277,7 @@ const styles = StyleSheet.create({
   },
   categoryIcon: {
     alignItems: "center",
+    justifyContent: "center",
     width: "33%",
     marginBottom: 10,
     paddingVertical: 10,

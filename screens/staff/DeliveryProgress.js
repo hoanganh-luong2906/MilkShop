@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function DeliveryProgress({ route }) {
   const navigation = useNavigation();
@@ -34,14 +35,20 @@ export default function DeliveryProgress({ route }) {
   };
 
   return (
-    <ScrollView style={styles.screen} showsVerticalScrollIndicator={false}>
-      <View style={styles.title}>
-        <TouchableOpacity onPress={goBack}>
-          <FontAwesome name="chevron-left" size={22} style={styles.goBack} />
-        </TouchableOpacity>
-        <Text style={styles.titleText}>Tiến độ giao hàng</Text>
-      </View>
-      {/* <View>
+    <>
+      <LinearGradient colors={["#FFF3ED", "#FFFFFF"]} style={styles.screen}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.title}>
+            <TouchableOpacity onPress={goBack}>
+              <FontAwesome
+                name="chevron-left"
+                size={22}
+                style={styles.goBack}
+              />
+            </TouchableOpacity>
+            <Text style={styles.titleText}>Tiến độ giao hàng</Text>
+          </View>
+          {/* <View>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>
             Đã giao thành công -- 25 Tháng 4 2024
@@ -95,37 +102,47 @@ export default function DeliveryProgress({ route }) {
           />
         </View>
       </View> */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>
-          {order?.shippingList?.[order?.shippingList?.length - 1]?.statusString}{" "}
-          -- {order?.timeCompletion?.substring(0, 5) + ' ' + order?.timeCompletion?.slice(10, 16)}
-        </Text>
-        <Text style={styles.headerText}>
-          Vận chuyển thường -- Giao Hàng Nhanh
-        </Text>
-      </View>
-      <View style={styles.progressContainer}>
-        <View style={styles.codeContainer}>
-          <Text style={styles.code}>
-            Mã vận đơn{"                      "}ABCXYZ123456
-          </Text>
-        </View>
-        {order?.shippingList?.map((shipping, index) => (
-          <ProgressDetail
-            key={index}
-            date={shipping.date}
-            timeCompletion={shipping.timeCompletion}
-            status={shipping.statusString}
-            statusString={shipping.statusString}
-            receiver={shipping.receiver}
-            sender={shipping.sender}
-            senderPhone={shipping.senderPhone}
-            licensePlate={shipping.licensePlate}
-            currentStatus={index === (order?.shippingList?.length - 1) ? 1 : 2}
-            />
-        ))}
-      </View>
-    </ScrollView>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerText}>
+              {
+                order?.shippingList?.[order?.shippingList?.length - 1]
+                  ?.statusString
+              }{" "}
+              --{" "}
+              {order?.timeCompletion?.substring(0, 5) +
+                " " +
+                order?.timeCompletion?.slice(10, 16)}
+            </Text>
+            <Text style={styles.headerText}>
+              Vận chuyển thường -- Giao Hàng Nhanh
+            </Text>
+          </View>
+          <View style={styles.progressContainer}>
+            <View style={styles.codeContainer}>
+              <Text style={styles.code}>
+                Mã vận đơn{"                      "}ABCXYZ123456
+              </Text>
+            </View>
+            {order?.shippingList?.map((shipping, index) => (
+              <ProgressDetail
+                key={index}
+                date={shipping.date}
+                timeCompletion={shipping.timeCompletion}
+                status={shipping.statusString}
+                statusString={shipping.statusString}
+                receiver={shipping.receiver}
+                sender={shipping.sender}
+                senderPhone={shipping.senderPhone}
+                licensePlate={shipping.licensePlate}
+                currentStatus={
+                  index === order?.shippingList?.length - 1 ? 1 : 2
+                }
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </LinearGradient>
+    </>
   );
 }
 const ProgressDetail = ({
@@ -279,6 +296,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 15,
     backgroundColor: "#FFBE98",
+    elevation: 5,
+    borderWidth: 5,
+    borderColor: "#FEECE2",
+    marginHorizontal: 2
   },
   headerText: {
     fontSize: 18,
@@ -293,6 +314,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     marginBottom: 30,
+    borderWidth: 2,
+    borderColor: "#FFBE98",
+    elevation: 5
   },
   codeContainer: {
     backgroundColor: "#FFBE98",
@@ -301,6 +325,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 10,
     borderRadius: 20,
+    elevation: 3
   },
   code: {
     fontWeight: "bold",
@@ -327,13 +352,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFBE98",
     borderRadius: 50,
+    borderColor: "black",
+    borderWidth: 2,
     width: 30,
     height: 30,
-    marginLeft: -12,
+    marginLeft: -11,
     marginTop: -12,
     position: "absolute",
     left: "32%",
-    top: "10%",
+    top: "10%"
   },
   progressLine: {
     top: 30,
@@ -346,7 +373,7 @@ const styles = StyleSheet.create({
   rightInfo: {
     flex: 1,
     left: 40,
-    paddingHorizontal:10
+    paddingHorizontal: 10,
   },
   infoStatus: {
     fontSize: 18,

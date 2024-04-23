@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView, ToastAndroid, Pressable, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, ToastAndroid, Pressable, FlatList } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import moment from "moment";
-import DatePickerCustom from './DatePickerCustom';
+import DatePickerCustom from '../admin/DatePickerCustom';
 import { AntDesign } from '@expo/vector-icons';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../admin/ConfirmModal';
 
-export default function UpdateProduct() {
+export default function StaffUpdateProduct({ route }) {
     const arrImages = [
         "https://cdn1.concung.com/2023/03/61836-99104/tpddyh-varna-complete-si-lon-850g.png",
         "https://cdn1.concung.com/2022/03/54474-84246/scu-probi-duong-65-ml-5-chai.jpg",
@@ -16,24 +16,32 @@ export default function UpdateProduct() {
     ];
     const [isShowedImg, setShowedImg] = useState(false);
 
-    // const [dateChooseImportedDate, setDateChooseImportedDate] = useState(new Date());
     const [dateChooseExpiredDate, setDateChooseExpiredDate] = useState(new Date());
 
-    const [product, setProduct] = useState({
-        _id: "",
-        name: "",
-        description: "",
-        price: undefined,
-        quantity: undefined,
-        sales: undefined,
-        status: true,
-        expiredDate: "",
-        imageURL: "",
-    });
-    const [productsData, setProductsData] = useState([]);
-    const [isShowedProductData, setShowedProductData] = useState(false);
-
-    // const [arrCategoriesData, setCategoriesData] = useState([]);
+    const [product, setProduct] = useState(route?.params?.product != undefined
+        ? {
+            _id: route?.params?.product._id.toString(),
+            name: route?.params?.product.name,
+            description: route?.params?.product.description,
+            price: route?.params?.product.price.toString(),
+            quantity: route?.params?.product.quantity.toString(),
+            sales: route?.params?.product.sales.toString(),
+            status: route?.params?.product.status,
+            expiredDate: route?.params?.product.expiredDate,
+            imageURL: route?.params?.product.imageURL,
+        }
+        :
+        {
+            _id: "",
+            name: "",
+            description: "",
+            price: undefined,
+            quantity: undefined,
+            sales: undefined,
+            status: true,
+            expiredDate: "",
+            imageURL: "",
+        });
 
     const [errors, setErrors] = useState({
         "name": false,
@@ -70,15 +78,6 @@ export default function UpdateProduct() {
         }))
     }
 
-    // const handleChooseImportedDate = (event, selectedDate) => {
-    //     // const currentDate = selectedDate;
-    //     const currentDate = moment(selectedDate).format('DD/MM/YYYY');
-    //     setProduct(prev => ({
-    //         ...prev,
-    //         importedDate: currentDate.toString()
-    //     }))
-    //     setDateChooseImportedDate(selectedDate);
-    // };
     const handleChooseExpiredDate = (event, selectedDate) => {
         // const currentDate = selectedDate;
         const currentDate = moment(selectedDate).format('DD/MM/YYYY');
@@ -240,24 +239,6 @@ export default function UpdateProduct() {
             delete copyProduct._id;
             const data = await putProduct(copyProduct);
             if (data.status == 200) {
-                setProduct({
-                    name: "",
-                    description: "",
-                    brandName: "",
-                    category: {
-                        _id: "",
-                        name: "",
-                        products: []
-                    },
-                    price: undefined,
-                    percentageRating: 0,
-                    quantity: undefined,
-                    sales: undefined,
-                    status: true,
-                    importedDate: "",
-                    expiredDate: "",
-                    imageURL: "",
-                })
                 showError("Cập nhật sản phẩm thành công");
             } else if (data.status == 400) {
                 setErrors(prev => ({
@@ -325,25 +306,6 @@ export default function UpdateProduct() {
         }
     }
 
-    // const getCategories = async () => {
-    //     const response = await fetch("https://milk-shop-eight.vercel.app/api/category")
-    //     const data = await response.json();
-    //     setCategoriesData(data.data);
-    // }
-
-    const getProducts = async () => {
-        const response = await fetch("https://milk-shop-eight.vercel.app/api/product")
-        const data = await response.json();
-        setProductsData(data.data);
-    }
-
-    useFocusEffect(
-        useCallback(() => {
-            // getCategories();
-            getProducts();
-        }, [])
-    )
-
     return (
         <KeyboardAvoidingView behavior="padding" style={{
             flex: 1
@@ -358,61 +320,7 @@ export default function UpdateProduct() {
                 <ScrollView>
                     <View style={{ marginVertical: 10 }} />
 
-                    {/* Product list for choosing */}
-                    <Pressable style={[styles.filterContainer, { marginBottom: isShowedProductData ? -5 : 5, }]} onPress={() => { setShowedProductData(!isShowedProductData) }} >
-                        <View style={styles.filterWrapper}>
-                            <Text style={[
-                                styles.inputFilter,
-                                { backgroundColor: "#FFBE98" },
-                                { color: `${product?._id ? "grey" : "black"}` },
-                                errors.category ? styles.inputError : null
-                            ]}>
-                                {product?._id ? product?._id : "Chọn sản phẩm"}
-                            </Text>
-                            <View style={styles.iconFilterContainer}>
-                                <AntDesign name={isShowedProductData ? "caretup" : "caretdown"} size={15} color={errors.category ? "red" : "grey"} />
-                            </View>
-                        </View>
-                    </Pressable>
-                    {isShowedProductData &&
-                        <View style={styles.showItemTest}>
-                            {
-                                productsData.map((item, index) => (
-                                    <Pressable
-                                        style={[styles.item, {
-                                            borderTopLeftRadius: index == 0 ? 20 : 0,
-                                            borderTopRightRadius: index == 0 ? 20 : 0,
-                                            borderBottomLeftRadius: index == productsData.length - 1 ? 20 : 0,
-                                            borderBottomRightRadius: index == productsData.length - 1 ? 20 : 0,
-                                            backgroundColor: product?._id === item._id ? "#FFBE98" : "#FEECE2",
-                                            borderTopWidth: index == 0 || product?._id === item._id ? 1 : 0,
-                                            borderBottomWidth: index == productsData.length - 1 || product?._id === item._id ? 1 : 0,
-                                            borderLeftWidth: 1,
-                                            borderRightWidth: 1,
-                                        }]}
-                                        onPress={() => {
-                                            setProduct({
-                                                _id: item._id,
-                                                name: item.name,
-                                                description: item.description,
-                                                price: item.price.toString(),
-                                                quantity: item.quantity.toString(),
-                                                sales: item.sales.toString(),
-                                                status: item.status,
-                                                expiredDate: item.expiredDate,
-                                                imageURL: item.imageURL,
-                                            })
-                                            setShowedProductData(!isShowedProductData)
-                                        }}
-                                        key={index}
-                                    >
-                                        <Text style={{ textAlign: "left", textAlignVertical: "center", paddingLeft: 10 }}>{item.name}</Text>
-                                    </Pressable>
-                                ))
-                            }
-                        </View>
-                    }
-                    {product?._id &&
+                    {product?._id ?
                         <>
 
                             {/* Name */}
@@ -645,6 +553,8 @@ export default function UpdateProduct() {
                             </View>
                             <ConfirmModal textTitle={"Bạn có chắc chắn sửa sản phẩm?"} visible={confirmVisible} onClose={() => setConfirmVisible(false)} onConfirm={saveChanges} />
                         </>
+                        :
+                        <Text style={{ textAlign: "center", textAlignVertical: "center" }}>Không tìm thấy sản phẩm</Text>
                     }
                 </ScrollView>
             </LinearGradient >

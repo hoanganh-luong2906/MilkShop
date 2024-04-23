@@ -14,6 +14,7 @@ const AdminNavigator = () => {
 	const screenOptions = ({ route }) => ({
 		headerShown: false,
 		tabBarHideOnKeyboard: true,
+		tabBarActiveTintColor: 'tomato',
 		// tabBarIcon: ({ focused, color }) => {
 		// 	switch (route.name) {
 		// 		case "Staff Home":
