@@ -161,6 +161,13 @@ const RootNavigator = () => {
 										component={StaffNavigator}
 									/>
 									<Stack.Screen
+										name='staff-product-detail'
+										component={ProductDetailScreen}
+										options={{
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
 										name='staff-create-voucher'
 										component={AddVoucher}
 										options={{
