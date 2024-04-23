@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -9,19 +9,20 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Pressable,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import moment from "moment";
 import ConfirmModal from "../components/admin/ConfirmModal";
 import DatePickerCustom from "../components/admin/DatePickerCustom";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import useAuth from "../utils/useAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function UpdateProfile({ route }) {
   const { userId } = route.params;
-  const { user, setUser, isChanged, setIsChanged } = useAuth();
+  const { user, logout } = useAuth();
   const navigation = useNavigation();
   const goBack = () => {
     navigation.navigate("Profile");
@@ -61,6 +62,11 @@ export default function UpdateProfile({ route }) {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const handleConfirm = () => {
     setConfirmVisible(!confirmVisible);
+  };
+
+  const [confirmSignIn, setConfirmSignIn] = useState(false);
+  const handleConfirmSignIn = () => {
+    setConfirmSignIn(!confirmSignIn);
   };
 
   const handleChooseDateOfBirth = (event, selectedDate) => {
@@ -143,16 +149,7 @@ export default function UpdateProfile({ route }) {
             errorFinal: data.message,
           }));
         } else {
-          // setProfile({
-          //   gender: true,
-          //   dateOfBirth: new Date(),
-          //   phone: "",
-          //   address: "",
-          // });
           showError("Cập nhật thành công");
-          setConfirmVisible(false)
-          await AsyncStorage.setItem("user", JSON.stringify(profile))
-          setIsChanged(!isChanged)
         }
       } catch (error) {
         console.error("Lỗi cập nhât:", error);
@@ -161,6 +158,7 @@ export default function UpdateProfile({ route }) {
     } else {
       showError("Làm ơn điền đủ");
     }
+    handleConfirm();
   };
 
   const showError = (message) => {
@@ -183,6 +181,31 @@ export default function UpdateProfile({ route }) {
       throw error;
     }
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      setProfile({
+        fullName: user.fullName || "",
+        gender: user.gender, // true for male, false for female
+        dateOfBirth: user.dateOfBirth || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        address: user.address || "",
+      })
+      setErrors({
+        dateOfBirth: false,
+        phone: false,
+        address: false,
+        errorFinal: false,
+      })
+      setErrorsString({
+        dateOfBirth: "",
+        phone: "",
+        address: "",
+        errorFinal: "",
+      })
+    }, [])
+  )
 
   return (
     <KeyboardAvoidingView
@@ -339,6 +362,28 @@ export default function UpdateProfile({ route }) {
             onClose={() => setConfirmVisible(false)}
             onConfirm={saveChanges}
           />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={confirmSignIn}
+            onRequestClose={handleConfirmSignIn}
+          >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+              <View style={{ backgroundColor: 'white', padding: 20, borderWidth: 1, borderColor: "black", borderRadius: 10 }}>
+                <Text style={{ fontSize: 20, marginBottom: 20 }}>
+                  Cập nhật thành công. Vui lòng đăng nhập lại.
+                </Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                  <Pressable
+                    style={{ flex: 0.5, backgroundColor: '#FFBE98', padding: 10, borderWidth: 1, borderColor: "black", borderRadius: 5, marginHorizontal: 10 }}
+                    onPress={logout}
+                  >
+                    <Text style={{ color: 'black', fontSize: 18, textAlignVertical: "center", textAlign: "center" }}>Có</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </LinearGradient>
       </ScrollView>
     </KeyboardAvoidingView>
