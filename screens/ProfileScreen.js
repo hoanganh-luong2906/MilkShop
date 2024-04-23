@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
+import { MaterialIcons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useAuth from "../utils/useAuth";
 
@@ -10,20 +11,16 @@ const ProfileScreen = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Fetch user data from AsyncStorage
     const fetchUserData = async () => {
       try {
         const userData = await AsyncStorage.getItem("user");
         if (userData !== null) {
-          // User data found, parse and set it to state
           setUser(JSON.parse(userData));
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-
-    // Call the fetchUserData function when the component mounts
     fetchUserData();
   }, [isChanged]);
 
@@ -76,12 +73,14 @@ const ProfileScreen = () => {
                 style={styles.profileButton}
                 onPress={() => handleEditProfile(user._id)}
               >
+                <FontAwesome name="edit" color="black" size={28} />
                 <Text style={styles.profileButtonText}>Chỉnh sửa hồ sơ</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.loginButton}
                 onPress={() => logout()}
               >
+                <MaterialIcons name="logout" color="black" size={28} />
                 <Text style={styles.loginButtonText}>Đăng xuất</Text>
               </TouchableOpacity>
             </View>
@@ -171,8 +170,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 20,
   },
   loginContainer: {
@@ -188,7 +188,10 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     backgroundColor: "#FFBE98",
-    width: "30%",
+    width: "35%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderRadius: 15,
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -204,16 +207,20 @@ const styles = StyleSheet.create({
   profileButton: {
     backgroundColor: "#FFBE98",
     width: "50%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderRadius: 15,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    marginVertical: 5,
+    marginVertical: 15,
     marginHorizontal: 25,
   },
   profileButtonText: {
     color: "#000000",
     fontWeight: "bold",
     textAlign: "center",
+    paddingHorizontal:5,
     fontSize: 20,
   },
 });
