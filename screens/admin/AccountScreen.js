@@ -136,13 +136,13 @@ const AccountScreen = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    const { fullName } = item;
+    const { fullName, role } = item;
     const normalizedSearchQuery = removeVietnameseDiacritics(
       searchQuery.toLowerCase()
     );
     const normalizedName = removeVietnameseDiacritics(fullName.toLowerCase());
 
-    if (normalizedName.includes(normalizedSearchQuery)) {
+    if (normalizedName.includes(normalizedSearchQuery) && role !== 'Admin') {
       return (
         <Item
           id={item._id}
