@@ -17,6 +17,7 @@ import UpdateProduct from '../components/admin/UpdateProduct';
 import AddVoucher from '../components/staff/AddVoucher';
 import UpdateVoucher from '../components/staff/UpdateVoucher';
 import CartScreen from '../screens/CartScreen';
+import ProductDetailScreen from '../screens/admin/ProductDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -84,6 +85,13 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='admin-home'
 										component={AdminNavigator}
+										options={{
+											statusBarColor: 'black',
+										}}
+									/>
+									<Stack.Screen
+										name='admin-product-detail'
+										component={ProductDetailScreen}
 										options={{
 											statusBarColor: 'black',
 										}}
