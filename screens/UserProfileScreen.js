@@ -507,6 +507,7 @@ const UserprofileScreen = ({ navigation }) => {
 																	borderRadius: 5,
 																}}
 															>
+																<Pressable onPress={() => navigation.navigate('order', {orderId: order._id})}>
 																<Text
 																	style={{
 																		fontSize: 16,
@@ -518,6 +519,7 @@ const UserprofileScreen = ({ navigation }) => {
 																>
 																	Chi tiết
 																</Text>
+																</Pressable>
 															</Pressable>
 														</View>
 													</Pressable>

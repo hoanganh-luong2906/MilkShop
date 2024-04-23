@@ -20,6 +20,7 @@ import StaffUpdateProduct from '../components/staff/StaffUpdateProduct';
 import UpdateAdminProfile from '../components/admin/UpdateAdminProfile';
 import UserprofileScreen from '../screens/UserProfileScreen';
 import UpdateProfile from '../screens/UpdateProfile';
+import ViewOrderScreen from '../screens/staff/ViewOrderScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -223,6 +224,10 @@ const RootNavigator = () => {
 									<Stack.Screen
 										name='Update Profile'
 										component={UpdateProfile}
+									/>
+									<Stack.Screen
+										name='order'
+										component={ViewOrderScreen}
 									/>
 									<Stack.Screen
 										name='detail'
