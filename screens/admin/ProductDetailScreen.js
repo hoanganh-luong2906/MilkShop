@@ -1,4 +1,4 @@
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import React, { useCallback, useState } from "react";
@@ -26,8 +26,9 @@ function formatToVND(value) {
 }
 
 const ProductDetailScreen = ({ route }) => {
-  const { product, vouchers, navigation } = route.params;
+  const { product, vouchers } = route.params;
   const [comments, setComments] = useState([]);
+  const navigation = useNavigation()
 
   useFocusEffect(
     useCallback(() => {
