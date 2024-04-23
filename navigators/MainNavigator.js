@@ -1,14 +1,13 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/Ionicons';
-import CategoryScreen from '../screens/CategoryScreen';
-import CartScreen from '../screens/CartScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import VoucherScreen from '../screens/VoucherScreen';
-import LandingScreen from '../screens/LandingScreen';
-import { Text, View } from 'react-native';
-import { useEffect, useState } from 'react';
-import useAuth from '../utils/useAuth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import CartScreen from '../screens/CartScreen';
+import CategoryScreen from '../screens/CategoryScreen';
+import LandingScreen from '../screens/LandingScreen';
+import UserprofileScreen from '../screens/UserProfileScreen';
+import useAuth from '../utils/useAuth';
 
 const Tab = createBottomTabNavigator();
 
@@ -89,7 +88,7 @@ const MainNavigator = () => {
 			/>
 			<Tab.Screen
 				name='profile'
-				component={ProfileScreen}
+				component={UserprofileScreen}
 				options={{
 					tabBarShowLabel: false,
 					tabBarActiveTintColor: 'tomato',

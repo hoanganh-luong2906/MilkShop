@@ -49,12 +49,12 @@ const DetailScreen = ({ route }) => {
 					setComments([...filteredComments]);
 				}
 
-				const cartDB = await AsyncStorage.getItem('cart');
+				const cartDB = (await AsyncStorage.getItem('cart')) ?? null;
 				if (cart) {
-					setOriginCart(JSON.parse(cartDB));
+					setOriginCart(JSON.parse(cartDB) ?? []);
 
-					let tmpCart = JSON.parse(cartDB);
-					tmpCart = tmpCart.filter((product) => {
+					let tmpCart = JSON.parse(cartDB) ?? [];
+					tmpCart = tmpCart?.filter((product) => {
 						return (
 							product?.user === (user?._id ? user?._id : 'guest')
 						);
@@ -78,20 +78,24 @@ const DetailScreen = ({ route }) => {
 		return count;
 	}
 
-	async function handleAddToCart(product) {
+	async function handleAddToCart() {
 		let newCart = originCart;
 		setRecentClick(true);
 		let isDuplicated = false;
-		newCart.map((item) => {
-			if (item.product._id === product._id) {
-				if (item.quantity >= product.quantity) {
-					alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
-					return;
+		if (newCart?.length > 0) {
+			newCart?.map((item) => {
+				if ((item?.product._id ?? '') === product._id) {
+					if (item.quantity >= product.quantity) {
+						alert(
+							'Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.'
+						);
+						return;
+					}
+					item.quantity += 1;
+					isDuplicated = true;
 				}
-				item.quantity += 1;
-				isDuplicated = true;
-			}
-		});
+			});
+		}
 		if (!isDuplicated) {
 			newCart.push({
 				user: `${user?._id ? user._id : 'guest'}`,
@@ -300,7 +304,7 @@ const DetailScreen = ({ route }) => {
 											? { backgroundColor: 'light-gray' }
 											: { backgroundColor: '#FFF3EE' },
 									]}
-									onPress={() => handleAddToCart(product)}
+									onPress={handleAddToCart}
 									disabled={isRecentClick}
 								>
 									<Icon
@@ -707,6 +711,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		elevation: 2,
+		zIndex: 999,
 	},
 	descriptionContainer: {
 		width: '100%',

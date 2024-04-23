@@ -6,6 +6,9 @@ const AuthContext = createContext({
 	user: {},
 	setIsLoggedIn: () => {},
 	setRole: () => {},
+	isChanged: false,
+	setIsChanged: () => {},
+	setUser: () => {},
 });
 
 const AuthProvider = ({ children }) => {
@@ -53,6 +56,7 @@ const AuthProvider = ({ children }) => {
 				isLoading,
 				isChanged,
 				setIsChanged,
+				setUser,
 			}}
 		>
 			{children}

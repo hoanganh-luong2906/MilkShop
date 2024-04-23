@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View } from 'react-native';
 import useAuth from '../utils/useAuth';
+import UserprofileScreen from '../screens/UserProfileScreen';
 const Tab = createBottomTabNavigator();
 
 const CustomerNavigator = () => {
@@ -88,7 +89,7 @@ const CustomerNavigator = () => {
 			/>
 			<Tab.Screen
 				name='profile'
-				component={ProfileScreen}
+				component={UserprofileScreen}
 				options={{
 					tabBarShowLabel: false,
 					tabBarActiveTintColor: 'tomato',
