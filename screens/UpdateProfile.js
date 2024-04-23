@@ -150,6 +150,7 @@ export default function UpdateProfile({ route }) {
           }));
         } else {
           showError("Cập nhật thành công");
+          handleConfirmSignIn();
         }
       } catch (error) {
         console.error("Lỗi cập nhât:", error);
@@ -376,9 +377,9 @@ export default function UpdateProfile({ route }) {
                 <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                   <Pressable
                     style={{ flex: 0.5, backgroundColor: '#FFBE98', padding: 10, borderWidth: 1, borderColor: "black", borderRadius: 5, marginHorizontal: 10 }}
-                    onPress={logout}
+                    onPress={() => logout()}
                   >
-                    <Text style={{ color: 'black', fontSize: 18, textAlignVertical: "center", textAlign: "center" }}>Có</Text>
+                    <Text style={{ color: 'black', fontSize: 18, textAlignVertical: "center", textAlign: "center" }}>Đăng nhập</Text>
                   </Pressable>
                 </View>
               </View>

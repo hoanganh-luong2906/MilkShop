@@ -193,7 +193,6 @@ const ProductCard = ({
         style={[styles.productCard, { position: "relative" }]}
         onPress={() => navigation.navigate("admin-product-detail", { product: product })}
       >
-        <FontAwesome style={{ position: "absolute", top: 10, right: 10 }} name="pencil" size={18} color={"grey"} />
         <Image
           src={imageUrl}
           style={styles.productImages}
