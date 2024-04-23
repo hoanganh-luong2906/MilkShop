@@ -30,6 +30,7 @@ const DetailScreen = ({ route }) => {
 	const { product, vouchers, navigation } = route.params;
 	const [comments, setComments] = useState([]);
 	const [cart, setCart] = useState([]);
+	const [originCart, setOriginCart] = useState([]);
 	const [isRecentClick, setRecentClick] = useState(false);
 	const { isChanged, setIsChanged } = useAuth();
 	const { user } = useAuth();
@@ -50,6 +51,8 @@ const DetailScreen = ({ route }) => {
 
 				const cartDB = await AsyncStorage.getItem('cart');
 				if (cart) {
+					setOriginCart(JSON.parse(cartDB));
+
 					let tmpCart = JSON.parse(cartDB);
 					tmpCart = tmpCart.filter((product) => {
 						return (
@@ -76,14 +79,11 @@ const DetailScreen = ({ route }) => {
 	}
 
 	async function handleAddToCart(product) {
-		let newCart = cart;
+		let newCart = originCart;
 		setRecentClick(true);
 		let isDuplicated = false;
 		newCart.map((item) => {
-			if (
-				item.product._id === product._id &&
-				item.user === (user?._id ? user?._id : 'guest')
-			) {
+			if (item.product._id === product._id) {
 				if (item.quantity >= product.quantity) {
 					alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
 					return;
@@ -100,7 +100,11 @@ const DetailScreen = ({ route }) => {
 			});
 		}
 
-		setCart(newCart);
+		let tmpCart = newCart;
+		tmpCart = tmpCart.filter((product) => {
+			return product?.user === (user?._id ? user?._id : 'guest');
+		});
+		setCart(tmpCart);
 		await AsyncStorage.setItem('cart', JSON.stringify(newCart));
 		setIsChanged(!isChanged);
 		setRecentClick(false);

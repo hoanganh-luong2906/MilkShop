@@ -56,12 +56,6 @@ const LoginScreen = ({ navigation }) => {
 				loop={false}
 			/>
 			<View style={styles.container}>
-				<Pressable
-					style={styles.backArrow}
-					onPress={() => navigation.goBack()}
-				>
-					<Icon name='arrow-back' size={30} color='black' />
-				</Pressable>
 				<Text style={styles.title}>ĐĂNG NHẬP</Text>
 				<View style={styles.inputContainer}>
 					<TextInput
@@ -180,7 +174,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 30,
 		fontWeight: 'bold',
-		marginTop: 60,
+		marginTop: 50,
 		marginBottom: 40,
 		width: '100%',
 		textAlign: 'center',
