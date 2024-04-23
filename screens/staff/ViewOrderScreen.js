@@ -41,7 +41,7 @@ export default function ViewOrderScreen({ route }) {
       <LinearGradient colors={["#FFF3ED", "#FFFFFF"]} style={styles.screen}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.title}>
-            <TouchableOpacity onPress={goBack}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <FontAwesome
                 name="chevron-left"
                 size={22}
