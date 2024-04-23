@@ -7,6 +7,7 @@ import ProductManagement from "../screens/staff/ProductManagement";
 import ViewDetail from "../screens/staff/ViewDetail";
 import ProfileScreen from "../screens/ProfileScreen";
 import Voucher from "../screens/staff/Voucher";
+import UpdateProfile from "../screens/UpdateProfile";
 
 const Tab = createBottomTabNavigator();
 
@@ -60,6 +61,7 @@ const StaffNavigator = () => {
       />
       <Tab.Screen name="Voucher" component={Voucher} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Update Profile" component={UpdateProfile}  options={tabOptions}/>
     </Tab.Navigator>
   );
 };
