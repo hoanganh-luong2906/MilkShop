@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/Ionicons";
 import ConfirmModal from "../../components/admin/ConfirmModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 const removeVietnameseDiacritics = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -126,12 +127,14 @@ const AccountScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    fetch("https://milk-shop-eight.vercel.app/api/account")
-      .then((response) => response.json())
-      .then((json) => setData(json.data))
-      .catch((error) => console.error(error));
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetch("https://milk-shop-eight.vercel.app/api/account")
+        .then((response) => response.json())
+        .then((json) => setData(json.data))
+        .catch((error) => console.error(error));
+    }, [])
+  )
 
   const renderItem = ({ item }) => {
     const { fullName, role } = item;

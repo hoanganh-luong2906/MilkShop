@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import useAuth from "../../utils/useAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -22,23 +22,25 @@ export function AdminProfileScreen({ navigation }) {
 
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    // Fetch user data from AsyncStorage
-    const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("user");
-        if (userData !== null) {
-          // User data found, parse and set it to state
-          setUser(JSON.parse(userData));
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch user data from AsyncStorage
+      const fetchUserData = async () => {
+        try {
+          const userData = await AsyncStorage.getItem("user");
+          if (userData !== null) {
+            // User data found, parse and set it to state
+            setUser(JSON.parse(userData));
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+      };
 
-    // Call the fetchUserData function when the component mounts
-    fetchUserData();
-  }, [isChanged]);
+      // Call the fetchUserData function when the component mounts
+      fetchUserData();
+    }, [isChanged])
+  )
 
   const handleNavigate = (nameRoute) => {
     navigation.navigate(nameRoute);

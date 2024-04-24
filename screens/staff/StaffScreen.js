@@ -1,5 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -15,20 +15,22 @@ import { LinearGradient } from "expo-linear-gradient";
 export default function StaffScreen() {
   const navigation = useNavigation();
   const [orders, setOrders] = useState([]);
-  useEffect(() => {
-    const getOrders = async () => {
-      try {
-        const response = await fetch(
-          "https://milk-shop-eight.vercel.app/api/order"
-        );
-        const data = await response.json();
-        setOrders(data.data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-    getOrders();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getOrders = async () => {
+        try {
+          const response = await fetch(
+            "https://milk-shop-eight.vercel.app/api/order"
+          );
+          const data = await response.json();
+          setOrders(data.data);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        }
+      };
+      getOrders();
+    }, [])
+  )
 
   const viewOrder = (id) => {
     navigation.navigate("View Order", { orderId: id });
@@ -97,7 +99,7 @@ const OrderItem = ({
       style: "decimal",
       minimumFractionDigits: 0,
     });
-  
+
     const formattedNumber = formatter.format(value);
     return `${formattedNumber} VNĐ`;
   }
@@ -134,13 +136,13 @@ const OrderItem = ({
             <Text style={styles.retrade}>Đổi trả hàng trong 15 ngày</Text>
           </View>
           {numOfProducts > 1 ? (
-          <TouchableOpacity style={styles.seeMoreButton} onPress={onPress1}>
-            <Text style={styles.buttonText}>Xem thêm {numOfProducts - 1} sản phẩm</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.seeMoreButton} onPress={onPress1}>
+              <Text style={styles.buttonText}>Xem thêm {numOfProducts - 1} sản phẩm</Text>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.seeMoreButton} onPress={onPress1}>
-            <Text style={styles.buttonText}>Xem thêm</Text>
-          </TouchableOpacity>
+              <Text style={styles.buttonText}>Xem thêm</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -154,10 +156,10 @@ const OrderItem = ({
         <Text style={styles.otherProducts}>({numOfProducts} sản phẩm)</Text>
         <Text style={styles.total}>Tổng: {formatToVND(total)}</Text>
       </View>
-      
-        <Text style={styles.sale}>Giảm: {formatToVND(discount)}</Text>
-        <Text style={styles.final}>Thành tiền: {formatToVND(total - discount)}</Text>
-      
+
+      <Text style={styles.sale}>Giảm: {formatToVND(discount)}</Text>
+      <Text style={styles.final}>Thành tiền: {formatToVND(total - discount)}</Text>
+
       <View style={styles.line}>
         <Text></Text>
       </View>
