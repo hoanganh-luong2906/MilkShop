@@ -1,19 +1,18 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import LottieView from 'lottie-react-native';
+import React, { useCallback, useState } from 'react';
 import {
+	Image,
+	Pressable,
+	ScrollView,
+	StyleSheet,
 	Text,
 	View,
-	StyleSheet,
-	FlatList,
-	TouchableOpacity,
-	Image,
-	ScrollView,
-	Pressable,
 } from 'react-native';
-import useAuth from '../utils/useAuth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LottieView from 'lottie-react-native';
+import useAuth from '../utils/useAuth';
+import { useFocusEffect } from '@react-navigation/native';
 
 function formatToVND(value) {
 	const formatter = new Intl.NumberFormat('vi-VN', {
@@ -25,39 +24,60 @@ function formatToVND(value) {
 	return `${formattedNumber} VNĐ`; // Prepend "VND " manually
 }
 
+function formatDateToString(date) {
+	const day = date.getDate().toString().padStart(2, '0');
+	const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	const year = date.getFullYear().toString();
+	const hours = date.getHours().toString().padStart(2, '0');
+	const minutes = date.getMinutes().toString().padStart(2, '0');
+	return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
 const CartScreen = ({ navigation }) => {
 	const [cart, setCart] = useState([]);
 	const [originCart, setOriginCart] = useState([]);
-	const { isChanged, user, setIsChanged } = useAuth();
+	const { isChanged, user, setIsChanged, isLoggedIn } = useAuth();
 	const [total, setTotal] = useState(0);
+	const [totalDisc, setTotalDisc] = useState(0);
 
-	useEffect(() => {
-		const loadCart = async () => {
-			const cartDB = await AsyncStorage.getItem('cart');
-			if (cartDB) {
-				setOriginCart(JSON.parse(cartDB));
+	useFocusEffect(
+		useCallback(() => {
+			const loadCart = async () => {
+				const cartDB = await AsyncStorage.getItem('cart');
+				if (cartDB) {
+					setOriginCart(JSON.parse(cartDB));
 
-				let tmpCart = JSON.parse(cartDB);
-				tmpCart = tmpCart.filter((product) => {
-					return product?.user === (user?._id ? user?._id : 'guest');
-				});
-				setCart([...tmpCart]);
+					let tmpCart = JSON.parse(cartDB);
+					tmpCart = tmpCart.filter((product) => {
+						return (
+							product?.user === (user?._id ? user?._id : 'guest')
+						);
+					});
+					setCart([...tmpCart]);
 
-				setTotal(0);
-				tmpCart.map((item) => {
-					setTotal(
-						(prev) =>
-							prev +
-							(item.product.price -
-								(item.product.price * item.product.sales) /
+					setTotal(0);
+					tmpCart.map((item) => {
+						setTotal(
+							(prev) =>
+								prev +
+								(item.product.price -
+									(item.product.price * item.product.sales) /
+										100) *
+									item.quantity
+						);
+						setTotalDisc(
+							(prev) =>
+								prev +
+								((item.product.price * item.product.sales) /
 									100) *
-								item.quantity
-					);
-				});
-			}
-		};
-		loadCart();
-	}, [isChanged]);
+									item.quantity
+						);
+					});
+				}
+			};
+			loadCart();
+		}, [isChanged])
+	);
 
 	function subtractQuantityProduct(addedProduct) {
 		try {
@@ -105,6 +125,67 @@ const CartScreen = ({ navigation }) => {
 			alert('Có lỗi xảy ra: ' + error);
 		}
 	}
+
+	const handleCheckout = async () => {
+		if (isLoggedIn) {
+			let productList = cart.map((item) => {
+				return {
+					name: item.product.name,
+					brandName: item.product.brandName,
+					category: item.product.category.name,
+					price: item.product.price,
+					quantity: item.quantity,
+					sales: item.product.sales,
+					status: item.product.status,
+					importedDate: item.product.importedDate,
+					expiredDate: item.product.expiredDate,
+					imageURL: item.product.imageURL,
+					_id: item.product._id,
+				};
+			});
+			const checkoutBody = {
+				order: {
+					shippingList: [],
+					productList: [...productList],
+					totalPrice: total,
+					totalDiscount: totalDisc,
+					shippingFee: 0,
+					paymentMethod: 'Thanh toán bằng tiền mặt',
+					timeOrder: formatDateToString(new Date()),
+					timePayed: formatDateToString(new Date()),
+					timeStartShip: formatDateToString(new Date()),
+					timeCompletion: '',
+				},
+				user: user,
+			};
+			try {
+				const response = await fetch(
+					'https://milk-shop-eight.vercel.app/api/order/',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(checkoutBody),
+					}
+				);
+				const data = await response.json();
+				if (data.status === 201) {
+					alert(
+						'Tạo đơn hàng thành công, vui lòng theo dõi đơn trong hồ sơ.'
+					);
+					deleteCart();
+				} else {
+					throw new Error(data?.message ?? 'Lỗi server');
+				}
+			} catch (error) {
+				alert('Có lỗi ở đây: ', error);
+			}
+			console.log(JSON.stringify(checkoutBody));
+		} else {
+			navigation.navigate('login');
+		}
+	};
 
 	function deleteCart() {
 		try {
@@ -342,8 +423,7 @@ const CartScreen = ({ navigation }) => {
 							textAlign: 'right',
 						}}
 					>
-						Tiến hành thanh toán để có thể áp dụng thêm nhiều mã
-						giảm giá hấp dẫn
+						Tiến hành thanh toán và nhận hàng ngay trong hôm nay
 					</Text>
 				</View>
 				<View
@@ -373,7 +453,10 @@ const CartScreen = ({ navigation }) => {
 								: { backgroundColor: 'tomato' },
 						]}
 					>
-						<Text style={{ fontWeight: 'bold', color: 'white' }}>
+						<Text
+							style={{ fontWeight: 'bold', color: 'white' }}
+							onPress={handleCheckout}
+						>
 							THANH TOÁN
 						</Text>
 					</Pressable>

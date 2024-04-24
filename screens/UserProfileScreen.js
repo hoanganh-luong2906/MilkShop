@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -12,13 +13,14 @@ import {
 import useAuth from '../utils/useAuth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ORDER_STATUS = [
 	{
 		title: 'Chờ giao',
 		icon: 'https://cdn-icons-png.flaticon.com/128/850/850960.png',
 		color: 'tomato',
-		values: ['Đang chuẩn bị hàng'],
+		values: ['Đang chuẩn bị hàng', 'Đang xử lý'],
 	},
 	{
 		title: 'Đang giao',
@@ -47,6 +49,7 @@ const ORDER_STATUS = [
 			'Đang giao hàng',
 			'Người gửi hẹn lại ngày giao',
 			'Đang chuẩn bị hàng',
+			'Đang xử lý',
 		],
 	},
 ];
@@ -79,7 +82,8 @@ const UserprofileScreen = ({ navigation }) => {
 					let tmpData = data.data.filter((order) => {
 						let index = order.shippingList.length;
 						return (
-							order.shippingList[index - 1].receiver === user.fullName
+							order.shippingList[index - 1]?.receiver ===
+							user.fullName
 						);
 					});
 					setOrder([...tmpData]);
@@ -91,7 +95,7 @@ const UserprofileScreen = ({ navigation }) => {
 			}
 			setSelectedStatus(ORDER_STATUS[ORDER_STATUS.length - 1]);
 		}, [isLoggedIn])
-	)
+	);
 
 	function filterOrder() {
 		let tmpData = originOrder.filter((order) => {
@@ -118,6 +122,9 @@ const UserprofileScreen = ({ navigation }) => {
 			case 'Đang chuẩn bị hàng':
 				shortStatus = 'Chờ giao';
 				break;
+			case 'Đang xử lý':
+				shortStatus = 'Chờ giao';
+				break;
 			case 'Đã huỷ':
 				shortStatus = 'Đã hủy';
 				break;
@@ -141,6 +148,9 @@ const UserprofileScreen = ({ navigation }) => {
 				statusColor = 'blue';
 				break;
 			case 'Đang chuẩn bị hàng':
+				statusColor = 'tomato';
+				break;
+			case 'Đang xử lý':
 				statusColor = 'tomato';
 				break;
 			case 'Đã huỷ':
@@ -291,7 +301,7 @@ const UserprofileScreen = ({ navigation }) => {
 																			order
 																				.shippingList
 																				.length -
-																			1
+																				1
 																		]
 																			.statusString
 																	),
@@ -303,7 +313,7 @@ const UserprofileScreen = ({ navigation }) => {
 																		order
 																			.shippingList
 																			.length -
-																		1
+																			1
 																	]
 																		.statusString
 																)}
@@ -473,7 +483,7 @@ const UserprofileScreen = ({ navigation }) => {
 																			order
 																				.shippingList
 																				.length -
-																			1
+																				1
 																		]
 																			.statusString
 																	),
@@ -485,7 +495,7 @@ const UserprofileScreen = ({ navigation }) => {
 																		order
 																			.shippingList
 																			.length -
-																		1
+																			1
 																	]
 																		.statusString
 																}
@@ -510,7 +520,17 @@ const UserprofileScreen = ({ navigation }) => {
 																	borderRadius: 5,
 																}}
 															>
-																<Pressable onPress={() => navigation.navigate('order', { orderId: order._id })}>
+																<Pressable
+																	onPress={() =>
+																		navigation.navigate(
+																			'order',
+																			{
+																				orderId:
+																					order._id,
+																			}
+																		)
+																	}
+																>
 																	<Text
 																		style={{
 																			fontSize: 16,

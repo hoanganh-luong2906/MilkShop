@@ -1,11 +1,19 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+	Image,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	TextInput,
+	View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LandingCategory from '../components/landing/Category';
 import LandingTopProduct from '../components/landing/TopProducts';
 import LandingVoucher from '../components/landing/Voucher';
 import useAuth from '../utils/useAuth';
+import { useFocusEffect } from '@react-navigation/native';
 
 const calculateAvgRating = (ratings) => {
 	let totalRatings = 0;
@@ -32,28 +40,41 @@ const LandingScreen = ({ navigation }) => {
 	const [isCategoryLoaded, setIsCategoryLoaded] = useState(false);
 	const { isLoggedIn, user } = useAuth();
 
-	useEffect(() => {
-		const loadTopProducts = async () => {
-			const { default: LandingTopProduct } = await import('../components/landing/TopProducts');
-			setIsTopProductsLoaded(true);
-		};
+	useFocusEffect(
+		useCallback(() => {
+			const loadTopProducts = async () => {
+				const { default: LandingTopProduct } = await import(
+					'../components/landing/TopProducts'
+				);
+				setIsTopProductsLoaded(true);
+			};
 
-		const loadVoucher = async () => {
-			const { default: LandingVoucher } = await import('../components/landing/Voucher');
-			setIsVoucherLoaded(true);
-		};
+			const loadVoucher = async () => {
+				const { default: LandingVoucher } = await import(
+					'../components/landing/Voucher'
+				);
+				setIsVoucherLoaded(true);
+			};
 
-		const loadCategory = async () => {
-			const { default: LandingCategory } = await import('../components/landing/Category');
-			setIsCategoryLoaded(true);
-		};
+			const loadCategory = async () => {
+				const { default: LandingCategory } = await import(
+					'../components/landing/Category'
+				);
+				setIsCategoryLoaded(true);
+			};
 
-		loadTopProducts();
-		loadVoucher();
-		loadCategory();
-	}, []);
+			loadTopProducts();
+			loadVoucher();
+			loadCategory();
+		}, [])
+	);
 
-	function updateStateValue({ productsValue, topProductsValue, categoriesValue, voucherData }) {
+	function updateStateValue({
+		productsValue,
+		topProductsValue,
+		categoriesValue,
+		voucherData,
+	}) {
 		setProducts([...productsValue]);
 		setTopProducts([...topProductsValue]);
 		setCategoryList([...categoriesValue]);
@@ -62,10 +83,14 @@ const LandingScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		const fetchProducts = async () => {
-			const response = await fetch('https://milk-shop-eight.vercel.app/api/product/top');
+			const response = await fetch(
+				'https://milk-shop-eight.vercel.app/api/product/top'
+			);
 			const data = await response.json();
 
-			const responseVoucher = await fetch('https://milk-shop-eight.vercel.app/api/voucher');
+			const responseVoucher = await fetch(
+				'https://milk-shop-eight.vercel.app/api/voucher'
+			);
 			const dataVoucher = await responseVoucher.json();
 
 			if (data && dataVoucher) {
@@ -95,12 +120,28 @@ const LandingScreen = ({ navigation }) => {
 
 	return (
 		<View style={styles.container}>
-			<LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1.2 }} colors={['#FFF3ED', '#FFF3ED', '#FFFFFF']} style={styles.linearGradient}>
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0, y: 1.2 }}
+				colors={['#FFF3ED', '#FFF3ED', '#FFFFFF']}
+				style={styles.linearGradient}
+			>
 				<View style={styles.searchContainer}>
-					<TextInput style={styles.searchBox} placeholder='Tìm kiếm sản phẩm' />
-					<Icon name='search' size={25} color='gray' style={styles.searchIcon} />
+					<TextInput
+						style={styles.searchBox}
+						placeholder='Tìm kiếm sản phẩm'
+					/>
+					<Icon
+						name='search'
+						size={25}
+						color='gray'
+						style={styles.searchIcon}
+					/>
 					{isLoggedIn ? (
-						<Pressable style={styles.button}>
+						<Pressable
+							style={styles.button}
+							onPress={() => navigation.navigate('profile')}
+						>
 							<Image
 								source={require('../assets/user-logo.jpg')}
 								style={{
@@ -111,16 +152,35 @@ const LandingScreen = ({ navigation }) => {
 							/>
 						</Pressable>
 					) : (
-						<Pressable style={styles.button} onPress={() => navigation.push('login')}>
+						<Pressable
+							style={styles.button}
+							onPress={() => navigation.push('login')}
+						>
 							<Icon name='person' size={23} color='black' />
 						</Pressable>
 					)}
 				</View>
 				<ScrollView>
-					{isTopProductsLoaded && <LandingTopProduct topProducts={topProducts} navigation={navigation} vouchers={vouchers} />}
-					{isVoucherLoaded && <LandingVoucher vouchers={vouchers} navigation={navigation} />}
+					{isTopProductsLoaded && (
+						<LandingTopProduct
+							topProducts={topProducts}
+							navigation={navigation}
+							vouchers={vouchers}
+						/>
+					)}
+					{isVoucherLoaded && (
+						<LandingVoucher
+							vouchers={vouchers}
+							navigation={navigation}
+						/>
+					)}
 					{isCategoryLoaded && (
-						<LandingCategory categoryList={categoryList} products={products} vouchers={vouchers} navigation={navigation} />
+						<LandingCategory
+							categoryList={categoryList}
+							products={products}
+							vouchers={vouchers}
+							navigation={navigation}
+						/>
 					)}
 				</ScrollView>
 			</LinearGradient>
