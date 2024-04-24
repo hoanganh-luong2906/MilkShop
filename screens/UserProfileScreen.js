@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import useAuth from '../utils/useAuth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 
 const ORDER_STATUS = [

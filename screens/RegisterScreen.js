@@ -296,11 +296,6 @@ const RegisterScreen = ({ navigation }) => {
 		setChooseDOB(selectedDate);
 	};
 
-	// useFocusEffect(
-	// 	useCallback(() => {
-	// 	}, [])
-	// )
-
 	return (
 		<KeyboardAvoidingView
 			behavior='padding'

@@ -3,21 +3,17 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Pressable,
-  Dimensions,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
-import { FontAwesome6 } from '@expo/vector-icons';
 import useAuth from '../../utils/useAuth';
 
 export default function Voucher({ navigation }) {
-  const { user, isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const handleNavigate = (nameRoute) => {
     navigation.navigate(nameRoute);
@@ -43,7 +39,7 @@ export default function Voucher({ navigation }) {
       {isLoggedIn && (
         <>
           <ScrollView style={styles.mainScreen}>
-          <Text style={styles.title}>Quản lí mã giảm giá</Text>
+            <Text style={styles.title}>Quản lí mã giảm giá</Text>
             {/* Function 1 */}
             <Pressable
               style={styles.functionContainerStyle}
@@ -63,7 +59,7 @@ export default function Voucher({ navigation }) {
                 color='black'
               />
             </Pressable>
-            <Image style={styles.image} source={require('../../assets/voucher.png')} resizeMode='cover'  />
+            <Image style={styles.image} source={require('../../assets/voucher.png')} resizeMode='cover' />
           </ScrollView>
         </>
       )

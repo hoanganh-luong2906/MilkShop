@@ -18,7 +18,6 @@ import DatePickerCustom from '../components/admin/DatePickerCustom';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import useAuth from '../utils/useAuth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UpdateProfile({ route }) {
 	const { userId } = route.params;
@@ -288,7 +287,7 @@ export default function UpdateProfile({ route }) {
 																	: 0,
 															backgroundColor:
 																profile.gender ===
-																(index === 0)
+																	(index === 0)
 																	? '#FFBE98'
 																	: '#FEECE2',
 															borderWidth: 1,
