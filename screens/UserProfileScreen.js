@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import useAuth from '../utils/useAuth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ORDER_STATUS = [
 	{
@@ -67,28 +68,30 @@ const UserprofileScreen = ({ navigation }) => {
 	const [selectedStatus, setSelectedStatus] = useState();
 	const { logout } = useAuth();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const response = await fetch(
-				'https://milk-shop-eight.vercel.app/api/order'
-			);
-			const data = await response.json();
-			if (data) {
-				let tmpData = data.data.filter((order) => {
-					let index = order.shippingList.length;
-					return (
-						order.shippingList[index - 1].receiver === user.fullName
-					);
-				});
-				setOrder([...tmpData]);
-				setOriginOrder([...tmpData]);
+	useFocusEffect(
+		useCallback(() => {
+			const fetchData = async () => {
+				const response = await fetch(
+					'https://milk-shop-eight.vercel.app/api/order'
+				);
+				const data = await response.json();
+				if (data) {
+					let tmpData = data.data.filter((order) => {
+						let index = order.shippingList.length;
+						return (
+							order.shippingList[index - 1].receiver === user.fullName
+						);
+					});
+					setOrder([...tmpData]);
+					setOriginOrder([...tmpData]);
+				}
+			};
+			if (isLoggedIn) {
+				fetchData();
 			}
-		};
-		if (isLoggedIn) {
-			fetchData();
-		}
-		setSelectedStatus(ORDER_STATUS[ORDER_STATUS.length - 1]);
-	}, [isLoggedIn]);
+			setSelectedStatus(ORDER_STATUS[ORDER_STATUS.length - 1]);
+		}, [isLoggedIn])
+	)
 
 	function filterOrder() {
 		let tmpData = originOrder.filter((order) => {
@@ -288,7 +291,7 @@ const UserprofileScreen = ({ navigation }) => {
 																			order
 																				.shippingList
 																				.length -
-																				1
+																			1
 																		]
 																			.statusString
 																	),
@@ -300,7 +303,7 @@ const UserprofileScreen = ({ navigation }) => {
 																		order
 																			.shippingList
 																			.length -
-																			1
+																		1
 																	]
 																		.statusString
 																)}
@@ -470,7 +473,7 @@ const UserprofileScreen = ({ navigation }) => {
 																			order
 																				.shippingList
 																				.length -
-																				1
+																			1
 																		]
 																			.statusString
 																	),
@@ -482,7 +485,7 @@ const UserprofileScreen = ({ navigation }) => {
 																		order
 																			.shippingList
 																			.length -
-																			1
+																		1
 																	]
 																		.statusString
 																}
@@ -507,18 +510,18 @@ const UserprofileScreen = ({ navigation }) => {
 																	borderRadius: 5,
 																}}
 															>
-																<Pressable onPress={() => navigation.navigate('order', {orderId: order._id})}>
-																<Text
-																	style={{
-																		fontSize: 16,
-																		fontWeight:
-																			'bold',
-																		letterSpacing: 0.2,
-																		color: 'white',
-																	}}
-																>
-																	Chi tiết
-																</Text>
+																<Pressable onPress={() => navigation.navigate('order', { orderId: order._id })}>
+																	<Text
+																		style={{
+																			fontSize: 16,
+																			fontWeight:
+																				'bold',
+																			letterSpacing: 0.2,
+																			color: 'white',
+																		}}
+																	>
+																		Chi tiết
+																	</Text>
 																</Pressable>
 															</Pressable>
 														</View>

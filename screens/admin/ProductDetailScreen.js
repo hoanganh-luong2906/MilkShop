@@ -8,12 +8,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import useAuth from "../../utils/useAuth";
 
 function formatToVND(value) {
   const formatter = new Intl.NumberFormat("vi-VN", {
@@ -315,10 +312,10 @@ const ProductDetailScreen = ({ route }) => {
                           style={{
                             width:
                               countExistingStar(comments, star) *
-                                (100 /
-                                  (comments.length == 0
-                                    ? 1
-                                    : comments.length)) ?? 0,
+                              (100 /
+                                (comments.length == 0
+                                  ? 1
+                                  : comments.length)) ?? 0,
                             height: 10,
                             backgroundColor: "#FF8137",
                             marginVertical: 5,

@@ -1,5 +1,5 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, Text, View, Button, TouchableOpacity } from "react-native";
 import { MaterialIcons, AntDesign, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,19 +10,21 @@ const ProfileScreen = () => {
   const { isLoggedIn, logout, isChanged } = useAuth();
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("user");
-        if (userData !== null) {
-          setUser(JSON.parse(userData));
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const userData = await AsyncStorage.getItem("user");
+          if (userData !== null) {
+            setUser(JSON.parse(userData));
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUserData();
-  }, [isChanged]);
+      };
+      fetchUserData();
+    }, [isChanged])
+  )
 
   const handleEditProfile = (id) => {
     navigation.navigate("Update Profile", { userId: id });
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontWeight: "bold",
     textAlign: "center",
-    paddingHorizontal:5,
+    paddingHorizontal: 5,
     fontSize: 20,
   },
 });

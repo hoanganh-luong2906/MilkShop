@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
-import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function ViewOrderScreen({ route }) {
@@ -17,20 +17,22 @@ export default function ViewOrderScreen({ route }) {
   const [order, setOrder] = useState([]);
   const { orderId } = route.params;
 
-  useEffect(() => {
-    const getOrderDetail = async () => {
-      try {
-        const response = await fetch(
-          `https://milk-shop-eight.vercel.app/api/order/${orderId}`
-        );
-        const data = await response.json();
-        setOrder(data.data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-    getOrderDetail();
-  }, [orderId]);
+  useFocusEffect(
+    useCallback(() => {
+      const getOrderDetail = async () => {
+        try {
+          const response = await fetch(
+            `https://milk-shop-eight.vercel.app/api/order/${orderId}`
+          );
+          const data = await response.json();
+          setOrder(data.data);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        }
+      };
+      getOrderDetail();
+    }, [orderId])
+  )
 
   const goBack = () => {
     navigation.navigate("Staff Home");

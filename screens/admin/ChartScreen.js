@@ -1,7 +1,8 @@
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ChartScreen() {
     const arrayYears = ["2020", "2021", "2022", "2023", "2024",]
@@ -9,14 +10,16 @@ export default function ChartScreen() {
     const [isShowed, setShowed] = useState(false);
     const [arrData, setData] = useState([]);
 
-    useEffect(() => {
-        const handleData = async () => {
-            const response = await fetch("https://milk-shop-eight.vercel.app/api/chart")
-            const data = await response.json();
-            setData(data.data);
-        };
-        handleData();
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            const handleData = async () => {
+                const response = await fetch("https://milk-shop-eight.vercel.app/api/chart")
+                const data = await response.json();
+                setData(data.data);
+            };
+            handleData();
+        }, [])
+    )
     return (
         <LinearGradient
             colors={['#FFF3ED', '#FFFFFF']}
