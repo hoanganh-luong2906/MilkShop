@@ -1,7 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { useCallback, useEffect, useState } from 'react';
 import {
 	Image,
 	Pressable,
@@ -12,7 +11,6 @@ import {
 } from 'react-native';
 import useAuth from '../utils/useAuth';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useFocusEffect } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 
 const ORDER_STATUS = [
@@ -235,7 +233,7 @@ const UserprofileScreen = ({ navigation }) => {
 						</Pressable>
 					)}
 				</View>
-				<ScrollView showsVerticalScrollIndicator={false}>
+				<View>
 					<View style={styles.orderContainer}>
 						<View style={styles.orderHeader}>
 							{ORDER_STATUS.map((category, index) => (
@@ -267,7 +265,9 @@ const UserprofileScreen = ({ navigation }) => {
 							{isLoggedIn ? (
 								<View>
 									{order.length > 0 ? (
-										<ScrollView>
+										<ScrollView
+											showsVerticalScrollIndicator={false}
+										>
 											<View style={{ marginBottom: 100 }}>
 												{order.map((order, index2) => (
 													<Pressable
@@ -617,41 +617,7 @@ const UserprofileScreen = ({ navigation }) => {
 							)}
 						</View>
 					</View>
-					{isLoggedIn && (
-						<View
-							style={{
-								width: '100%',
-								marginTop: 20,
-								display: 'flex',
-								flexDirection: 'row',
-								justifyContent: 'center',
-							}}
-						>
-							<Pressable
-								style={{
-									backgroundColor: 'lightgray',
-									width: '100%',
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'center',
-									alignItems: 'center',
-									height: 40,
-								}}
-							>
-								<Text
-									style={{
-										fontSize: 18,
-										fontWeight: 'bold',
-										letterSpacing: 1,
-									}}
-									onPress={() => logout()}
-								>
-									ĐĂNG XUẤT
-								</Text>
-							</Pressable>
-						</View>
-					)}
-				</ScrollView>
+				</View>
 			</LinearGradient>
 		</View>
 	);
