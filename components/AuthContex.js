@@ -8,9 +8,9 @@ const AuthContext = createContext({
 	setRole: () => {},
 	isChanged: false,
 	setIsChanged: () => {},
-	setUser: () => {},
 	login: () => {},
 	logout: () => {},
+	setUser: () => {},
 });
 
 const AuthProvider = ({ children }) => {

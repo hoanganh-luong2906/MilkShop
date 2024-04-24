@@ -2,7 +2,15 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
 import React, { useCallback, useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+	Image,
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LandingVoucher from '../components/landing/Voucher';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,10 +38,14 @@ const DetailScreen = ({ route }) => {
 	useFocusEffect(
 		useCallback(() => {
 			const fetchComments = async () => {
-				const response = await fetch('https://milk-shop-eight.vercel.app/api/comment');
+				const response = await fetch(
+					'https://milk-shop-eight.vercel.app/api/comment'
+				);
 				const data = await response.json();
 				if (data) {
-					const filteredComments = data.data.filter((comment) => comment.productId === product._id);
+					const filteredComments = data.data.filter(
+						(comment) => comment.productId === product._id
+					);
 					setComments([...filteredComments]);
 				}
 
@@ -43,7 +55,9 @@ const DetailScreen = ({ route }) => {
 
 					let tmpCart = JSON.parse(cartDB) ?? [];
 					tmpCart = tmpCart?.filter((product) => {
-						return product?.user === (user?._id ? user?._id : 'guest');
+						return (
+							product?.user === (user?._id ? user?._id : 'guest')
+						);
 					});
 					setCart([...tmpCart]);
 				} else {
@@ -70,9 +84,14 @@ const DetailScreen = ({ route }) => {
 		let isDuplicated = false;
 		if (newCart?.length > 0) {
 			newCart?.map((item) => {
-				if ((item?.product._id ?? '') === product._id && item?.user === (user?._id ? user?._id : 'guest')) {
+				if (
+					(item?.product._id ?? '') === product._id &&
+					item?.user === (user?._id ? user?._id : 'guest')
+				) {
 					if (item.quantity >= product.quantity) {
-						alert('Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.');
+						alert(
+							'Bạn đã thêm vào giỏ hàng số lượng sản phẩm tối đa.'
+						);
 						return;
 					}
 					item.quantity += 1;
@@ -100,19 +119,46 @@ const DetailScreen = ({ route }) => {
 
 	return (
 		<View style={styles.container}>
-			<LinearGradient start={{ x: 0, y: 0 }} end={{ x: 0, y: 1.5 }} colors={['#FFF3ED', '#FFF3EE', '#FFFFFF']} style={styles.linearGradient}>
+			<LinearGradient
+				start={{ x: 0, y: 0 }}
+				end={{ x: 0, y: 1.5 }}
+				colors={['#FFF3ED', '#FFF3EE', '#FFFFFF']}
+				style={styles.linearGradient}
+			>
 				<View style={styles.searchContainer}>
-					<Pressable style={styles.button} onPress={() => navigation.goBack()}>
-						<Icon name='arrow-back-outline' size={23} color='gray' />
+					<Pressable
+						style={styles.button}
+						onPress={() => navigation.goBack()}
+					>
+						<Icon
+							name='arrow-back-outline'
+							size={23}
+							color='gray'
+						/>
 					</Pressable>
 					<View>
-						<TextInput style={styles.searchBox} placeholder='Tìm kiếm sản phẩm' />
-						<Icon name='search' size={25} color='gray' style={styles.searchIcon} />
+						<TextInput
+							style={styles.searchBox}
+							placeholder='Tìm kiếm sản phẩm'
+						/>
+						<Icon
+							name='search'
+							size={25}
+							color='gray'
+							style={styles.searchIcon}
+						/>
 					</View>
 					<Pressable
 						style={styles.button}
 						onPress={() =>
-							navigation.navigate(user?.fullName ? `${user?.role?.toLowerCase() ?? 'user'}-home` : 'landing', { screen: 'cart' })
+							navigation.navigate(
+								user?.fullName
+									? `${
+											user?.role?.toLowerCase() ?? 'user'
+									  }-home`
+									: 'landing',
+								{ screen: 'cart' }
+							)
 						}
 					>
 						<View style={{ position: 'relative' }}>
@@ -150,14 +196,19 @@ const DetailScreen = ({ route }) => {
 				</View>
 				<ScrollView>
 					<View style={styles.headerContainer}>
-						<Image src={product.imageURL} style={styles.productImage} resizeMode='contain' />
+						<Image
+							src={product.imageURL}
+							style={styles.productImage}
+							resizeMode='contain'
+						/>
 						<View>
 							<View style={styles.productHeader}>
 								{product?.sales > 0 ? (
 									<View>
 										<Text
 											style={{
-												textDecorationLine: 'line-through',
+												textDecorationLine:
+													'line-through',
 												opacity: 0.4,
 												fontSize: 20,
 												fontWeight: 'bold',
@@ -173,7 +224,12 @@ const DetailScreen = ({ route }) => {
 												letterSpacing: 0.7,
 											}}
 										>
-											{formatToVND(product.price - (product.price * product.sales) / 100)}
+											{formatToVND(
+												product.price -
+													(product.price *
+														product.sales) /
+														100
+											)}
 										</Text>
 									</View>
 								) : (
@@ -196,7 +252,13 @@ const DetailScreen = ({ route }) => {
 												<Icon
 													name='star'
 													size={25}
-													color={Math.round(product.percentageRating) >= star ? '#FF8137' : 'gray'}
+													color={
+														Math.round(
+															product.percentageRating
+														) >= star
+															? '#FF8137'
+															: 'gray'
+													}
 												/>
 											</View>
 										))}
@@ -217,7 +279,11 @@ const DetailScreen = ({ route }) => {
 												lineHeight: 20,
 											}}
 										>
-											{`  ${product.count < 1000 ? product.count : '999+'}`}
+											{`  ${
+												product.count < 1000
+													? product.count
+													: '999+'
+											}`}
 										</Text>
 									</View>
 								</View>
@@ -231,23 +297,34 @@ const DetailScreen = ({ route }) => {
 									alignItems: 'center',
 								}}
 							>
-								<Text style={styles.productName}>{product.name}</Text>
+								<Text style={styles.productName}>
+									{product.name}
+								</Text>
 								<Pressable
 									style={[
 										styles.addToCartButton,
-										isRecentClick ? { backgroundColor: 'light-gray' } : { backgroundColor: '#FFF3EE' },
+										isRecentClick
+											? { backgroundColor: 'light-gray' }
+											: { backgroundColor: '#FFF3EE' },
 									]}
 									onPress={handleAddToCart}
 									disabled={isRecentClick}
 								>
-									<Icon name='cart' size={28} color={'black'} />
+									<Icon
+										name='cart'
+										size={28}
+										color={'black'}
+									/>
 								</Pressable>
 							</View>
 						</View>
 					</View>
 					{vouchers ? (
 						<View style={{ width: '100%', paddingHorizontal: 14 }}>
-							<LandingVoucher vouchers={vouchers} navigation={navigation} />
+							<LandingVoucher
+								vouchers={vouchers}
+								navigation={navigation}
+							/>
 						</View>
 					) : (
 						<View></View>
@@ -266,18 +343,32 @@ const DetailScreen = ({ route }) => {
 								Thông tin chi tiết
 							</Text>
 							<View style={styles.evenTable}>
-								<Text style={{ fontSize: 16, lineHeight: 18 }}>Danh mục</Text>
-								<Text style={styles.hightlightText}>{product.category.name}</Text>
+								<Text style={{ fontSize: 16, lineHeight: 18 }}>
+									Danh mục
+								</Text>
+								<Text style={styles.hightlightText}>
+									{product.category.name}
+								</Text>
 							</View>
 							<View style={styles.oddTable}>
-								<Text style={{ fontSize: 16, lineHeight: 18 }}>Thương hiệu</Text>
-								<Text style={styles.hightlightText}>{product.brandName}</Text>
+								<Text style={{ fontSize: 16, lineHeight: 18 }}>
+									Thương hiệu
+								</Text>
+								<Text style={styles.hightlightText}>
+									{product.brandName}
+								</Text>
 							</View>
 							<View style={styles.evenTable}>
-								<Text style={{ fontSize: 16, lineHeight: 18 }}>Sản xuất tại</Text>
-								<Text style={styles.hightlightText}>Việt Nam</Text>
+								<Text style={{ fontSize: 16, lineHeight: 18 }}>
+									Sản xuất tại
+								</Text>
+								<Text style={styles.hightlightText}>
+									Việt Nam
+								</Text>
 							</View>
-							<Text style={styles.productDescription}>{product.description}</Text>
+							<Text style={styles.productDescription}>
+								{product.description}
+							</Text>
 						</View>
 					</View>
 					<View style={styles.descriptionContainer}>
@@ -356,11 +447,22 @@ const DetailScreen = ({ route }) => {
 												alignItems: 'center',
 											}}
 										>
-											{Array.from({ length: star }).map((_, innerIndex) => (
-												<View key={innerIndex * Math.random(10, 100)}>
-													<Icon name='star' size={25} color={'#FF8137'} />
-												</View>
-											))}
+											{Array.from({ length: star }).map(
+												(_, innerIndex) => (
+													<View
+														key={
+															innerIndex *
+															Math.random(10, 100)
+														}
+													>
+														<Icon
+															name='star'
+															size={25}
+															color={'#FF8137'}
+														/>
+													</View>
+												)
+											)}
 											<View
 												style={{
 													position: 'relative',
@@ -374,7 +476,8 @@ const DetailScreen = ({ route }) => {
 														left: 0,
 														width: 100,
 														height: 10,
-														backgroundColor: 'lightgray',
+														backgroundColor:
+															'lightgray',
 														marginVertical: 5,
 														marginHorizontal: 5,
 														borderRadius: 4,
@@ -383,10 +486,19 @@ const DetailScreen = ({ route }) => {
 												<View
 													style={{
 														width:
-															countExistingStar(comments, star) *
-																(100 / (comments.length == 0 ? 1 : comments.length)) ?? 0,
+															countExistingStar(
+																comments,
+																star
+															) *
+																(100 /
+																	(comments.length ==
+																	0
+																		? 1
+																		: comments.length)) ??
+															0,
 														height: 10,
-														backgroundColor: '#FF8137',
+														backgroundColor:
+															'#FF8137',
 														marginVertical: 5,
 														marginHorizontal: 5,
 														borderRadius: 4,
@@ -400,26 +512,55 @@ const DetailScreen = ({ route }) => {
 							{comments?.length > 0 ? (
 								<View>
 									{comments.map((comment, index) => (
-										<View style={styles.commentContainer} key={index}>
+										<View
+											style={styles.commentContainer}
+											key={index}
+										>
 											<View style={styles.commentContent}>
-												<View style={styles.commentHeader}>
+												<View
+													style={styles.commentHeader}
+												>
 													<Text
 														style={{
 															fontSize: 17,
 															fontWeight: 500,
 														}}
 													>
-														{comment.author.fullName}
+														{
+															comment.author
+																.fullName
+														}
 													</Text>
-													<View style={styles.commentRating}>
-														{[1, 2, 3, 4, 5].map((star, index) => (
-															<View key={index}>
-																<Icon name='star' size={18} color={comment.rating >= star ? '#FF8137' : 'gray'} />
-															</View>
-														))}
+													<View
+														style={
+															styles.commentRating
+														}
+													>
+														{[1, 2, 3, 4, 5].map(
+															(star, index) => (
+																<View
+																	key={index}
+																>
+																	<Icon
+																		name='star'
+																		size={
+																			18
+																		}
+																		color={
+																			comment.rating >=
+																			star
+																				? '#FF8137'
+																				: 'gray'
+																		}
+																	/>
+																</View>
+															)
+														)}
 													</View>
 												</View>
-												<Text style={{ opacity: 0.4 }}>{comment.date}</Text>
+												<Text style={{ opacity: 0.4 }}>
+													{comment.date}
+												</Text>
 												<Text
 													style={{
 														fontSize: 16,
@@ -470,7 +611,7 @@ const styles = StyleSheet.create({
 	},
 	linearGradient: {
 		flex: 1,
-		paddingTop: 35,
+		paddingTop: 15,
 		// paddingHorizontal: 15,
 		borderRadius: 5,
 		overflow: 'visible',
